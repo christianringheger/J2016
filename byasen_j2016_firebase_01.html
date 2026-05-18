@@ -12,10 +12,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .logo span { color: #3C3489; }
 .sync-status { font-size: 11px; color: #999; margin-left: 8px; }
 .sync-status.live { color: #1D9E75; }
-.nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
-.nav-btn { padding: 6px 12px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; color: #666; transition: all 0.15s; }
-.nav-btn.active, .nav-btn:hover { background: #f0f0ec; color: #1a1a1a; }
-.nav-btn.active { font-weight: 500; }
+.nav { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { padding: 7px 14px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; color: #555; transition: all 0.15s; font-weight: 400; letter-spacing: 0.1px; }
+.nav-btn:hover { background: #f0f0ec; color: #1a1a1a; }
+.nav-btn.active { background: #3C3489; color: #fff; font-weight: 500; box-shadow: 0 1px 4px rgba(60,52,137,0.25); }
 .main { display: flex; flex: 1; min-height: calc(100vh - 56px); }
 .sidebar { width: 195px; background: #fff; border-right: 0.5px solid #e0e0e0; padding: 1rem 0.75rem; flex-shrink: 0; }
 .sidebar-label { font-size: 11px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 0.5rem 0.25rem; }
@@ -125,6 +125,7 @@ tr:hover td { background: #f5f5f0; }
     <button class="nav-btn" onclick="showPage('rangering')">Rangering</button>
     <button class="nav-btn" onclick="showPage('cup')">Cup-planlegger</button>
     <button class="nav-btn" onclick="showPage('oppmoete')">Oppmøte</button>
+    <button class="nav-btn" onclick="showPage('treneroppmote')">Treneroppmøte</button>
   </div>
 </div>
 <div class="main">
@@ -308,6 +309,74 @@ tr:hover td { background: #f5f5f0; }
   <div style="font-size:11px;color:#ccc;margin-top:8px;" id="om-fotnote"></div>
 </div>
 
+<div class="page" id="page-treneroppmote" style="padding:1.5rem;background:#f5f5f0;min-height:100vh;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px;">
+    <div class="section-title" style="margin:0;">Treneroppmøte</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="openTOModal()" style="font-size:12px;">+ Registrer trening</button>
+      <button class="btn" onclick="openKancellerModal()" style="font-size:12px;">Kanseller trening</button>
+    </div>
+  </div>
+  <div class="cards-row" id="to-trener-cards" style="margin-bottom:1.5rem;"></div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
+    <div class="tabs" id="to-trener-lag-tabs" style="margin:0;"></div>
+    <div style="display:flex;gap:4px;background:#f0f0ec;border-radius:8px;padding:3px;">
+      <button id="to-sort-pct" onclick="setTOSort('pct')" style="padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-family:inherit;background:#fff;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08);">Oppmøte %</button>
+      <button id="to-sort-navn" onclick="setTOSort('navn')" style="padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-family:inherit;background:transparent;font-weight:400;">A–Å</button>
+      <button id="to-sort-lag" onclick="setTOSort('lag')" style="padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-family:inherit;background:transparent;font-weight:400;">Lag</button>
+    </div>
+    <div style="flex:1;"></div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+      <input type="checkbox" id="to-trener-vis-kamp" checked onchange="renderTreneroppmote()"> Vis kampunntak
+    </label>
+  </div>
+  <div class="card" style="padding:0;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead id="to-trener-thead"></thead>
+      <tbody id="to-trener-tbody"></tbody>
+    </table>
+  </div>
+  <div style="margin-top:8px;display:flex;gap:16px;font-size:11px;color:#999;">
+    <span>✅ Tilstede</span>
+    <span style="color:#534AB7;">⚽ Kampunntak</span>
+    <span>–  Ikke tilstede</span>
+    <span style="color:#D85A30;">✕  Kansellert</span>
+  </div>
+</div>
+
+<!-- TO MODAL: Registrer trening -->
+<div class="modal-overlay" id="to-modal">
+  <div class="modal" style="width:480px;">
+    <div class="modal-header"><div class="modal-title">Registrer trening</div><button class="modal-close" onclick="closeModal('to-modal')">×</button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Dato</label><select id="to-dato-sel" style="font-family:inherit;font-size:13px;padding:7px 10px;border-radius:8px;border:0.5px solid #ccc;"></select></div>
+      <div class="form-group full">
+        <label>Hvem møtte opp?</label>
+        <div id="to-trenere-valg" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;">
+      <button class="btn" onclick="closeModal('to-modal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveTORegistrering()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- TO KANSELLER MODAL -->
+<div class="modal-overlay" id="to-kanseller-modal">
+  <div class="modal" style="width:400px;">
+    <div class="modal-header"><div class="modal-title">Kanseller trening</div><button class="modal-close" onclick="closeModal('to-kanseller-modal')">×</button></div>
+    <div class="form-group full" style="padding:0 0 1rem;">
+      <label>Velg treningsdato å kansellere</label>
+      <select id="to-kanseller-dato" style="font-family:inherit;font-size:13px;padding:7px 10px;border-radius:8px;border:0.5px solid #ccc;width:100%;margin-top:4px;"></select>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button class="btn" onclick="closeModal('to-kanseller-modal')">Avbryt</button>
+      <button class="btn" style="color:#D85A30;border-color:#D85A30;" onclick="kancellerTrening()">Kanseller</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="cup-modal">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="cup-modal-tittel">Nytt cup-oppsett</div><button class="modal-close" onclick="closeModal('cup-modal')">×</button></div>
@@ -344,8 +413,8 @@ tr:hover td { background: #f5f5f0; }
     <div class="form-grid">
       <div class="form-group"><label>Lag</label><select id="k-lag" onchange="oppdaterKampValg()"><option>Lag 1</option><option>Lag 2</option><option>Lag 3</option><option>Lag 4</option></select></div>
       <div class="form-group"><label>Velg kamp</label><select id="k-velg-kamp" onchange="fyllKampInfo()"></select></div>
-      <div class="form-group"><label>Dato</label><input type="date" id="k-dato" readonly style="opacity:0.7;"></div>
-      <div class="form-group"><label>Motstander</label><input type="text" id="k-motstander" readonly style="opacity:0.7;"></div>
+      <div class="form-group"><label style="display:flex;align-items:center;justify-content:space-between;">Dato <span style="font-size:11px;color:#534AB7;cursor:pointer;font-weight:400;" onclick="toggleKampOverstyr()">✏️ Overstyr</span></label><input type="date" id="k-dato" readonly style="opacity:0.7;"></div>
+      <div class="form-group"><label>Klokkeslett</label><input type="time" id="k-tid" readonly style="opacity:0.7;"></div>
       <div class="form-group"><label>Mål for (oss)</label><input type="number" id="k-mal-for" min="0" value="0"></div>
       <div class="form-group"><label>Mål mot (dem)</label><input type="number" id="k-mal-mot" min="0" value="0"></div>
       <div class="form-group full">
@@ -361,9 +430,13 @@ tr:hover td { background: #f5f5f0; }
       <div class="form-group full"><label>Lånespiller(e) fra annet lag</label><div id="k-lanspiller-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div></div>
       <div class="form-group full"><label>Notat</label><textarea id="k-notat" rows="2" style="resize:vertical;"></textarea></div>
     </div>
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;">
+    <div style="background:#E1F5EE;border-radius:8px;padding:8px 12px;font-size:12px;color:#0F6E56;margin-top:8px;">
+      💡 Lagre planlegging lagrer fravær og lånespillere uten å registrere resultatet. Fyll inn mål og trykk Registrer resultat etter kampen.
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;flex-wrap:wrap;">
       <button class="btn" onclick="closeModal('kamp-modal')">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveKamp()">Lagre</button>
+      <button class="btn" onclick="saveKamp(false)" style="color:#1D9E75;border-color:#1D9E75;">💾 Lagre planlegging</button>
+      <button class="btn btn-primary" onclick="saveKamp(true)">✅ Registrer resultat</button>
     </div>
   </div>
 </div>
@@ -579,7 +652,7 @@ async function lagreFirebase(){
   await setDoc(doc(db,'byasen','data'),{
     kamper:state.kamper, spillere:state.spillere, trenere:state.trenere,
     j2015kamper:state.j2015kamper, rangeringer:state.rangeringer||[],
-    cupOppsett:state.cupOppsett||[], omData:state.omData||{perioder:[]},
+    cupOppsett:state.cupOppsett||[], omData:state.omData||{perioder:[]}, toTrenerData:state.toTrenerData||{treninger:[]},
     oppdatert: new Date().toISOString()
   });
 }
@@ -599,7 +672,7 @@ async function initFirebase(){
       const d=snap.data();
       state.kamper=d.kamper||[]; state.spillere=d.spillere||[];
       state.trenere=d.trenere||[]; state.j2015kamper=d.j2015kamper||[];
-      state.rangeringer=d.rangeringer||[]; state.cupOppsett=d.cupOppsett||[]; state.omData=d.omData||{perioder:[]};
+      state.rangeringer=d.rangeringer||[]; state.cupOppsett=d.cupOppsett||[]; state.omData=d.omData||{perioder:[]}; state.toTrenerData=d.toTrenerData||{treninger:[]};
       
     }
     // Seed hvis tomt
@@ -613,7 +686,7 @@ async function initFirebase(){
         const d=snap.data();
         state.kamper=d.kamper||[]; state.spillere=d.spillere||[];
         state.trenere=d.trenere||[]; state.j2015kamper=d.j2015kamper||[];
-        state.rangeringer=d.rangeringer||[]; state.cupOppsett=d.cupOppsett||[]; state.omData=d.omData||{perioder:[]};
+        state.rangeringer=d.rangeringer||[]; state.cupOppsett=d.cupOppsett||[]; state.omData=d.omData||{perioder:[]}; state.toTrenerData=d.toTrenerData||{treninger:[]};
         
         render();
         setSyncStatus('● Live', true);
@@ -709,9 +782,10 @@ function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const idx={dashboard:0,kamper:1,spillere:2,trenere:3,lan:4,rangering:5,cup:6,oppmoete:7};
+  const idx={dashboard:0,kamper:1,spillere:2,trenere:3,lan:4,rangering:5,cup:6,oppmoete:7,treneroppmote:8};
   document.querySelectorAll('.nav-btn')[idx[p]].classList.add('active');
   if(p==='oppmoete') renderOppmoete();
+  if(p==='treneroppmote') renderTreneroppmote();
   document.querySelectorAll('.nav-btn')[idx[p]].classList.add('active');
   render();
 }
@@ -767,7 +841,11 @@ function renderKamper(){
   tbody.innerHTML=kamper.map(k=>{
     const col=LC[k.lag]||'#888',hj=erHjemme(k),motst=motstander(k);
     if(k.avlyst)return`<tr class="kommende-row"><td style="font-size:12px;white-space:nowrap;">${norskDato(k.dato)}<div style="font-size:11px;color:#999;">${k.tid||''}</div></td><td><span style="font-size:11px;font-weight:500;color:${col};">${k.lag}</span></td><td><span style="font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;margin-right:4px;background:${hj?'#E1F5EE':'#FAEEDA'};color:${hj?'#0F6E56':'#854F0B'};">${hj?'H':'B'}</span>${motst}</td><td><span class="badge badge-avlyst">Avlyst</span></td><td colspan="3">–</td><td><button class="btn" style="font-size:11px;padding:4px 8px;" onclick="angrerAvlyst('${k.id}')">Angre</button></td></tr>`;
-    if(!k.spilt)return`<tr class="kommende-row"><td style="font-size:12px;white-space:nowrap;">${norskDato(k.dato)}<div style="font-size:11px;color:#999;">${k.tid||''}</div></td><td><span style="font-size:11px;font-weight:500;color:${col};">${k.lag}</span></td><td><span style="font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;margin-right:4px;background:${hj?'#E1F5EE':'#FAEEDA'};color:${hj?'#0F6E56':'#854F0B'};">${hj?'H':'B'}</span>${motst}</td><td><span class="badge badge-kommende">Kommende</span></td><td colspan="3">–</td><td style="display:flex;gap:4px;"><button class="btn btn-primary" style="font-size:11px;padding:4px 10px;" onclick="registrerResultat('${k.id}')">Registrer</button><button class="btn" style="font-size:11px;padding:4px 8px;" onclick="markerAvlyst('${k.id}')">Avlyst</button></td></tr>`;
+    if(!k.spilt){
+      const planFravar=(k.fravar||[]).map(sid=>{const sp=state.spillere.find(s=>s.id===sid);return sp?sp.navn:null;}).filter(Boolean).join(', ');
+      const planLan=(k.lanspillere||[]).map(sid=>{const sp=state.spillere.find(s=>s.id===sid);return sp?sp.navn:null;}).filter(Boolean).join(', ');
+      return`<tr class="kommende-row"><td style="font-size:12px;white-space:nowrap;">${norskDato(k.dato)}<div style="font-size:11px;color:#999;">${k.tid||''}</div></td><td><span style="font-size:11px;font-weight:500;color:${col};">${k.lag}</span></td><td><span style="font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;margin-right:4px;background:${hj?'#E1F5EE':'#FAEEDA'};color:${hj?'#0F6E56':'#854F0B'};">${hj?'H':'B'}</span>${motst}</td><td><span class="badge badge-kommende">Kommende</span></td><td style="font-size:12px;">${planFravar?`<span class="absent-chip">${planFravar}</span>`:''}</td><td>${planLan?`<span class="loan-chip">${planLan}</span>`:''}</td><td></td><td style="display:flex;gap:4px;"><button class="btn btn-primary" style="font-size:11px;padding:4px 10px;" onclick="registrerResultat('${k.id}')">Registrer</button><button class="btn" style="font-size:11px;padding:4px 8px;" onclick="markerAvlyst('${k.id}')">Avlyst</button></td></tr>`;
+    }
     const f=k.malFor||0,m=k.malMot||0,res=f>m?'seier':f<m?'tap':'uavgjort';
     const scorere=k.scorere?Object.entries(k.scorere).map(([sid,a])=>{if(sid==='selvmaal')return`Selvmål ×${a}`;const sp=state.spillere.find(s=>s.id===sid);return sp?`${sp.navn}${a>1?' ('+a+')':''}`:null;}).filter(Boolean).join(', '):'';
     const fravar=(k.fravar||[]).map(sid=>{const sp=state.spillere.find(s=>s.id===sid);return sp?sp.navn:null;}).filter(Boolean).join(', ');
@@ -899,14 +977,22 @@ function renderLan(){
 
 function oppdaterKampValg(){
   const lag=document.getElementById('k-lag').value;
-  const uspilte=state.kamper.filter(k=>k.lag===lag&&!k.spilt&&!k.avlyst).sort((a,b)=>a.dato.localeCompare(b.dato));
-  document.getElementById('k-velg-kamp').innerHTML=uspilte.length?uspilte.map(k=>`<option value="${k.id}">${norskDato(k.dato)} – ${motstander(k)}</option>`).join(''):'<option value="">Ingen uregistrerte kamper</option>';
+  const alleKamper=state.kamper.filter(k=>k.lag===lag&&!k.avlyst).sort((a,b)=>a.dato.localeCompare(b.dato));
+  document.getElementById('k-velg-kamp').innerHTML=alleKamper.length?alleKamper.map(k=>`<option value="${k.id}">${norskDato(k.dato)} – ${motstander(k)}${k.spilt?' ✓':''}</option>`).join(''):'<option value="">Ingen kamper</option>';
   fyllKampInfo();
   oppdaterScorerListe();
-  document.getElementById('k-fravar-list').innerHTML=state.spillere.filter(s=>s.lag===lag).map(s=>`<button type="button" class="toggle-chip" data-id="${s.id}" onclick="toggleChip(this,'fravar')">${s.navn}</button>`).join('');
-  document.getElementById('k-lanspiller-list').innerHTML=state.spillere.filter(s=>s.lag!==lag).sort((a,b)=>a.lag.localeCompare(b.lag)||a.navn.localeCompare(b.navn)).map(s=>`<button type="button" class="toggle-chip" data-id="${s.id}" onclick="toggleChip(this,'lan');oppdaterScorerListe()">${s.navn} <span style="font-size:10px;opacity:0.7;">${s.lag}</span></button>`).join('');
+  oppdaterFravarLanChips();
 }
 window.oppdaterKampValg=oppdaterKampValg;
+
+function oppdaterFravarLanChips(){
+  const lag=document.getElementById('k-lag').value;
+  const kid=document.getElementById('k-velg-kamp').value;
+  const k=state.kamper.find(k=>k.id===kid);
+  document.getElementById('k-fravar-list').innerHTML=state.spillere.filter(s=>s.lag===lag).map(s=>`<button type="button" class="toggle-chip ${(k?.fravar||[]).includes(s.id)?'selected-fravar':''}" data-id="${s.id}" onclick="toggleChip(this,'fravar')">${s.navn}</button>`).join('');
+  document.getElementById('k-lanspiller-list').innerHTML=state.spillere.filter(s=>s.lag!==lag).sort((a,b)=>a.lag.localeCompare(b.lag)||a.navn.localeCompare(b.navn)).map(s=>`<button type="button" class="toggle-chip ${(k?.lanspillere||[]).includes(s.id)?'selected-lan':''}" data-id="${s.id}" onclick="toggleChip(this,'lan');oppdaterScorerListe()">${s.navn} <span style="font-size:10px;opacity:0.7;">${s.lag}</span></button>`).join('');
+}
+window.oppdaterFravarLanChips=oppdaterFravarLanChips;
 
 function oppdaterScorerListe(){
   const lag=document.getElementById('k-lag').value;
@@ -919,10 +1005,57 @@ function oppdaterScorerListe(){
 }
 window.oppdaterScorerListe=oppdaterScorerListe;
 
-function fyllKampInfo(){const kid=document.getElementById('k-velg-kamp').value;const k=state.kamper.find(k=>k.id===kid);if(k){document.getElementById('k-dato').value=k.dato;document.getElementById('k-motstander').value=motstander(k);}else{document.getElementById('k-dato').value='';document.getElementById('k-motstander').value='';}}
+function toggleKampOverstyr(){
+  const datoEl=document.getElementById('k-dato');
+  const tidEl=document.getElementById('k-tid');
+  const isLocked=datoEl.hasAttribute('readonly');
+  if(isLocked){
+    datoEl.removeAttribute('readonly'); datoEl.style.opacity='1'; datoEl.style.border='1.5px solid #534AB7';
+    tidEl.removeAttribute('readonly'); tidEl.style.opacity='1'; tidEl.style.border='1.5px solid #534AB7';
+  } else {
+    datoEl.setAttribute('readonly',''); datoEl.style.opacity='0.7'; datoEl.style.border='';
+    tidEl.setAttribute('readonly',''); tidEl.style.opacity='0.7'; tidEl.style.border='';
+  }
+}
+window.toggleKampOverstyr=toggleKampOverstyr;
+
+function fyllKampInfo(){
+  const kid=document.getElementById('k-velg-kamp').value;
+  const k=state.kamper.find(k=>k.id===kid);
+  // Reset readonly
+  const datoEl=document.getElementById('k-dato');
+  const tidEl=document.getElementById('k-tid');
+  datoEl.setAttribute('readonly',''); datoEl.style.opacity='0.7'; datoEl.style.border='';
+  tidEl.setAttribute('readonly',''); tidEl.style.opacity='0.7'; tidEl.style.border='';
+  if(k){
+    datoEl.value=k.dato;
+    tidEl.value=k.tid||'';
+    document.getElementById('k-notat').value=k.notat||'';
+    document.getElementById('k-mal-for').value=k.spilt?(k.malFor||0):'';
+    document.getElementById('k-mal-mot').value=k.spilt?(k.malMot||0):'';
+    pendingScorers=k.spilt?{...k.scorere}:{};
+    renderChips();
+    oppdaterFravarLanChips();
+    oppdaterScorerListe();
+  } else {
+    datoEl.value='';
+    tidEl.value='';
+    document.getElementById('k-mal-for').value='';
+    document.getElementById('k-mal-mot').value='';
+  }
+}
 window.fyllKampInfo=fyllKampInfo;
 
-function openKampModal(){pendingScorers={};document.getElementById('k-mal-for').value=0;document.getElementById('k-mal-mot').value=0;document.getElementById('k-notat').value='';document.getElementById('scorers-chips').innerHTML='';if(state.aktivLag!=='alle')document.getElementById('k-lag').value=state.aktivLag;oppdaterKampValg();document.getElementById('kamp-modal').classList.add('open');}
+function openKampModal(){
+  pendingScorers={};
+  document.getElementById('k-mal-for').value='';
+  document.getElementById('k-mal-mot').value='';
+  document.getElementById('k-notat').value='';
+  document.getElementById('scorers-chips').innerHTML='';
+  if(state.aktivLag!=='alle') document.getElementById('k-lag').value=state.aktivLag;
+  oppdaterKampValg();
+  document.getElementById('kamp-modal').classList.add('open');
+}
 window.openKampModal=openKampModal;
 
 function redigerKamp(kampId){
@@ -945,7 +1078,17 @@ function redigerKamp(kampId){
 }
 window.redigerKamp=redigerKamp;
 
-function registrerResultat(kampId){const k=state.kamper.find(k=>k.id===kampId);if(!k)return;pendingScorers={};document.getElementById('k-lag').value=k.lag;oppdaterKampValg();document.getElementById('k-velg-kamp').value=kampId;fyllKampInfo();document.getElementById('k-mal-for').value=0;document.getElementById('k-mal-mot').value=0;document.getElementById('k-notat').value='';document.getElementById('scorers-chips').innerHTML='';document.getElementById('kamp-modal').classList.add('open');}
+function registrerResultat(kampId){
+  const k=state.kamper.find(k=>k.id===kampId);if(!k)return;
+  pendingScorers={...k.scorere||{}};
+  document.getElementById('k-lag').value=k.lag;
+  oppdaterKampValg();
+  document.getElementById('k-velg-kamp').value=kampId;
+  fyllKampInfo();
+  document.getElementById('k-mal-for').value='';
+  document.getElementById('k-mal-mot').value='';
+  document.getElementById('kamp-modal').classList.add('open');
+}
 window.registrerResultat=registrerResultat;
 
 function toggleChip(el,type){el.classList.toggle('selected-'+type);}
@@ -957,21 +1100,35 @@ function removeScorer(sid){delete pendingScorers[sid];renderChips();}
 window.removeScorer=removeScorer;
 function renderChips(){document.getElementById('scorers-chips').innerHTML=Object.entries(pendingScorers).map(([sid,a])=>{const sp=state.spillere.find(s=>s.id===sid);const navn=sid==='selvmaal'?'⚽ Selvmål':sp?sp.navn:'?';const bg=sid==='selvmaal'?'#FAEEDA':'#EEEDFE';const col=sid==='selvmaal'?'#854F0B':'#3C3489';return`<div class="scorer-chip" style="background:${bg};color:${col};">${navn} ×${a} <button onclick="removeScorer('${sid}')" style="color:${col};">×</button></div>`;}).join('');}
 
-async function saveKamp(){
+async function saveKamp(registrerResultat=true){
   const kid=document.getElementById('k-velg-kamp').value;
   const k=state.kamper.find(k=>k.id===kid);if(!k){alert('Velg en kamp.');return;}
-  k.malFor=parseInt(document.getElementById('k-mal-for').value)||0;
-  k.malMot=parseInt(document.getElementById('k-mal-mot').value)||0;
-  k.scorere={...pendingScorers};
+  // Lagre overstyrt dato/tid hvis endret
+  const nyDato=document.getElementById('k-dato').value;
+  const nyTid=document.getElementById('k-tid').value;
+  if(nyDato) k.dato=nyDato;
+  if(nyTid) k.tid=nyTid;
   k.fravar=getSelectedChips('fravar');
   k.lanspillere=getSelectedChips('lan');
   k.notat=document.getElementById('k-notat').value;
-  k.spilt=true;
+  if(registrerResultat){
+    const malFor=document.getElementById('k-mal-for').value;
+    const malMot=document.getElementById('k-mal-mot').value;
+    if(malFor===''||malMot===''){alert('Fyll inn resultatet før du registrerer kampen.');return;}
+    k.malFor=parseInt(malFor)||0;
+    k.malMot=parseInt(malMot)||0;
+    k.scorere={...pendingScorers};
+    k.spilt=true;
+  }
   closeModal('kamp-modal');
   setSyncStatus('Lagrer...');
   await lagreFirebase();
 }
 window.saveKamp=saveKamp;
+
+async function lagrePlanlegging(){
+  await saveKamp(false);
+}
 
 async function slettResultat(id){if(!confirm('Nullstille resultatet?'))return;const k=state.kamper.find(k=>k.id===id);if(k){k.spilt=false;k.malFor=null;k.malMot=null;k.scorere={};k.fravar=[];k.lanspillere=[];k.notat='';}setSyncStatus('Lagrer...');await lagreFirebase();}
 window.slettResultat=slettResultat;
@@ -1760,6 +1917,270 @@ function renderOppmoete() {
   if (fotnote) fotnote.innerHTML = '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;"><span style="width:14px;height:14px;border-radius:3px;background:#EAF3DE;color:#3B6D11;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">✓</span> Deltok</span><span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;"><span style="width:14px;height:14px;border-radius:3px;background:#E8F0FF;color:#534AB7;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">K</span> Hadde kamp</span><span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:14px;height:14px;border-radius:3px;background:#f5f5f0;color:#ccc;font-size:9px;display:inline-flex;align-items:center;justify-content:center;">–</span> Ikke tilstede</span>';
 }
 window.renderOppmoete=renderOppmoete;
+
+// ── TRENEROPPMØTE ──
+
+// Seed data fra april-filen
+const TO_SEED_DATA = [
+  {dato:'2026-04-07', oppmote:['Christoffer Rosmo','Tom Gråwe','Jonas Larsen','Christian Heger','Ole Sagbakken','Terje Vullum','Per Skei','Jon Arne Kråkenes','Magnus Nilsen','Ola Nordbø','Vegard Aune','Syver Nygård']},
+  {dato:'2026-04-09', oppmote:['Jonas Larsen','Christian Heger','Ole Sagbakken','Per Skei','Jon Arne Kråkenes','Magnus Nilsen','Syver Nygård','Andreas Stokke','Stefan Slettedal']},
+  {dato:'2026-04-12', oppmote:['Per Skei','Jon Arne Kråkenes','Vegard Aune','Syver Nygård']},
+  {dato:'2026-04-14', oppmote:['Christoffer Rosmo','Jonas Larsen','Per Skei','Jon Arne Kråkenes','Syver Nygård']},
+  {dato:'2026-04-21', oppmote:['Christian Heger','Ole Sagbakken','Jon Arne Kråkenes','Magnus Nilsen','Ola Nordbø','Syver Nygård']},
+  {dato:'2026-04-23', oppmote:['Christoffer Rosmo','Jonas Larsen','Christian Heger','Ole Sagbakken','Terje Vullum','Andreas Stokke','Stefan Slettedal','Kim Danielsen','Eirin Stadsøy']},
+  {dato:'2026-04-28', oppmote:['Christoffer Rosmo','Tom Gråwe','Jonas Larsen','Ole Sagbakken','Per Skei','Jon Arne Kråkenes','Magnus Nilsen','Ola Nordbø','Vegard Aune','Syver Nygård','Kim Danielsen']},
+  {dato:'2026-04-30', oppmote:['Jonas Larsen','Ole Sagbakken','Per Skei','Syver Nygård']},
+  {dato:'2026-05-03', oppmote:['Christoffer Rosmo','Jonas Larsen','Ola Nordbø','Vegard Aune']},
+  {dato:'2026-05-07', oppmote:['Christoffer Rosmo','Jonas Larsen','Per Skei','Jon Arne Kråkenes','Christian Heger','Stefan Slettedal','Kim Danielsen','Eirin Stadsøy']},
+  {dato:'2026-05-10', oppmote:['Jonas Larsen','Per Skei','Ola Nordbø','Eirin Stadsøy']},
+  {dato:'2026-05-12', oppmote:['Jonas Larsen','Christian Heger','Ole Sagbakken','Terje Vullum','Jon Arne Kråkenes','Magnus Nilsen','Syver Nygård','Stefan Slettedal']},
+];
+
+// Generer treningsdatoer: tirsdager(2), torsdager(4), søndager(0) fra 13.mai til 31.okt
+// 16.mai erstatter 17.mai, 17.mai hoppes over
+function genererTreningsdatoer(){
+  const datoer = [];
+  const start = new Date('2026-05-13');
+  const slutt = new Date('2026-10-31');
+  const cur = new Date(start);
+  while(cur <= slutt){
+    const dag = cur.getDay(); // 0=søn, 2=tirs, 4=tors
+    const datoStr = cur.toISOString().slice(0,10);
+    if(dag===0||dag===2||dag===4){
+      // Hopp over 17. mai, legg til 16. mai i stedet
+      if(datoStr==='2026-05-17') { cur.setDate(cur.getDate()+1); continue; }
+      datoer.push(datoStr);
+    }
+    if(datoStr==='2026-05-15'){ // lørdag 16. mai
+      // legg til 2026-05-16
+    }
+    cur.setDate(cur.getDate()+1);
+  }
+  // Legg til 16.mai manuelt
+  if(!datoer.includes('2026-05-16')) datoer.push('2026-05-16');
+  datoer.sort();
+  return datoer;
+}
+
+const TO_FREMTIDIGE = genererTreningsdatoer();
+const TO_ALLE_DATOER = [...TO_SEED_DATA.map(d=>d.dato), ...TO_FREMTIDIGE].sort();
+
+let toAktivLag = 'alle';
+let toSort = 'pct';
+
+function toSetLag(lag){ toAktivLag=lag; renderTreneroppmote(); }
+window.toSetLag=toSetLag;
+
+function setTOSort(mode){
+  toSort=mode;
+  ['pct','navn','lag'].forEach(m=>{
+    const btn=document.getElementById('to-sort-'+m);
+    if(!btn)return;
+    btn.style.background=m===mode?'#fff':'transparent';
+    btn.style.fontWeight=m===mode?'500':'400';
+    btn.style.boxShadow=m===mode?'0 1px 3px rgba(0,0,0,0.08)':'none';
+  });
+  renderTreneroppmote();
+}
+window.setTOSort=setTOSort;
+
+function toInitSeed(){
+  if(!state.toTrenerData) state.toTrenerData={treninger:[]};
+  TO_SEED_DATA.forEach(seed=>{
+    if(!state.toTrenerData.treninger.find(t=>t.dato===seed.dato)){
+      state.toTrenerData.treninger.push({dato:seed.dato, oppmote:seed.oppmote, kansellert:false});
+    }
+  });
+  // Fremtidige datoer legges til som tomme
+  TO_FREMTIDIGE.forEach(dato=>{
+    if(!state.toTrenerData.treninger.find(t=>t.dato===dato)){
+      state.toTrenerData.treninger.push({dato, oppmote:[], kansellert:false});
+    }
+  });
+}
+
+function toHarKampUnntak(trenerNavn, dato){
+  const trener = state.trenere.find(t=>t.navn===trenerNavn);
+  if(!trener) return false;
+  // Sjekk om lagets treneren tilhører har kamp denne dagen
+  return state.kamper.some(k=>k.lag===trener.lag&&k.dato===dato&&(k.spilt||k.dato>=TODAY));
+}
+
+function norskKortDato(dato){
+  const [y,m,d]=dato.split('-');
+  const mnd=['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
+  return `${parseInt(d)}.${mnd[parseInt(m)-1]}`;
+}
+
+function renderTreneroppmote(){
+  toInitSeed();
+  const visKamp = document.getElementById('to-trener-vis-kamp')?.checked !== false;
+  const alleNavn = state.trenere.map(t=>t.navn).sort();
+
+  // Lag-tabs
+  document.getElementById('to-trener-lag-tabs').innerHTML =
+    `<button class="tab ${toAktivLag==='alle'?'active':''}" onclick="toSetLag('alle')">Alle</button>`+
+    ['Lag 1','Lag 2','Lag 3','Lag 4'].map(l=>`<button class="tab ${toAktivLag===l?'active':''}" onclick="toSetLag('${l}')">${l}</button>`).join('');
+
+  // Filtrer trenere
+  let filtrerteTrenere = toAktivLag==='alle' ? alleNavn :
+    state.trenere.filter(t=>t.lag===toAktivLag).map(t=>t.navn);
+
+  // Statistikk beregnes først for å kunne sortere på pst
+  const treninger = [...state.toTrenerData.treninger].sort((a,b)=>a.dato.localeCompare(b.dato));
+  const spilteDatoer = treninger.filter(t=>t.oppmote.length>0||t.kansellert);
+  const fremtidige = treninger.filter(t=>t.oppmote.length===0&&!t.kansellert&&t.dato>TODAY);
+
+  const statsData = filtrerteTrenere.map(navn=>{
+    let møtt=0, totalt=0, kamp=0;
+    treninger.filter(t=>!t.kansellert&&(t.oppmote.length>0||t.dato<=TODAY)).forEach(t=>{
+      const harKamp=visKamp&&toHarKampUnntak(navn,t.dato);
+      if(harKamp){kamp++;}
+      else{totalt++;if(t.oppmote.includes(navn))møtt++;}
+    });
+    const pst=totalt>0?Math.round(møtt/totalt*100):null;
+    return{navn,møtt,totalt,kamp,pst};
+  });
+
+  // Sorter
+  if(toSort==='pct'){
+    filtrerteTrenere=[...filtrerteTrenere].sort((a,b)=>{
+      const sa=statsData.find(s=>s.navn===a);
+      const sb=statsData.find(s=>s.navn===b);
+      return (sb?.pst??-1)-(sa?.pst??-1);
+    });
+  } else if(toSort==='navn'){
+    filtrerteTrenere=[...filtrerteTrenere].sort((a,b)=>a.localeCompare(b,'no'));
+  } else {
+    // lag
+    filtrerteTrenere=[...filtrerteTrenere].sort((a,b)=>{
+      const ta=state.trenere.find(t=>t.navn===a);
+      const tb=state.trenere.find(t=>t.navn===b);
+      return (ta?.lag||'').localeCompare(tb?.lag||'')||a.localeCompare(b,'no');
+    });
+  }
+
+  const snitt=statsData.filter(s=>s.pst!==null).length?
+    Math.round(statsData.filter(s=>s.pst!==null).reduce((a,b)=>a+(b.pst||0),0)/statsData.filter(s=>s.pst!==null).length):0;
+
+  document.getElementById('to-trener-cards').innerHTML=`
+    <div class="metric-card"><div class="metric-label">Trenere</div><div class="metric-val">${filtrerteTrenere.length}</div></div>
+    <div class="metric-card"><div class="metric-label">Treninger registrert</div><div class="metric-val">${spilteDatoer.filter(t=>!t.kansellert).length}</div></div>
+    <div class="metric-card"><div class="metric-label">Snitt oppmøte</div><div class="metric-val ${snitt>=70?'pos':snitt>=50?'':'neg'}">${snitt}%</div></div>
+    <div class="metric-card"><div class="metric-label">Fremtidige</div><div class="metric-val">${fremtidige.length}</div></div>
+  `;
+
+  // Tabell
+  const visibleTreninger = treninger.filter(t=>t.oppmote.length>0||t.kansellert||(t.dato<=TODAY));
+  const thead = document.getElementById('to-trener-thead');
+  const tbody = document.getElementById('to-trener-tbody');
+
+  if(!visibleTreninger.length){
+    thead.innerHTML=''; tbody.innerHTML='<tr><td colspan="3"><div class="empty-state">Ingen treninger registrert ennå.</div></td></tr>'; return;
+  }
+
+  const datoCols = visibleTreninger.map(t=>`<th style="padding:4px 3px;font-size:10px;color:#aaa;font-weight:400;border-bottom:0.5px solid #e0e0e0;text-align:center;white-space:nowrap;min-width:32px;">${norskKortDato(t.dato)}</th>`).join('');
+  thead.innerHTML=`<tr style="background:#f8f8f5;"><th style="padding:8px 10px;text-align:left;font-size:12px;color:#888;font-weight:500;border-bottom:0.5px solid #e0e0e0;min-width:160px;">Trener</th><th style="padding:8px 6px;font-size:12px;color:#888;font-weight:500;border-bottom:0.5px solid #e0e0e0;text-align:center;min-width:100px;">Oppmøte %</th>${datoCols}<th style="padding:8px 6px;font-size:12px;color:#888;font-weight:500;border-bottom:0.5px solid #e0e0e0;text-align:center;">Tot.</th></tr>`;
+
+  tbody.innerHTML = filtrerteTrenere.map(navn=>{
+    const trener=state.trenere.find(t=>t.navn===navn);
+    const col=LC[trener?.lag]||'#888';
+    const st=statsData.find(s=>s.navn===navn)||{møtt:0,totalt:0,kamp:0,pst:null};
+    const pstFarge=st.pst===null?'#999':st.pst>=70?'#1D9E75':st.pst>=50?'#BA7517':'#D85A30';
+
+    const celler=visibleTreninger.map(t=>{
+      if(t.kansellert) return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;"><div style="width:20px;height:20px;border-radius:4px;background:#f5f5f0;color:#D85A30;font-size:11px;display:inline-flex;align-items:center;justify-content:center;">✕</div></td>`;
+      const harKamp=visKamp&&toHarKampUnntak(navn,t.dato);
+      if(harKamp) return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;" title="Kampdag"><div style="width:20px;height:20px;border-radius:4px;background:#E8F0FF;color:#534AB7;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">⚽</div></td>`;
+      if(t.oppmote.includes(navn)) return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;"><div style="width:20px;height:20px;border-radius:4px;background:#EAF3DE;color:#3B6D11;font-size:11px;display:inline-flex;align-items:center;justify-content:center;">✅</div></td>`;
+      return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;"><div style="width:20px;height:20px;border-radius:4px;background:#f5f5f0;color:#ccc;font-size:10px;display:inline-flex;align-items:center;justify-content:center;">–</div></td>`;
+    }).join('');
+
+    const pstBar=st.pst!==null?`<div style="flex:1;background:#e8e8e4;border-radius:3px;height:6px;"><div style="width:${st.pst}%;background:${pstFarge};height:6px;border-radius:3px;"></div></div>`:'';
+    return`<tr>
+      <td style="padding:6px 10px;border-bottom:0.5px solid #f0f0ec;">
+        <div style="font-size:13px;font-weight:500;">${navn}</div>
+        <div style="font-size:11px;color:${col};">${trener?.lag||''} · ${trener?.rolle==='hoved'?'Hovedtrener':'Hjelpetrener'}</div>
+      </td>
+      <td style="padding:6px 6px;border-bottom:0.5px solid #f0f0ec;">
+        <div style="display:flex;align-items:center;gap:5px;">
+          <span style="font-size:12px;font-weight:600;color:${pstFarge};min-width:32px;">${st.pst!==null?st.pst+'%':'–'}</span>
+          ${pstBar}
+        </div>
+        <div style="font-size:10px;color:#aaa;margin-top:2px;">${st.møtt}/${st.totalt}${st.kamp?' (⚽'+st.kamp+')':''}</div>
+      </td>
+      ${celler}
+      <td style="text-align:center;font-weight:500;font-size:13px;padding:6px;border-bottom:0.5px solid #f0f0ec;">${st.møtt}</td>
+    </tr>`;
+  }).join('');
+}
+window.renderTreneroppmote=renderTreneroppmote;
+
+function openTOModal(){
+  toInitSeed();
+  // Vis fremtidige + uregistrerte datoer
+  const uregistrerte = state.toTrenerData.treninger
+    .filter(t=>!t.kansellert)
+    .sort((a,b)=>a.dato.localeCompare(b.dato));
+  const sel=document.getElementById('to-dato-sel');
+  sel.innerHTML=uregistrerte.map(t=>`<option value="${t.dato}">${norskKortDato(t.dato)} (${t.oppmote.length} registrert)</option>`).join('');
+
+  // Trenere valg – vis alle
+  document.getElementById('to-trenere-valg').innerHTML=
+    state.trenere.sort((a,b)=>a.navn.localeCompare(b.navn)).map(t=>{
+      const col=LC[t.lag]||'#888';
+      return`<label style="display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:0.5px solid #e0e0e0;cursor:pointer;font-size:12px;">
+        <input type="checkbox" value="${t.navn}">
+        <span style="color:${col};font-size:10px;">${t.lag}</span>
+        <span>${t.navn}</span>
+      </label>`;
+    }).join('');
+
+  // Pre-huk av eksisterende
+  sel.onchange=()=>{
+    const dato=sel.value;
+    const reg=state.toTrenerData.treninger.find(t=>t.dato===dato);
+    document.querySelectorAll('#to-trenere-valg input').forEach(cb=>{
+      cb.checked=reg?reg.oppmote.includes(cb.value):false;
+    });
+  };
+  sel.dispatchEvent(new Event('change'));
+  document.getElementById('to-modal').classList.add('open');
+}
+window.openTOModal=openTOModal;
+
+async function saveTORegistrering(){
+  const dato=document.getElementById('to-dato-sel').value;
+  const valgte=Array.from(document.querySelectorAll('#to-trenere-valg input:checked')).map(cb=>cb.value);
+  const tr=state.toTrenerData.treninger.find(t=>t.dato===dato);
+  if(tr) tr.oppmote=valgte;
+  else state.toTrenerData.treninger.push({dato,oppmote:valgte,kansellert:false});
+  setSyncStatus('Lagrer...');
+  await lagreFirebase();
+  closeModal('to-modal');
+  renderTreneroppmote();
+}
+window.saveTORegistrering=saveTORegistrering;
+
+function openKancellerModal(){
+  toInitSeed();
+  const ikkeKansellert=state.toTrenerData.treninger.filter(t=>!t.kansellert).sort((a,b)=>a.dato.localeCompare(b.dato));
+  document.getElementById('to-kanseller-dato').innerHTML=ikkeKansellert.map(t=>`<option value="${t.dato}">${norskKortDato(t.dato)}</option>`).join('');
+  document.getElementById('to-kanseller-modal').classList.add('open');
+}
+window.openKancellerModal=openKancellerModal;
+
+async function kancellerTrening(){
+  const dato=document.getElementById('to-kanseller-dato').value;
+  if(!confirm(`Kansellere trening ${norskKortDato(dato)}?`)) return;
+  const tr=state.toTrenerData.treninger.find(t=>t.dato===dato);
+  if(tr) tr.kansellert=true;
+  setSyncStatus('Lagrer...');
+  await lagreFirebase();
+  closeModal('to-kanseller-modal');
+  renderTreneroppmote();
+}
+window.kancellerTrening=kancellerTrening;
 
 // Start
 initFirebase();

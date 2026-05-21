@@ -6,116 +6,216 @@
 <title>Byåsen J2016</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; font-size: 14px; }
-.topbar { background: #fff; border-bottom: 0.5px solid #e0e0e0; padding: 0 1.5rem; display: flex; align-items: center; gap: 1rem; height: 56px; position: sticky; top: 0; z-index: 100; }
-.logo { font-size: 15px; font-weight: 500; }
-.logo span { color: #3C3489; }
-.sync-status { font-size: 11px; color: #999; margin-left: 8px; }
-.sync-status.live { color: #1D9E75; }
+
+/* ── LIGHT MODE (standard) ── */
+:root {
+  --bg: #f5f5f0;
+  --panel: #ffffff;
+  --panel-2: #f0f0ec;
+  --panel-3: #e8e8e4;
+  --border: #e0e0e0;
+  --border-soft: #ebebeb;
+  --ink: #1a1a1a;
+  --ink-dim: #555;
+  --ink-faint: #999;
+  --shadow: 0 1px 4px rgba(0,0,0,0.08);
+
+  /* Lagfarger – fra Hydrocup */
+  --lag1: #7c6cf0;
+  --lag2: #23c08a;
+  --lag3: #e08b4a;
+  --lag4: #e25c8a;
+  --lag1-bg: #eeecfd;
+  --lag2-bg: #e0f7ef;
+  --lag3-bg: #fdf0e4;
+  --lag4-bg: #fdeaf0;
+
+  /* Primær (aktiv nav, knapper) */
+  --primary: #7c6cf0;
+  --primary-dark: #5e50d4;
+  --primary-bg: #eeecfd;
+  --primary-text: #ffffff;
+
+  /* Status */
+  --seier-bg: #e0f7ef; --seier-text: #0a5e3a;
+  --tap-bg: #fdeaea; --tap-text: #8b1a1a;
+  --uavgjort-bg: #fef3e0; --uavgjort-text: #7a4e00;
+  --kommende-bg: #e4eeff; --kommende-text: #1a40a0;
+  --avlyst-bg: #f0eeea; --avlyst-text: #5a5855;
+  --loan-bg: #e0f7ef; --loan-text: #0a5e3a;
+  --absent-bg: #fdeaea; --absent-text: #8b1a1a;
+  --info-bg: #e4eeff; --info-text: #1a40a0;
+
+  /* Topbar */
+  --topbar-bg: #ffffff;
+  --topbar-border: #e0e0e0;
+}
+
+/* ── DARK MODE ── */
+html.dark {
+  --bg: #0e1320;
+  --panel: #161d2e;
+  --panel-2: #1d2740;
+  --panel-3: #232f4a;
+  --border: #2a3450;
+  --border-soft: #212b44;
+  --ink: #eef2fb;
+  --ink-dim: #9aa6c4;
+  --ink-faint: #6b7795;
+  --shadow: 0 8px 30px rgba(0,0,0,0.35);
+
+  --lag1: #7c6cf0;
+  --lag2: #23c08a;
+  --lag3: #e08b4a;
+  --lag4: #e25c8a;
+  --lag1-bg: rgba(124,108,240,0.15);
+  --lag2-bg: rgba(35,192,138,0.15);
+  --lag3-bg: rgba(224,139,74,0.15);
+  --lag4-bg: rgba(226,92,138,0.15);
+
+  --primary: #7c6cf0;
+  --primary-dark: #9485f5;
+  --primary-bg: rgba(124,108,240,0.18);
+  --primary-text: #ffffff;
+
+  --seier-bg: rgba(35,192,138,0.15); --seier-text: #23c08a;
+  --tap-bg: rgba(224,92,74,0.15); --tap-text: #e05c4a;
+  --uavgjort-bg: rgba(224,139,74,0.15); --uavgjort-text: #e08b4a;
+  --kommende-bg: rgba(124,108,240,0.15); --kommende-text: #9485f5;
+  --avlyst-bg: rgba(107,119,149,0.2); --avlyst-text: #9aa6c4;
+  --loan-bg: rgba(35,192,138,0.15); --loan-text: #23c08a;
+  --absent-bg: rgba(224,92,74,0.15); --absent-text: #e05c4a;
+  --info-bg: rgba(124,108,240,0.15); --info-text: #9485f5;
+
+  --topbar-bg: #161d2e;
+  --topbar-border: #2a3450;
+}
+
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; font-size: 14px; transition: background 0.2s, color 0.2s; }
+.topbar { background: var(--topbar-bg); border-bottom: 0.5px solid var(--topbar-border); padding: 0 1.5rem; display: flex; align-items: center; gap: 1rem; height: 56px; position: sticky; top: 0; z-index: 100; }
+.logo { font-size: 15px; font-weight: 500; color: var(--ink); }
+.logo span { color: var(--primary); }
+.sync-status { font-size: 11px; color: var(--ink-faint); margin-left: 8px; }
+.sync-status.live { color: var(--lag2); }
+.dark-toggle { margin-left: 8px; background: var(--panel-2); border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 10px; cursor: pointer; font-size: 12px; color: var(--ink-dim); transition: all 0.15s; }
+.dark-toggle:hover { color: var(--ink); }
 .nav { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
-.nav-btn { padding: 7px 14px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; color: #555; transition: all 0.15s; font-weight: 400; letter-spacing: 0.1px; }
-.nav-btn:hover { background: #f0f0ec; color: #1a1a1a; }
-.nav-btn.active { background: #3C3489; color: #fff; font-weight: 500; box-shadow: 0 1px 4px rgba(60,52,137,0.25); }
+.nav-btn { padding: 7px 14px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; color: var(--ink-dim); transition: all 0.15s; font-weight: 400; letter-spacing: 0.1px; }
+.nav-btn:hover { background: var(--panel-2); color: var(--ink); }
+.nav-btn.active { background: var(--primary); color: var(--primary-text); font-weight: 500; box-shadow: 0 1px 4px rgba(124,108,240,0.3); }
 .main { display: flex; flex: 1; min-height: calc(100vh - 56px); }
-.sidebar { width: 195px; background: #fff; border-right: 0.5px solid #e0e0e0; padding: 1rem 0.75rem; flex-shrink: 0; }
-.sidebar-label { font-size: 11px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 0.5rem 0.25rem; }
-.lag-btn { width: 100%; text-align: left; padding: 8px 10px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; color: #555; transition: all 0.15s; display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-.lag-btn:hover { background: #f0f0ec; }
-.lag-btn.active { background: #EEEDFE; color: #3C3489; font-weight: 500; }
+.sidebar { width: 195px; background: var(--panel); border-right: 0.5px solid var(--border); padding: 1rem 0.75rem; flex-shrink: 0; }
+.sidebar-label { font-size: 11px; font-weight: 500; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 0.5rem 0.25rem; }
+.lag-btn { width: 100%; text-align: left; padding: 8px 10px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; color: var(--ink-dim); transition: all 0.15s; display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+.lag-btn:hover { background: var(--panel-2); }
+.lag-btn.active { background: var(--primary-bg); color: var(--primary); font-weight: 500; }
 .lag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .content { flex: 1; padding: 1.5rem; overflow: auto; }
 .page { display: none; }
 .page.active { display: block; }
-.section-title { font-size: 18px; font-weight: 500; margin-bottom: 1.25rem; }
+.section-title { font-size: 18px; font-weight: 500; margin-bottom: 1.25rem; color: var(--ink); }
 .cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
-.metric-card { background: #f0f0ec; border-radius: 8px; padding: 0.875rem 1rem; }
-.metric-label { font-size: 11px; color: #666; margin-bottom: 4px; }
-.metric-val { font-size: 22px; font-weight: 500; }
-.metric-val.pos { color: #1D9E75; }
-.metric-val.neg { color: #D85A30; }
-.card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.metric-card { background: var(--panel-2); border-radius: 8px; padding: 0.875rem 1rem; }
+.metric-label { font-size: 11px; color: var(--ink-faint); margin-bottom: 4px; }
+.metric-val { font-size: 22px; font-weight: 500; color: var(--ink); }
+.metric-val.pos { color: var(--lag2); }
+.metric-val.neg { color: var(--lag3); }
+.card { background: var(--panel); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-.card-title { font-size: 13px; font-weight: 500; }
+.card-title { font-size: 13px; font-weight: 500; color: var(--ink); }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th { font-size: 11px; font-weight: 500; color: #666; text-align: left; padding: 6px 8px; border-bottom: 0.5px solid #e0e0e0; }
-td { padding: 7px 8px; border-bottom: 0.5px solid #e0e0e0; vertical-align: middle; }
+th { font-size: 11px; font-weight: 500; color: var(--ink-faint); text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--border); }
+td { padding: 7px 8px; border-bottom: 0.5px solid var(--border-soft); vertical-align: middle; color: var(--ink); }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: #f5f5f0; }
+tr:hover td { background: var(--panel-2); }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-.badge-seier { background: #EAF3DE; color: #3B6D11; }
-.badge-tap { background: #FCEBEB; color: #A32D2D; }
-.badge-uavgjort { background: #FAEEDA; color: #854F0B; }
-.badge-kommende { background: #E6F1FB; color: #185FA5; }
-.badge-avlyst { background: #F1EFE8; color: #5F5E5A; }
-.btn { padding: 7px 14px; border-radius: 8px; border: 0.5px solid #ccc; background: transparent; cursor: pointer; font-size: 12px; color: #1a1a1a; transition: all 0.15s; }
-.btn:hover { background: #f0f0ec; }
-.btn-primary { background: #3C3489; border-color: #3C3489; color: #fff; }
-.btn-primary:hover { background: #534AB7; }
+.badge-seier { background: var(--seier-bg); color: var(--seier-text); }
+.badge-tap { background: var(--tap-bg); color: var(--tap-text); }
+.badge-uavgjort { background: var(--uavgjort-bg); color: var(--uavgjort-text); }
+.badge-kommende { background: var(--kommende-bg); color: var(--kommende-text); }
+.badge-avlyst { background: var(--avlyst-bg); color: var(--avlyst-text); }
+.btn { padding: 7px 14px; border-radius: 8px; border: 0.5px solid var(--border); background: transparent; cursor: pointer; font-size: 12px; color: var(--ink); transition: all 0.15s; }
+.btn:hover { background: var(--panel-2); }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: var(--primary-text); }
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 .form-group { display: flex; flex-direction: column; gap: 4px; }
 .form-group.full { grid-column: 1/-1; }
-.form-group label { font-size: 11px; font-weight: 500; color: #666; }
-.form-group input, .form-group select, .form-group textarea { font-family: inherit; font-size: 13px; padding: 7px 10px; border-radius: 8px; border: 0.5px solid #ccc; background: #fff; color: #1a1a1a; }
-.form-group input:focus, .form-group select:focus { outline: none; border-color: #534AB7; box-shadow: 0 0 0 2px rgba(83,74,183,0.15); }
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
+.form-group label { font-size: 11px; font-weight: 500; color: var(--ink-dim); }
+.form-group input, .form-group select, .form-group textarea { font-family: inherit; font-size: 13px; padding: 7px 10px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--panel); color: var(--ink); }
+.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(124,108,240,0.15); }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
 .modal-overlay.open { display: flex; }
-.modal { background: #fff; border-radius: 12px; padding: 1.5rem; width: 540px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+.modal { background: var(--panel); border-radius: 12px; padding: 1.5rem; width: 540px; max-width: 95vw; max-height: 90vh; overflow-y: auto; border: 0.5px solid var(--border); }
 .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
-.modal-title { font-size: 15px; font-weight: 500; }
-.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #666; line-height: 1; }
+.modal-title { font-size: 15px; font-weight: 500; color: var(--ink); }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink-dim); line-height: 1; }
 .scorers-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; min-height: 28px; }
-.scorer-chip { display: flex; align-items: center; gap: 4px; background: #EEEDFE; color: #3C3489; border-radius: 20px; padding: 3px 10px; font-size: 12px; }
-.scorer-chip button { background: none; border: none; cursor: pointer; color: #534AB7; font-size: 14px; line-height: 1; padding: 0; }
-.tabs { display: flex; gap: 2px; background: #f0f0ec; border-radius: 8px; padding: 3px; margin-bottom: 1.25rem; width: fit-content; }
-.tab { padding: 5px 12px; border-radius: 6px; border: none; background: transparent; cursor: pointer; font-size: 12px; color: #666; transition: all 0.15s; }
-.tab.active { background: #fff; color: #1a1a1a; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.scorer-chip { display: flex; align-items: center; gap: 4px; background: var(--primary-bg); color: var(--primary); border-radius: 20px; padding: 3px 10px; font-size: 12px; }
+.scorer-chip button { background: none; border: none; cursor: pointer; color: var(--primary); font-size: 14px; line-height: 1; padding: 0; }
+.tabs { display: flex; gap: 2px; background: var(--panel-2); border-radius: 8px; padding: 3px; margin-bottom: 1.25rem; width: fit-content; }
+.tab { padding: 5px 12px; border-radius: 6px; border: none; background: transparent; cursor: pointer; font-size: 12px; color: var(--ink-dim); transition: all 0.15s; }
+.tab.active { background: var(--panel); color: var(--ink); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 .avatar { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
 .avatar-lg { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; flex-shrink: 0; }
-.loan-chip { background: #E1F5EE; color: #0F6E56; border-radius: 4px; font-size: 11px; padding: 1px 6px; }
-.absent-chip { background: #FCEBEB; color: #A32D2D; border-radius: 4px; font-size: 11px; padding: 1px 6px; }
-.ranking-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 0.5px solid #e0e0e0; }
+.loan-chip { background: var(--loan-bg); color: var(--loan-text); border-radius: 4px; font-size: 11px; padding: 1px 6px; }
+.absent-chip { background: var(--absent-bg); color: var(--absent-text); border-radius: 4px; font-size: 11px; padding: 1px 6px; }
+.ranking-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 0.5px solid var(--border-soft); }
 .ranking-row:last-child { border-bottom: none; }
-.ranking-bar-bg { flex: 1; background: #f0f0ec; border-radius: 4px; height: 6px; }
+.ranking-bar-bg { flex: 1; background: var(--panel-2); border-radius: 4px; height: 6px; }
 .ranking-bar { border-radius: 4px; height: 6px; }
-.empty-state { text-align: center; padding: 2.5rem 1rem; color: #999; font-size: 13px; }
+.empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--ink-faint); font-size: 13px; }
 .alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 13px; margin-bottom: 1rem; }
-.alert-info { background: #E6F1FB; color: #0C447C; }
-.toggle-chip { padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 0.5px solid #ccc; background: #fff; color: #555; transition: all 0.15s; }
-.toggle-chip.selected-fravar { background: #FCEBEB; color: #A32D2D; border-color: #A32D2D; font-weight: 500; }
-.toggle-chip.selected-lan { background: #E1F5EE; color: #0F6E56; border-color: #0F6E56; font-weight: 500; }
-.trener-card { background: #f5f5f0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.role-hoved { background: #EEEDFE; color: #3C3489; }
-.role-hjelp { background: #E1F5EE; color: #0F6E56; }
+.alert-info { background: var(--info-bg); color: var(--info-text); }
+.toggle-chip { padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 0.5px solid var(--border); background: var(--panel); color: var(--ink-dim); transition: all 0.15s; }
+.toggle-chip.selected-fravar { background: var(--absent-bg); color: var(--absent-text); border-color: var(--absent-text); font-weight: 500; }
+.toggle-chip.selected-lan { background: var(--loan-bg); color: var(--loan-text); border-color: var(--loan-text); font-weight: 500; }
+.trener-card { background: var(--panel-2); border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.role-hoved { background: var(--primary-bg); color: var(--primary); }
+.role-hjelp { background: var(--loan-bg); color: var(--loan-text); }
 .kommende-row { opacity: 0.65; }
-.loading { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 14px; color: #999; gap: 10px; }
-.cup-card { padding: 10px 16px; border-radius: 10px; border: 1.5px solid #e0e0e0; background: #fff; cursor: pointer; transition: all 0.15s; min-width: 130px; text-align: left; }
-.cup-card:hover { border-color: #534AB7; background: #EEEDFE; }
-.cup-card.aktiv { border-color: #534AB7; background: #EEEDFE; box-shadow: 0 0 0 2px rgba(83,74,183,0.15); }
-.cup-card-navn { font-size: 13px; font-weight: 500; color: #1a1a1a; }
-.cup-card.aktiv .cup-card-navn { color: #3C3489; }
-.cup-card-meta { font-size: 11px; color: #999; margin-top: 2px; }
-.cup-lag-kort { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 1rem; min-height: 120px; }
-.cup-lag-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 0.5px solid #e0e0e0; }
+.loading { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 14px; color: var(--ink-faint); gap: 10px; }
+.cup-card { padding: 10px 16px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--panel); cursor: pointer; transition: all 0.15s; min-width: 130px; text-align: left; }
+.cup-card:hover { border-color: var(--primary); background: var(--primary-bg); }
+.cup-card.aktiv { border-color: var(--primary); background: var(--primary-bg); box-shadow: 0 0 0 2px rgba(124,108,240,0.15); }
+.cup-card-navn { font-size: 13px; font-weight: 500; color: var(--ink); }
+.cup-card.aktiv .cup-card-navn { color: var(--primary); }
+.cup-card-meta { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+.cup-lag-kort { background: var(--panel); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem; min-height: 120px; }
+.cup-lag-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border); }
 .cup-lag-tittel { font-size: 14px; font-weight: 500; }
-.cup-spiller-brikke { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #f5f5f0; border-radius: 8px; margin-bottom: 6px; cursor: grab; border: 0.5px solid #e0e0e0; transition: all 0.15s; user-select: none; }
+.cup-spiller-brikke { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--panel-2); border-radius: 8px; margin-bottom: 6px; cursor: grab; border: 0.5px solid var(--border); transition: all 0.15s; user-select: none; }
 .cup-spiller-brikke:active { cursor: grabbing; opacity: 0.5; }
 .cup-spiller-brikke.dragging { opacity: 0.3; }
-.cup-lag-kort.drag-over { border: 2px dashed #534AB7; background: #EEEDFE; }
-.cup-venteliste { background: #f9f9f7; border: 0.5px dashed #ccc; border-radius: 12px; padding: 1rem; min-height: 80px; }
+.cup-lag-kort.drag-over { border: 2px dashed var(--primary); background: var(--primary-bg); }
+.cup-venteliste { background: var(--panel-2); border: 0.5px dashed var(--border); border-radius: 12px; padding: 1rem; min-height: 80px; }
 .rolle-ikon { font-size: 13px; }
-.spinner { width: 20px; height: 20px; border: 2px solid #e0e0e0; border-top-color: #534AB7; border-radius: 50%; animation: spin 0.8s linear infinite; }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .to-celle { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
-.to-ja { background: #EAF3DE; color: #3B6D11; }
-.to-nei { background: #FCEBEB; color: #A32D2D; }
-.to-kamp { background: #E6F1FB; color: #185FA5; }
-.to-ikke-invitert { background: #f5f5f0; color: #ccc; }
+.to-ja { background: var(--seier-bg); color: var(--seier-text); }
+.to-nei { background: var(--absent-bg); color: var(--absent-text); }
+.to-kamp { background: var(--kommende-bg); color: var(--kommende-text); }
+.to-ikke-invitert { background: var(--panel-2); color: var(--ink-faint); }
+.bane-wrapper { display: flex; gap: 1.5rem; align-items: flex-start; }
+.bane-container { position: relative; flex-shrink: 0; }
+.bane-svg { border-radius: 12px; display: block; }
+.posisjon-slot { position: absolute; transform: translate(-50%, -50%); width: 72px; text-align: center; cursor: pointer; }
+.posisjon-sirkel { width: 52px; height: 52px; border-radius: 50%; border: 2.5px dashed rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 3px; transition: all 0.15s; font-size: 11px; color: rgba(255,255,255,0.7); }
+.posisjon-sirkel.fylt { background: rgba(255,255,255,0.92); border: 2.5px solid #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; }
+.posisjon-sirkel.drag-over-pos { background: rgba(255,255,255,0.4); border-color: #fff; transform: scale(1.1); }
+.posisjon-label { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: 500; letter-spacing: 0.3px; }
+.bane-spillerliste { background: var(--panel); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem; min-width: 200px; flex: 1; max-height: 580px; overflow-y: auto; }
+.bane-spiller-brikke { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; border: 0.5px solid var(--border); margin-bottom: 5px; cursor: grab; font-size: 12px; background: var(--panel); transition: all 0.15s; }
+.bane-spiller-brikke:active { cursor: grabbing; opacity: 0.4; }
+.bane-spiller-brikke.paa-bane { opacity: 0.35; background: var(--panel-2); cursor: default; }
 </style>
 </head>
 <body>
 <div class="topbar">
   <div class="logo">Byåsen <span>J2016</span></div>
   <span class="sync-status" id="sync-status">Kobler til...</span>
+  <button class="dark-toggle" onclick="toggleDarkMode()" id="dark-btn">🌙 Mørkt</button>
   <div class="nav">
     <button class="nav-btn active" onclick="showPage('dashboard')">Oversikt</button>
     <button class="nav-btn" onclick="showPage('kamper')">Kamper</button>
@@ -175,7 +275,7 @@ tr:hover td { background: #f5f5f0; }
   </div>
   <div class="tabs" id="spiller-tabs"></div>
   <div class="card" style="padding:0.75rem 1.25rem;">
-    <table><thead><tr><th>Spiller</th><th>Lag</th><th>Mål</th><th>Kamper</th><th>Lånekamper</th><th>Fravær</th><th>Låneliste</th><th>J2015</th><th></th></tr></thead>
+    <table><thead><tr><th>Spiller</th><th>Lag</th><th>Mål</th><th>Mål/kamp</th><th>Kamper</th><th>Lånekamper</th><th>Fravær</th><th>Låneliste</th><th>J2015</th><th></th></tr></thead>
     <tbody id="spillere-table"></tbody></table>
   </div>
 </div>
@@ -377,6 +477,24 @@ tr:hover td { background: #f5f5f0; }
   </div>
 </div>
 
+<!-- TO NOTAT MODAL -->
+<div class="modal-overlay" id="to-notat-modal">
+  <div class="modal" style="width:360px;">
+    <div class="modal-header"><div class="modal-title" id="to-notat-tittel">Årsak til fravær</div><button class="modal-close" onclick="closeModal('to-notat-modal')">×</button></div>
+    <div class="form-group full" style="padding:0 0 1rem;">
+      <label id="to-notat-label">Hvorfor var du borte?</label>
+      <textarea id="to-notat-tekst" rows="3" style="width:100%;font-family:inherit;font-size:13px;padding:8px 10px;border-radius:8px;border:0.5px solid #ccc;margin-top:4px;resize:vertical;" placeholder="F.eks. jobb, sykdom, ferie..."></textarea>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:8px;">
+      <button class="btn" id="to-notat-slett-btn" onclick="lagreNotat(true)" style="color:#D85A30;border-color:#D85A30;display:none;">Slett notat</button>
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn" onclick="closeModal('to-notat-modal')">Avbryt</button>
+        <button class="btn btn-primary" onclick="lagreNotat(false)">Lagre</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="cup-modal">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="cup-modal-tittel">Nytt cup-oppsett</div><button class="modal-close" onclick="closeModal('cup-modal')">×</button></div>
@@ -505,8 +623,8 @@ const db = getFirestore(app);
 
 const MNDR=['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
 function norskDato(dato){const[y,m,d]=dato.split('-');return`${parseInt(d)}. ${MNDR[parseInt(m)-1]}`;}
-const LC={'Lag 1':'#534AB7','Lag 2':'#1D9E75','Lag 3':'#D85A30','Lag 4':'#BA7517'};
-const LB={'Lag 1':'#EEEDFE','Lag 2':'#E1F5EE','Lag 3':'#FAECE7','Lag 4':'#FAEEDA'};
+const LC={'Lag 1':'#7c6cf0','Lag 2':'#23c08a','Lag 3':'#e08b4a','Lag 4':'#e25c8a'};
+const LB={'Lag 1':'#eeecfd','Lag 2':'#e0f7ef','Lag 3':'#fdf0e4','Lag 4':'#fdeaf0'};
 const TODAY=new Date().toISOString().slice(0,10);
 
 const SEED_SPILLERE=[
@@ -807,15 +925,36 @@ function renderDashboard(){
   document.getElementById('dashboard-title').textContent=state.aktivLag==='alle'?'Oversikt – alle lag':'Oversikt – '+state.aktivLag;
   document.getElementById('dashboard-stats').innerHTML=`<div class="metric-card"><div class="metric-label">Spilt</div><div class="metric-val">${spilt.length}</div></div><div class="metric-card"><div class="metric-label">Seirer</div><div class="metric-val pos">${stats.seier}</div></div><div class="metric-card"><div class="metric-label">Tap</div><div class="metric-val neg">${stats.tap}</div></div><div class="metric-card"><div class="metric-label">Uavgjort</div><div class="metric-val">${stats.uavgjort}</div></div><div class="metric-card"><div class="metric-label">Mål for</div><div class="metric-val">${stats.mfor}</div></div><div class="metric-card"><div class="metric-label">Målforskjell</div><div class="metric-val ${stats.diff>=0?'pos':'neg'}">${stats.diff>0?'+':''}${stats.diff}</div></div><div class="metric-card"><div class="metric-label">Gjenstår</div><div class="metric-val">${kamper.filter(k=>!k.spilt&&!k.avlyst).length}</div></div>`;
   const malMap={};state.kamper.forEach(k=>{if(k.scorere)Object.entries(k.scorere).forEach(([sid,a])=>{if(sid==='selvmaal') return; malMap[sid]=(malMap[sid]||0)+a;});});
-  const sorted=Object.entries(malMap).sort((a,b)=>b[1]-a[1]).slice(0,8);const maxM=sorted.length?sorted[0][1]:1;
-  document.getElementById('toppscorer-list').innerHTML=sorted.length?sorted.map(([sid,a],i)=>{const sp=state.spillere.find(s=>s.id===sid);const col=LC[sp?.lag]||'#888';return`<div class="ranking-row"><div style="font-size:12px;color:#999;width:16px;text-align:right;">${i+1}</div><div style="flex:1;min-width:0;"><div style="font-size:12px;">${sp?sp.navn:'?'}</div><div style="font-size:11px;color:${col};">${sp?.lag||''}</div></div><div class="ranking-bar-bg"><div class="ranking-bar" style="width:${Math.round(a/maxM*100)}%;background:${col};"></div></div><div style="font-size:12px;font-weight:500;width:20px;text-align:right;">${a}</div></div>`;}).join(''):'<div class="empty-state">Ingen mål registrert ennå</div>';
+  const sorted=Object.entries(malMap).sort((a,b)=>b[1]-a[1]).slice(0,15);const maxM=sorted.length?sorted[0][1]:1;
+  document.getElementById('toppscorer-list').innerHTML=sorted.length?sorted.map(([sid,a],i)=>{
+    const sp=state.spillere.find(s=>s.id===sid);
+    const col=LC[sp?.lag]||'#888';
+    const kamper=getSpillerKamper(sid);
+    const snitt=kamper>0?(a/kamper).toFixed(2):null;
+    return`<div class="ranking-row">
+      <div style="font-size:12px;color:#999;width:16px;text-align:right;">${i+1}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;">${sp?sp.navn:'?'}</div>
+        <div style="font-size:11px;color:${col};">${sp?.lag||''}</div>
+      </div>
+      <div class="ranking-bar-bg"><div class="ranking-bar" style="width:${Math.round(a/maxM*100)}%;background:${col};"></div></div>
+      <div style="text-align:right;min-width:52px;">
+        <div style="font-size:12px;font-weight:500;">${a} mål</div>
+        ${snitt!==null?`<div style="font-size:10px;color:#999;">${snitt}/kamp</div>`:''}
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty-state">Ingen mål registrert ennå</div>';
   const lagStats=['Lag 1','Lag 2','Lag 3','Lag 4'].map(lag=>{const lk=state.kamper.filter(k=>k.lag===lag);const st=kalkulerStats(lk);const lagSpillere=state.spillere.filter(s=>s.lag===lag).map(s=>s.id);const b7=beste7snitt(lagSpillere);return{lag,...st,spilt:lk.filter(k=>k.spilt).length,pts:st.seier*3+st.uavgjort,b7};}).sort((a,b)=>b.pts-a.pts||b.diff-a.diff);
   document.getElementById('lag-standings').innerHTML=`<table style="width:100%;font-size:12px;"><thead><tr><th>Lag</th><th>K</th><th>S</th><th>T</th><th>U</th><th>MF</th><th>Pts</th><th title="Snitt beste 7">B7</th></tr></thead><tbody>${lagStats.map((l,i)=>`<tr><td style="display:flex;align-items:center;gap:6px;padding:6px 0;"><span style="width:8px;height:8px;border-radius:50%;background:${LC[l.lag]};display:inline-block;flex-shrink:0;"></span><span style="font-weight:${i===0&&l.spilt>0?500:400};">${l.lag}</span></td><td>${l.spilt}</td><td>${l.seier}</td><td>${l.tap}</td><td>${l.uavgjort}</td><td style="color:${l.diff>=0?'#1D9E75':'#D85A30'};">${l.diff>0?'+':''}${l.diff}</td><td style="font-weight:500;">${l.pts}</td><td style="color:#534AB7;font-weight:500;">${l.b7||'–'}</td></tr>`).join('')}</tbody></table><div style="font-size:10px;color:#999;margin-top:4px;">B7 = snitt av beste 7 rangerte spillere</div>`;
 
-  // Lånekamper fordeling
+  // Lånekamper fordeling – inkluder planlagte (ikke-spilte) lånekamper
   const lanSpillere=state.spillere.filter(s=>s.vilLan);
-  const lanData=lanSpillere.map(s=>({s,antall:state.kamper.filter(k=>(k.lanspillere||[]).includes(s.id)).length})).sort((a,b)=>a.antall-b.antall);
-  const maxLan=Math.max(...lanData.map(d=>d.antall),1);
+  const lanData=lanSpillere.map(s=>{
+    const spilt=state.kamper.filter(k=>k.spilt&&(k.lanspillere||[]).includes(s.id)).length;
+    const planlagt=state.kamper.filter(k=>!k.spilt&&!k.avlyst&&(k.lanspillere||[]).includes(s.id)).length;
+    return{s,antall:spilt,planlagt,total:spilt+planlagt};
+  }).sort((a,b)=>a.total-b.total);
+  const maxLan=Math.max(...lanData.map(d=>d.total),1);
   const minLan=Math.min(...lanData.map(d=>d.antall));
   const maxLanV=Math.max(...lanData.map(d=>d.antall));
   document.getElementById('dashboard-lan').innerHTML=lanData.length?`
@@ -824,10 +963,41 @@ function renderDashboard(){
       <div><div style="font-size:11px;color:#666;">Flest</div><div style="font-size:18px;font-weight:500;">${maxLanV}</div></div>
       <div><div style="font-size:11px;color:#666;">Diff</div><div style="font-size:18px;font-weight:500;color:${maxLanV-minLan>2?'#D85A30':maxLanV-minLan>0?'#BA7517':'#1D9E75'};">${maxLanV-minLan}</div></div>
     </div>
-    ${lanData.map(d=>{const col=LC[d.s.lag]||'#888';return`<div class="ranking-row"><div style="flex:1;min-width:0;"><div style="font-size:12px;">${d.s.navn}</div><div style="font-size:11px;color:${col};">${d.s.lag}</div></div><div class="ranking-bar-bg"><div class="ranking-bar" style="width:${d.antall===0?2:Math.round(d.antall/maxLan*100)}%;background:${col};"></div></div><div style="font-size:12px;font-weight:500;width:20px;text-align:right;">${d.antall}</div></div>`;}).join('')}
+    ${lanData.map(d=>{
+      const col=LC[d.s.lag]||'#888';
+      const barSpilt=d.antall===0&&d.planlagt===0?2:Math.round(d.antall/maxLan*100);
+      const barPlan=Math.round(d.planlagt/maxLan*100);
+      const planTekst=d.planlagt>0?` <span style="color:#aaa;font-size:11px;">(+${d.planlagt})</span>`:'';
+      return`<div class="ranking-row">
+        <div style="flex:1;min-width:0;"><div style="font-size:12px;">${d.s.navn}</div><div style="font-size:11px;color:${col};">${d.s.lag}</div></div>
+        <div class="ranking-bar-bg" style="position:relative;">
+          <div class="ranking-bar" style="width:${barSpilt}%;background:${col};position:relative;z-index:1;"></div>
+          ${d.planlagt>0?`<div style="position:absolute;top:0;left:${barSpilt}%;width:${barPlan}%;height:100%;background:${col};opacity:0.25;border-radius:0 3px 3px 0;"></div>`:''}
+        </div>
+        <div style="font-size:12px;font-weight:500;width:36px;text-align:right;">${d.antall}${planTekst}</div>
+      </div>`;
+    }).join('')}
+    <div style="font-size:10px;color:#aaa;margin-top:6px;">Lys farge = planlagt</div>
   `:'<div class="empty-state">Ingen lånespillere ennå</div>';
+
+  // Kommende kamper – vis planlagt fravær/lån
   const vis=kommende.slice(0,6);
-  document.getElementById('kommende-kamper').innerHTML=vis.length?vis.map(k=>{const col=LC[k.lag]||'#888';const hj=erHjemme(k);return`<div style="display:grid;grid-template-columns:90px 48px 16px 1fr 60px;gap:8px;align-items:center;padding:7px 0;border-bottom:0.5px solid #e0e0e0;"><div style="font-size:12px;color:#666;">${norskDato(k.dato)}</div><div style="font-size:12px;color:#999;font-weight:500;">${k.tid||''}</div><span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block;"></span><div style="font-size:13px;">${hj?'vs':'@'} ${motstander(k)} <span style="font-size:11px;color:${col};">${k.lag}</span></div><span class="badge badge-kommende" style="text-align:center;">${hj?'H':'B'}</span></div>`;}).join(''):'<div class="empty-state">Ingen kommende kamper</div>';
+  document.getElementById('kommende-kamper').innerHTML=vis.length?vis.map(k=>{
+    const col=LC[k.lag]||'#888';const hj=erHjemme(k);
+    const planFravar=(k.fravar||[]).length;
+    const planLan=(k.lanspillere||[]).length;
+    const infoStr=[planFravar?`<span style="font-size:10px;color:#999;">${planFravar} fraværende</span>`:'', planLan?`<span style="font-size:10px;color:#0F6E56;">${planLan} lån</span>`:''].filter(Boolean).join(' · ');
+    return`<div style="display:grid;grid-template-columns:90px 48px 16px 1fr 60px;gap:8px;align-items:center;padding:7px 0;border-bottom:0.5px solid #e0e0e0;">
+      <div style="font-size:12px;color:#666;">${norskDato(k.dato)}</div>
+      <div style="font-size:12px;color:#999;font-weight:500;">${k.tid||''}</div>
+      <span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block;"></span>
+      <div>
+        <div style="font-size:13px;">${hj?'vs':'@'} ${motstander(k)} <span style="font-size:11px;color:${col};">${k.lag}</span></div>
+        ${infoStr?`<div style="margin-top:2px;">${infoStr}</div>`:''}
+      </div>
+      <span class="badge badge-kommende" style="text-align:center;">${hj?'H':'B'}</span>
+    </div>`;
+  }).join(''):'<div class="empty-state">Ingen kommende kamper</div>';
   const siste=[...spilt].sort((a,b)=>b.dato.localeCompare(a.dato)).slice(0,5);
   document.getElementById('siste-kamper').innerHTML=siste.length?siste.map(k=>{const f=k.malFor||0,m=k.malMot||0;const res=f>m?'seier':f<m?'tap':'uavgjort';const col=LC[k.lag]||'#888';const hj=erHjemme(k);return`<div style="display:grid;grid-template-columns:90px 16px 1fr 44px 60px 80px;gap:8px;align-items:center;padding:7px 0;border-bottom:0.5px solid #e0e0e0;"><div style="font-size:12px;color:#666;">${norskDato(k.dato)}</div><span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block;"></span><div style="font-size:13px;">vs ${motstander(k)}</div><span style="font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;background:${hj?'#E1F5EE':'#FAEEDA'};color:${hj?'#0F6E56':'#854F0B'};">${hj?'H':'B'}</span><div style="font-size:14px;font-weight:500;text-align:center;color:${res==='seier'?'#1D9E75':res==='tap'?'#D85A30':'#BA7517'};">${f}–${m}</div><span class="badge badge-${res}">${res==='seier'?'Seier':res==='tap'?'Tap':'Uavgjort'}</span></div>`;}).join(''):'<div class="empty-state">Ingen resultater ennå.</div>';
 }
@@ -871,6 +1041,7 @@ function renderSpillere(){
   const spillere=filtrerSpillere().sort((a,b)=>a.lag.localeCompare(b.lag)||a.navn.localeCompare(b.navn));
   document.getElementById('spillere-table').innerHTML=spillere.map(s=>{
     const mal=getSpillerMal(s.id),lan=getSpillerLan(s.id),fravar=getSpillerFravar(s.id),kamper=getSpillerKamper(s.id);
+    const snitt=kamper>0&&mal>0?(mal/kamper).toFixed(2):null;
     const col=LC[s.lag]||'#888',bg=LB[s.lag]||'#eee';
     const ini=s.navn.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const trener=state.trenere.find(t=>t.spillerId===s.id);
@@ -884,7 +1055,7 @@ function renderSpillere(){
         </div>
       </div></td>
       <td><span style="font-size:11px;font-weight:500;color:${col};">${s.lag}</span></td>
-      <td><strong>${mal}</strong></td><td>${kamper}</td>
+      <td><strong>${mal}</strong></td><td style="color:#534AB7;font-weight:${snitt?'500':'400'};">${snitt||'–'}</td><td>${kamper}</td>
       <td>${lan>0?`<span class="loan-chip">${lan}</span>`:0}</td>
       <td>${fravar>0?`<span class="absent-chip">${fravar}</span>`:0}</td>
       <td>${s.vilLan?'<span style="color:#1D9E75;">✓</span>':''}</td>
@@ -1300,6 +1471,31 @@ async function saveRangering(spillerId, periodeId, verdi){
   await lagreFirebase();
 }
 window.saveRangering=saveRangering;
+
+// ── DARK MODE ──
+function toggleDarkMode(){
+  const isDark=document.documentElement.classList.toggle('dark');
+  document.getElementById('dark-btn').textContent=isDark?'☀️ Lyst':'🌙 Mørkt';
+  localStorage.setItem('j2016-dark',isDark?'1':'0');
+  if(isDark){
+    LB['Lag 1']='rgba(124,108,240,0.15)';LB['Lag 2']='rgba(35,192,138,0.15)';
+    LB['Lag 3']='rgba(224,139,74,0.15)'; LB['Lag 4']='rgba(226,92,138,0.15)';
+  } else {
+    LB['Lag 1']='#eeecfd';LB['Lag 2']='#e0f7ef';
+    LB['Lag 3']='#fdf0e4';LB['Lag 4']='#fdeaf0';
+  }
+  render();
+}
+window.toggleDarkMode=toggleDarkMode;
+(function(){
+  if(localStorage.getItem('j2016-dark')==='1'){
+    document.documentElement.classList.add('dark');
+    LB['Lag 1']='rgba(124,108,240,0.15)';LB['Lag 2']='rgba(35,192,138,0.15)';
+    LB['Lag 3']='rgba(224,139,74,0.15)'; LB['Lag 4']='rgba(226,92,138,0.15)';
+    const btn=document.getElementById('dark-btn');
+    if(btn) btn.textContent='☀️ Lyst';
+  }
+})();
 
 // ── CUP PLANLEGGER ──
 const CUP_LAGFARGER=['#534AB7','#1D9E75','#D85A30','#BA7517','#9B4DB8'];
@@ -2094,8 +2290,17 @@ function renderTreneroppmote(){
       if(t.kansellert) return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;"><div style="width:20px;height:20px;border-radius:4px;background:#f5f5f0;color:#D85A30;font-size:11px;display:inline-flex;align-items:center;justify-content:center;">✕</div></td>`;
       const harKamp=visKamp&&toHarKampUnntak(navn,t.dato);
       if(harKamp) return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;" title="Kampdag"><div style="width:20px;height:20px;border-radius:4px;background:#E8F0FF;color:#534AB7;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">⚽</div></td>`;
+      const notat=(t.notater&&t.notater[navn])||'';
       if(t.oppmote.includes(navn)) return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;"><div style="width:20px;height:20px;border-radius:4px;background:#EAF3DE;color:#3B6D11;font-size:11px;display:inline-flex;align-items:center;justify-content:center;">✅</div></td>`;
-      return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;"><div style="width:20px;height:20px;border-radius:4px;background:#f5f5f0;color:#ccc;font-size:10px;display:inline-flex;align-items:center;justify-content:center;">–</div></td>`;
+      // Fraværende – klikkbar for å legge inn notat
+      const harNotat=notat.length>0;
+      return`<td style="text-align:center;padding:4px 2px;border-bottom:0.5px solid #f0f0ec;">
+        <div onclick="åpneNotatModal('${navn}','${t.dato}')"
+          title="${harNotat?'Årsak: '+notat:'Klikk for å legge inn årsak'}"
+          style="width:20px;height:20px;border-radius:4px;background:${harNotat?'#FFF3CD':'#f5f5f0'};color:${harNotat?'#856404':'#ccc'};font-size:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:${harNotat?'1px solid #FFDBA0':'none'};">
+          ${harNotat?'📝':'–'}
+        </div>
+      </td>`;
     }).join('');
 
     const pstBar=st.pst!==null?`<div style="flex:1;background:#e8e8e4;border-radius:3px;height:6px;"><div style="width:${st.pst}%;background:${pstFarge};height:6px;border-radius:3px;"></div></div>`:'';
@@ -2183,6 +2388,39 @@ async function kancellerTrening(){
   renderTreneroppmote();
 }
 window.kancellerTrening=kancellerTrening;
+
+let toNotatKontekst = {navn:'', dato:''};
+
+function åpneNotatModal(navn, dato){
+  toNotatKontekst = {navn, dato};
+  const tr = state.toTrenerData.treninger.find(t=>t.dato===dato);
+  const notat = (tr?.notater&&tr.notater[navn])||'';
+  document.getElementById('to-notat-tittel').textContent = `Fravær – ${navn}`;
+  document.getElementById('to-notat-label').textContent = `${norskKortDato(dato)} – årsak til fravær:`;
+  document.getElementById('to-notat-tekst').value = notat;
+  document.getElementById('to-notat-slett-btn').style.display = notat ? '' : 'none';
+  document.getElementById('to-notat-modal').classList.add('open');
+}
+window.åpneNotatModal=åpneNotatModal;
+
+async function lagreNotat(slett=false){
+  const {navn, dato} = toNotatKontekst;
+  const tr = state.toTrenerData.treninger.find(t=>t.dato===dato);
+  if(!tr) return;
+  if(!tr.notater) tr.notater = {};
+  if(slett){
+    delete tr.notater[navn];
+  } else {
+    const tekst = document.getElementById('to-notat-tekst').value.trim();
+    if(tekst) tr.notater[navn] = tekst;
+    else delete tr.notater[navn];
+  }
+  closeModal('to-notat-modal');
+  setSyncStatus('Lagrer...');
+  await lagreFirebase();
+  renderTreneroppmote();
+}
+window.lagreNotat=lagreNotat;
 
 // Start
 initFirebase();

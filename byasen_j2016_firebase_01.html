@@ -331,17 +331,7 @@ tr:hover td { background: var(--panel-2); }
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;" id="rangering-snitt-cards"></div>
   <div class="card" style="padding:0.75rem 1.25rem;">
     <table id="rangering-table">
-      <thead>
-        <tr>
-          <th>Spiller</th>
-          <th>Lag</th>
-          <th style="text-align:center;">Vår 2026</th>
-          <th style="text-align:center;">Sommer 2026</th>
-          <th style="text-align:center;">Høst 2026</th>
-          <th style="text-align:center;">Vinter 2026</th>
-          <th style="text-align:center;">Utvikling</th>
-        </tr>
-      </thead>
+      <thead id="rangering-thead"></thead>
       <tbody id="rangering-tbody"></tbody>
     </table>
   </div>
@@ -1401,11 +1391,14 @@ window.closeModal=closeModal;
 document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
 
 const PERIODER=[
+  {id:'sesongstart2026',label:'Sesongstart 2026'},
   {id:'var2026',label:'Vår 2026'},
   {id:'sommer2026',label:'Sommer 2026'},
   {id:'host2026',label:'Høst 2026'},
   {id:'vinter2026',label:'Vinter 2026'},
 ];
+// Hvilke perioder som er minimert (set med id-er)
+const periodeKollaps=new Set(['sommer2026','host2026','vinter2026']);
 
 function getRangering(spillerId, periodeId){
   if(!state.rangeringer) return '';
@@ -1427,6 +1420,13 @@ function setRangSort(mode){
 }
 window.setRangSort=setRangSort;
 
+function togglePeriode(id){
+  if(periodeKollaps.has(id)) periodeKollaps.delete(id);
+  else periodeKollaps.add(id);
+  renderRangering();
+}
+window.togglePeriode=togglePeriode;
+
 function renderRangering(){
   if(!state.rangeringer) state.rangeringer=[];
   const aktiv=state.aktivLag;
@@ -1437,7 +1437,6 @@ function renderRangering(){
     ['Lag 1','Lag 2','Lag 3','Lag 4'].map(l=>`<button class="tab ${aktiv===l?'active':''}" onclick="setLag('${l}')">${l}</button>`).join('');
 
   let spillere=filtrerSpillere();
-  // Sorter basert på valgt modus
   if(rangSort==='alfabet'){
     spillere=spillere.sort((a,b)=>a.navn.localeCompare(b.navn,'no'));
   } else if(rangSort==='nivaa'){
@@ -1447,7 +1446,6 @@ function renderRangering(){
       return rb-ra;
     });
   } else {
-    // lag (standard)
     spillere=spillere.sort((a,b)=>a.lag.localeCompare(b.lag)||a.navn.localeCompare(b.navn));
   }
 
@@ -1465,7 +1463,19 @@ function renderRangering(){
     return`<div class="metric-card"><div class="metric-label" style="color:${LC[lag]};">${lag}</div><div class="metric-val">${sisteSnitt}</div><div style="font-size:11px;color:#534AB7;margin-top:4px;">Beste 7: <strong>${b7||'–'}</strong></div></div>`;
   }).join('');
 
-  // Tabell
+  // Bygg thead dynamisk med toggle-knapper
+  const thead=document.getElementById('rangering-thead');
+  thead.innerHTML=`<tr>
+    <th>Spiller</th><th>Lag</th>
+    ${PERIODER.map(p=>{
+      const koll=periodeKollaps.has(p.id);
+      return`<th style="text-align:center;cursor:pointer;white-space:nowrap;user-select:none;" onclick="togglePeriode('${p.id}')" title="Klikk for å ${koll?'utvide':'minimere'}">
+        ${koll?`<span style="font-size:11px;opacity:0.6;">${p.label.split(' ')[0]} ▶</span>`:`${p.label} <span style="font-size:10px;opacity:0.5;">▼</span>`}
+      </th>`;
+    }).join('')}
+    <th style="text-align:center;">Utvikling</th>
+  </tr>`;
+
   const tbody=document.getElementById('rangering-tbody');
   tbody.innerHTML=spillere.map(s=>{
     const col=LC[s.lag]||'#888',bg=LB[s.lag]||'#eee';
@@ -1474,16 +1484,22 @@ function renderRangering(){
     const harScores=scores.filter(v=>v!=='');
     const forste=harScores[0]||null,siste=harScores[harScores.length-1]||null;
     const utvikling=forste&&siste&&harScores.length>1?(Number(siste)-Number(forste)):null;
-    const utviklingHTML=utvikling===null?'–':utvikling>0?`<span style="color:#1D9E75;">▲ +${utvikling.toFixed(1)}</span>`:utvikling<0?`<span style="color:#D85A30;">▼ ${utvikling.toFixed(1)}</span>`:`<span style="color:#999;">= 0</span>`;
+    const utviklingHTML=utvikling===null?'–':utvikling>0?`<span style="color:var(--lag2);">▲ +${utvikling.toFixed(1)}</span>`:utvikling<0?`<span style="color:var(--lag3);">▼ ${utvikling.toFixed(1)}</span>`:`<span style="color:var(--ink-faint);">= 0</span>`;
     const scoreCeller=PERIODER.map((p,i)=>{
+      if(periodeKollaps.has(p.id)){
+        // Minimert – vis bare gjeldende verdi kompakt
+        const val=scores[i];
+        const farge=val?Number(val)<=3?'var(--lag2)':Number(val)<=6?'var(--lag3)':'var(--lag4)':'var(--ink-faint)';
+        return`<td style="text-align:center;padding:4px;"><span style="font-size:12px;font-weight:${val?600:400};color:${farge};">${val||'–'}</span></td>`;
+      }
       const val=scores[i];
       const knapper=Array.from({length:10},(_,j)=>{
         const n=j+1;
         const aktiv=Number(val)===n;
-        const farge=n<=3?'#1D9E75':n<=6?'#BA7517':'#D85A30';
+        const farge=n<=3?'var(--lag2)':n<=6?'var(--lag3)':'var(--lag4)';
         return`<button onclick="saveRangering('${s.id}','${p.id}',${aktiv?'null':n})"
-          style="width:22px;height:22px;border-radius:50%;border:1.5px solid ${aktiv?farge:'#ddd'};
-          background:${aktiv?farge:'transparent'};color:${aktiv?'#fff':'#999'};
+          style="width:22px;height:22px;border-radius:50%;border:1.5px solid ${aktiv?farge:'var(--border)'};
+          background:${aktiv?farge:'transparent'};color:${aktiv?'#fff':'var(--ink-faint)'};
           font-size:10px;font-weight:${aktiv?600:400};cursor:pointer;transition:all 0.1s;line-height:1;"
           title="${n}">${n}</button>`;
       }).join('');

@@ -249,7 +249,10 @@ tr:hover td { background: var(--panel-2); }
   <div class="cards-row" id="dashboard-stats"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
     <div class="card"><div class="card-header"><div class="card-title">Toppscorere</div></div><div id="toppscorer-list"></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">Lagstandings</div></div><div id="lag-standings"></div></div>
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+      <div class="card" style="margin:0;"><div class="card-header"><div class="card-title">Lagstandings</div></div><div id="lag-standings"></div></div>
+      <div class="card" style="margin:0;"><div class="card-header"><div class="card-title">Sesongstatistikk</div></div><div id="sesong-stats"></div></div>
+    </div>
     <div class="card"><div class="card-header"><div class="card-title">Lånekamper</div></div><div id="dashboard-lan"></div></div>
   </div>
   <div class="card"><div class="card-header"><div class="card-title">Kommende kamper</div></div><div id="kommende-kamper"></div></div>
@@ -981,6 +984,44 @@ function renderDashboard(){
   `:'<div class="empty-state">Ingen lånespillere ennå</div>';
 
   // Kommende kamper – vis planlagt fravær/lån
+  // Sesongstatistikk
+  const spilte=state.kamper.filter(k=>k.spilt);
+  const totMalFor=spilte.reduce((a,k)=>a+(k.malFor||0),0);
+  const totMalMot=spilte.reduce((a,k)=>a+(k.malMot||0),0);
+  const totKamper=spilte.length;
+  const seiere=spilte.filter(k=>k.malFor>k.malMot).length;
+  const tap=spilte.filter(k=>k.malFor<k.malMot).length;
+  const uavgjort=spilte.filter(k=>k.malFor===k.malMot).length;
+  const seierPst=totKamper?Math.round(seiere/totKamper*100):0;
+  const snitFor=totKamper?(totMalFor/totKamper).toFixed(1):0;
+  const snitMot=totKamper?(totMalMot/totKamper).toFixed(1):0;
+  const totMal=Object.values(Object.fromEntries(
+    spilte.flatMap(k=>Object.entries(k.scorere||{})).reduce((m,[id,a])=>{
+      if(id!=='selvmaal')m.set(id,(m.get(id)||0)+a);return m;
+    },new Map())
+  )).reduce((a,b)=>a+b,0);
+  const unikeScorere=new Set(spilte.flatMap(k=>Object.keys(k.scorere||{}).filter(id=>id!=='selvmaal'))).size;
+  const selvmaal=spilte.reduce((a,k)=>a+(k.scorere?.selvmaal||0),0);
+  const langsteSeier=spilte.filter(k=>k.malFor>k.malMot).sort((a,b)=>(b.malFor-b.malMot)-(a.malFor-a.malMot))[0];
+  const mesteMal=spilte.sort((a,b)=>(b.malFor+b.malMot)-(a.malFor+a.malMot))[0];
+
+  const statRad=(label,val,sub='')=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border-soft);">
+    <div style="font-size:13px;color:var(--ink-dim);">${label}</div>
+    <div style="text-align:right;"><span style="font-size:14px;font-weight:500;color:var(--ink);">${val}</span>${sub?`<span style="font-size:11px;color:var(--ink-faint);margin-left:5px;">${sub}</span>`:''}</div>
+  </div>`;
+
+  document.getElementById('sesong-stats').innerHTML=totKamper===0?'<div class="empty-state">Ingen kamper registrert ennå.</div>':`
+  <div style="font-size:12px;">
+    ${statRad('Kamper spilt', totKamper)}
+    ${statRad('Seiere / Tap / U', `${seiere} / ${tap} / ${uavgjort}`, `${seierPst}% seier`)}
+    ${statRad('Mål scoret', totMalFor, `${snitFor}/kamp`)}
+    ${statRad('Mål imot', totMalMot, `${snitMot}/kamp`)}
+    ${statRad('Målforskjell', `${totMalFor-totMalMot>=0?'+':''}${totMalFor-totMalMot}`)}
+    ${statRad('Ulike scorere', unikeScorere)}
+    ${selvmaal?statRad('Selvmål (motst.)', selvmaal):''}
+    ${langsteSeier?statRad('Største seier', `${langsteSeier.malFor}–${langsteSeier.malMot}`, `vs ${motstander(langsteSeier)}`):'' }
+    ${mesteMal?statRad('Flest mål i én kamp', `${(mesteMal.malFor||0)+(mesteMal.malMot||0)}`, `${mesteMal.malFor}–${mesteMal.malMot} vs ${motstander(mesteMal)}`):'' }
+  </div>`;
   const vis=kommende.slice(0,6);
   document.getElementById('kommende-kamper').innerHTML=vis.length?vis.map(k=>{
     const col=LC[k.lag]||'#888';const hj=erHjemme(k);

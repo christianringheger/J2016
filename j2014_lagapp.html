@@ -5,320 +5,416 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>J2014 · Byåsen IL</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ── Byåsen fotball-design + dark mode ────────────────────────────── */
 :root {
-  --bg: #f5f4f1;
-  --surface: #ffffff;
-  --surface2: #f0efeb;
-  --border: #e2e0da;
-  --border2: #d0cec7;
-  --text: #1a1915;
-  --text2: #6b6760;
-  --text3: #9c9890;
-  --accent: #2d5f3f;
-  --accent-light: #e8f0eb;
-  --accent2: #c8973a;
-  --accent2-light: #fdf3e3;
-  --red: #b83232;
-  --red-light: #fceaea;
-  --radius: 10px;
-  --radius-sm: 6px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --bg:           #f5f6fa;
+  --surface:      #ffffff;
+  --surface2:     #eef0f6;
+  --border:       #e3e6ef;
+  --border2:      #cdd2e0;
+  --text:         #1a1c28;
+  --text2:        #5d6379;
+  --text3:        #9499ad;
+  /* Primary accent – Indigo */
+  --accent:       #6366F1;
+  --accent-hover: #4f52e0;
+  --accent-light: #ecedfe;
+  --accent-deep:  #3f42c4;
+  /* Functional / palette colours */
+  --green:        #10B981;
+  --green-light:  #d9f6ec;
+  --green-dark:   #0a7d58;
+  --red:          #EC4899;
+  --red-light:    #fce4f0;
+  --amber:        #F59E0B;
+  --amber-light:  #fdf0d5;
+  --blue:         #6366F1;
+  --blue-light:   #ecedfe;
+  --orange:       #F59E0B;
+  --pink:         #EC4899;
+  --pink-light:   #fce4f0;
+  --purple:       #8b5cf6;
+  --purple-light: #f0e9fe;
+  --override:     #F59E0B;
+  /* Lag identity colours – drawn from palette family */
+  --lag1:         #EC4899;
+  --lag2:         #F59E0B;
+  --lag3:         #10B981;
+  --lag4:         #6366F1;
+  --lag5:         #8b5cf6;
+  /* Radius */
+  --r:            14px;
+  --r-sm:          9px;
+  --r-xs:          6px;
+  --shadow:       0 1px 2px rgba(30,32,60,0.04), 0 2px 8px rgba(30,32,60,0.06);
+  --shadow-lg:    0 6px 24px rgba(30,32,60,0.12);
+  --display:      'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --body:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono:         'SF Mono', 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+}
+
+[data-theme="dark"] {
+  --bg:           #0e0f17;
+  --surface:      #181a24;
+  --surface2:     #21242f;
+  --border:       #2c2f3d;
+  --border2:      #3c4051;
+  --text:         #eceef5;
+  --text2:        #a2a7b8;
+  --text3:        #6c7283;
+  --accent:       #818cf8;
+  --accent-hover: #9aa3fa;
+  --accent-light: #1e2040;
+  --accent-deep:  #a5adfb;
+  /* Functional / palette colours – brightened for dark bg */
+  --green:        #34d399;
+  --green-light:  #11302a;
+  --green-dark:   #6ee7b7;
+  --red:          #f472b6;
+  --red-light:    #3a1428;
+  --amber:        #fbbf24;
+  --amber-light:  #332611;
+  --blue:         #818cf8;
+  --blue-light:   #1e2040;
+  --orange:       #fbbf24;
+  --pink:         #f472b6;
+  --pink-light:   #3a1428;
+  --purple:       #a78bfa;
+  --purple-light: #281f44;
+  --override:     #fbbf24;
+  --lag1:         #f472b6;
+  --lag2:         #fbbf24;
+  --lag3:         #34d399;
+  --lag4:         #818cf8;
+  --lag5:         #a78bfa;
+  --shadow:       0 1px 2px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-lg:    0 6px 24px rgba(0,0,0,0.5);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Georgia', serif;
+  font-family: var(--body);
   background: var(--bg);
   color: var(--text);
   font-size: 14px;
   line-height: 1.5;
+  transition: background 0.3s, color 0.3s;
 }
 
-.shell {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 16px 40px;
-}
+/* ── SHELL ─────────────────────────────────────────────────────────── */
+.shell { max-width: 1180px; margin: 0 auto; padding: 0 20px 48px; }
 
-/* HEADER */
+/* ── HEADER ────────────────────────────────────────────────────────── */
 .hdr {
-  padding: 20px 0 16px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  border-bottom: 1.5px solid var(--border);
-  margin-bottom: 20px;
+  padding: 22px 0 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 22px;
 }
+.hdr-left { display: flex; align-items: center; gap: 14px; }
 .hdr-left h1 {
-  font-size: 24px;
-  font-weight: normal;
-  letter-spacing: -0.02em;
-  color: var(--text);
+  font-family: var(--display);
+  font-size: 32px; font-weight: 800;
+  letter-spacing: -0.01em; text-transform: uppercase;
+  line-height: 1;
 }
-.hdr-left p {
-  font-size: 12px;
-  font-family: 'Courier New', monospace;
-  color: var(--text3);
-  margin-top: 2px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+.hdr-left h1 span { color: var(--accent); }
+.hdr-left .crest {
+  width: 40px; height: 46px; flex-shrink: 0;
+  background: var(--accent);
+  clip-path: polygon(50% 0, 100% 15%, 100% 65%, 50% 100%, 0 65%, 0 15%);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: var(--display); font-weight: 800; font-size: 20px;
 }
+.hdr-sub { font-family: var(--display); font-size: 12px; color: var(--text3); margin-top: 1px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
 .hdr-badge {
-  font-size: 11px;
-  background: var(--accent-light);
-  color: var(--accent);
-  border: 1px solid #c2d9c9;
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.03em;
+  font-family: var(--display);
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  background: var(--accent); color: #fff;
+  border-radius: 20px; padding: 4px 12px;
 }
+.theme-toggle {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1.5px solid var(--border2); background: var(--surface);
+  font-size: 15px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.theme-toggle:hover { border-color: var(--accent); transform: scale(1.05); }
 
-/* TABS */
+/* ── TABS ──────────────────────────────────────────────────────────── */
 .tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
-  overflow-x: auto;
+  display: flex; gap: 2px;
+  background: var(--surface2); border-radius: var(--r-sm);
+  padding: 4px; margin-bottom: 22px;
+  overflow-x: auto; width: fit-content; max-width: 100%;
 }
 .tab {
-  padding: 9px 16px;
-  font-size: 13px;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: var(--text2);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  white-space: nowrap;
-  font-family: inherit;
-  letter-spacing: 0.01em;
-  transition: color 0.15s;
+  padding: 7px 15px; border-radius: var(--r-xs);
+  border: none; background: transparent;
+  cursor: pointer; font-size: 13px; color: var(--text2);
+  font-family: var(--display); font-weight: 600; white-space: nowrap;
+  text-transform: uppercase; letter-spacing: 0.03em; font-size: 14px;
+  transition: all 0.15s;
 }
 .tab.active {
-  color: var(--text);
-  border-bottom-color: var(--accent);
-  font-weight: bold;
+  background: var(--accent); color: #fff; font-weight: 700;
+  box-shadow: 0 2px 6px rgba(200,16,46,0.3);
 }
-.tab:hover:not(.active) { color: var(--text); }
+[data-theme="dark"] .tab.active { box-shadow: 0 2px 8px rgba(255,77,99,0.25); }
+.tab:hover:not(.active) { background: var(--surface); color: var(--text); }
 
-/* SECTIONS */
+/* ── TAG FILTER BUTTONS ────────────────────────────────────────────── */
+.tagfilter {
+  padding: 5px 13px; border-radius: 20px;
+  border: 1.5px solid var(--border2); background: var(--surface);
+  cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2);
+  font-family: var(--body); white-space: nowrap; transition: all 0.13s;
+}
+.tagfilter:hover { border-color: var(--accent); color: var(--accent); }
+.tagfilter.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── SORT BUTTONS ──────────────────────────────────────────────────── */
+.sortbtn {
+  padding: 5px 13px; border-radius: var(--r-xs);
+  border: none; background: transparent;
+  cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2);
+  font-family: var(--display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 13px;
+  transition: all 0.13s;
+}
+.sortbtn.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+
+/* ── VIEW TOGGLES ──────────────────────────────────────────────────── */
+.viewtoggle {
+  padding: 4px 11px; border-radius: 20px;
+  border: 1.5px solid var(--border2); background: var(--surface);
+  cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text3);
+  font-family: var(--body); white-space: nowrap; transition: all 0.13s;
+  opacity: 0.6;
+}
+.viewtoggle.active { border-color: var(--accent); color: var(--accent); background: var(--accent-light); opacity: 1; }
+.viewtoggle::before { content: '✓ '; font-weight: 700; }
+.viewtoggle:not(.active)::before { content: '○ '; }
+
+/* ── ADMIN TOGGLES ─────────────────────────────────────────────────── */
+.admintoggle {
+  padding: 4px 11px; border-radius: 20px;
+  border: 1.5px solid var(--border2); background: var(--surface);
+  cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text3);
+  font-family: var(--body); white-space: nowrap; transition: all 0.13s;
+  opacity: 0.6;
+}
+.admintoggle.active { border-color: var(--green); color: var(--green); background: var(--green-light); opacity: 1; }
+.admintoggle::before { content: '👁 '; }
+.admintoggle:not(.active)::before { content: '🚫 '; }
+
+/* ── PLAYER CARD ───────────────────────────────────────────────────── */
+.player-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.player-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+}
+.player-card.editing {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-light), var(--shadow-lg);
+}
+.player-card.editing:hover { transform: none; }
+
+/* ── SECTIONS ──────────────────────────────────────────────────────── */
 .section { display: none; }
 .section.active { display: block; }
 
-/* CARDS */
+/* ── CARDS ─────────────────────────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
+  border-radius: var(--r);
+  padding: 18px 22px;
   margin-bottom: 14px;
   box-shadow: var(--shadow);
 }
 .card-title {
-  font-size: 13px;
-  font-weight: bold;
-  margin-bottom: 14px;
-  color: var(--text);
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  font-size: 11px;
-  color: var(--text2);
+  font-family: var(--display);
+  font-size: 16px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.02em;
+  color: var(--text); margin-bottom: 14px;
 }
 
-/* GRID */
+/* ── GRIDS ─────────────────────────────────────────────────────────── */
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-.grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
 
-/* METRICS */
-.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+/* ── METRICS ───────────────────────────────────────────────────────── */
+.metric-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
 .metric {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  box-shadow: var(--shadow);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 16px 18px; box-shadow: var(--shadow);
+  position: relative; overflow: hidden;
 }
-.metric-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.05em; }
-.metric-val { font-size: 28px; font-weight: normal; letter-spacing: -0.03em; }
+.metric::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--accent);
+}
+.metric-label { font-size: 11px; font-weight: 600; color: var(--text2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.metric-val { font-family: var(--display); font-size: 32px; font-weight: 700; line-height: 1; }
 
-/* TABLE */
+/* ── TABLE ─────────────────────────────────────────────────────────── */
 table { width: 100%; font-size: 13px; border-collapse: collapse; }
-th { text-align: left; font-size: 11px; color: var(--text2); padding: 7px 10px; border-bottom: 1px solid var(--border); font-weight: normal; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.05em; }
-td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+th {
+  text-align: left; font-size: 11px; font-weight: 600;
+  color: var(--text2); padding: 8px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--surface2); }
 
-/* BADGES */
-.badge {
-  display: inline-block;
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-family: 'Courier New', monospace;
-}
-.badge-green { background: #e6f3ea; color: #2d5f3f; }
-.badge-red { background: var(--red-light); color: var(--red); }
-.badge-gray { background: var(--surface2); color: var(--text2); }
-.badge-blue { background: #e6edf8; color: #2a4f8c; }
-.badge-amber { background: var(--accent2-light); color: #7a5a1a; }
-.badge-teal { background: #e0f4f1; color: #1a6358; }
+/* ── BADGES ────────────────────────────────────────────────────────── */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.badge-green  { background: var(--green-light);  color: var(--green-dark); }
+.badge-red    { background: var(--red-light);    color: var(--red); }
+.badge-gray   { background: var(--surface2);     color: var(--text2); }
+.badge-blue   { background: var(--blue-light);   color: var(--blue); }
+.badge-amber  { background: var(--amber-light);  color: var(--amber); }
 
-/* CHIPS */
+/* ── CHIPS ─────────────────────────────────────────────────────────── */
 .chip {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 20px;
-  padding: 4px 11px;
-  font-size: 12px;
-  margin: 2px;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
-  transition: all 0.12s;
-  font-family: inherit;
+  display: inline-flex; align-items: center;
+  border-radius: 20px; padding: 4px 11px;
+  font-size: 12px; margin: 2px; cursor: pointer;
+  border: 0.5px solid var(--border2);
+  background: var(--surface); color: var(--text);
+  font-family: inherit; transition: all 0.12s;
 }
-.chip:hover { border-color: var(--border2); }
-.chip.sel-player { background: var(--accent-light); border-color: #a0c4ad; color: var(--accent); }
-.chip.sel-coach { background: var(--accent2-light); border-color: #e0b87a; color: #7a5a1a; }
+.chip:hover { background: var(--surface2); }
+.chip.sel-player { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.chip.sel-coach  { background: var(--amber-light);  border-color: var(--amber);  color: var(--amber); }
 
-/* FORM ELEMENTS */
-label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 4px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.04em; }
+/* ── FORMS ─────────────────────────────────────────────────────────── */
+label {
+  font-size: 11px; font-weight: 500; color: var(--text2);
+  display: block; margin-bottom: 4px;
+}
 input, select {
-  width: 100%;
-  margin-bottom: 12px;
-  font-size: 13px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 7px 10px;
-  background: var(--surface);
-  color: var(--text);
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s;
+  width: 100%; margin-bottom: 10px; font-size: 13px;
+  border: 0.5px solid var(--border2); border-radius: var(--r-sm);
+  padding: 7px 10px; background: var(--surface);
+  color: var(--text); font-family: inherit; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-input:focus, select:focus { border-color: var(--accent); }
+input:focus, select:focus {
+  border-color: var(--accent-hover);
+  box-shadow: 0 0 0 2px rgba(83,74,183,0.15);
+}
 
-/* BUTTONS */
+/* ── BUTTONS ───────────────────────────────────────────────────────── */
 button { cursor: pointer; font-family: inherit; }
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  padding: 8px 20px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: 0.02em;
-  transition: opacity 0.15s;
+  background: var(--accent); color: #fff; border: none;
+  padding: 8px 18px; border-radius: var(--r-sm);
+  font-family: var(--display); font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.03em;
+  transition: background 0.15s;
 }
-.btn-primary:hover { opacity: 0.88; }
+.btn-primary:hover { background: var(--accent-hover); }
 .btn-sm {
-  font-size: 12px;
-  padding: 6px 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text2);
-  transition: all 0.12s;
+  font-size: 12px; padding: 6px 12px; font-weight: 600;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--r-sm); color: var(--text2); transition: all 0.12s;
 }
-.btn-sm:hover { border-color: var(--border2); color: var(--text); }
+.btn-sm:hover { background: var(--surface2); color: var(--text); }
 .btn-danger {
-  font-size: 11px;
-  padding: 3px 9px;
-  background: none;
-  border: 1px solid #e8c0c0;
-  border-radius: var(--radius-sm);
-  color: var(--red);
-  transition: all 0.12s;
+  font-size: 11px; padding: 3px 9px; background: none;
+  border: 1px solid var(--red); border-radius: var(--r-sm);
+  color: var(--red); transition: all 0.12s;
 }
 .btn-danger:hover { background: var(--red-light); }
 
-/* FILTER BAR */
-.filter-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+/* ── FILTER BAR ────────────────────────────────────────────────────── */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
 .filter-bar select, .filter-bar input { width: auto; margin-bottom: 0; }
 
-/* LAG CARDS */
-.lag-grid { display: grid; gap: 10px; }
+/* ── LAG CARDS ─────────────────────────────────────────────────────── */
+.lag-grid { display: grid; gap: 12px; }
 .lag-grid-3 { grid-template-columns: repeat(3,1fr); }
 .lag-grid-4 { grid-template-columns: repeat(4,1fr); }
 .lag-grid-5 { grid-template-columns: repeat(5,1fr); }
-.lag-card { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); }
-.lag-header { padding: 10px 14px; font-weight: bold; font-size: 13px; letter-spacing: 0.02em; }
-.lag-coaches { padding: 7px 14px; font-size: 12px; color: var(--text2); border-bottom: 1px solid var(--border); background: var(--surface2); }
-.lag-players { padding: 6px 14px 12px; }
-.lag-player { font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+.lag-card   { border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); }
+.lag-header { padding: 11px 15px; font-family: var(--display); font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.02em; }
+.lag-coaches { padding: 11px 15px; border-bottom: 1px solid var(--border); background: var(--accent-light); }
+.lag-coaches .coach-name { font-size: 14px; font-weight: 700; color: var(--accent-deep); padding: 2px 0; }
+.lag-players { padding: 8px 15px 12px; }
+.lag-player  { font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--border); }
 .lag-player:last-child { border-bottom: none; }
 
-/* SEASON PILLS */
-.season-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+/* ── SEASON PILLS ──────────────────────────────────────────────────── */
+.season-tabs { display: flex; gap: 5px; flex-wrap: wrap; }
 .season-pill {
-  font-size: 12px;
-  padding: 5px 13px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: none;
-  color: var(--text2);
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.12s;
+  font-family: var(--display); font-size: 14px; font-weight: 600; padding: 5px 14px;
+  border-radius: 20px; border: 1.5px solid var(--border2);
+  background: none; color: var(--text2); text-transform: uppercase; letter-spacing: 0.02em;
+  cursor: pointer; transition: all 0.12s;
 }
-.season-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.season-pill:hover:not(.active) { border-color: var(--border2); color: var(--text); }
+.season-pill.active  { background: var(--accent); color: #fff; border-color: var(--accent); }
+.season-pill:hover:not(.active) { background: var(--surface2); color: var(--text); }
 
-/* POS BUTTONS */
+/* ── POS BUTTONS ───────────────────────────────────────────────────── */
 .pos-btn {
-  font-size: 12px;
-  padding: 5px 13px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: none;
-  color: var(--text2);
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.12s;
+  font-size: 12px; padding: 5px 13px; border-radius: 20px; font-weight: 600;
+  border: 1.5px solid var(--border2); background: none;
+  color: var(--text2); cursor: pointer; font-family: var(--body); transition: all 0.12s;
 }
-.pos-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+.pos-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-/* MISC */
+/* ── MISC ──────────────────────────────────────────────────────────── */
 .season-hdr {
-  font-size: 11px;
-  font-weight: bold;
-  color: var(--text2);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 12px 0 5px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--display);
+  font-size: 15px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 14px 0 6px;
 }
 .empty-state { text-align: center; padding: 2rem; color: var(--text3); font-size: 13px; }
-.coach-win { color: var(--accent); font-weight: bold; }
-.format-tag {
-  display: inline-block;
-  font-size: 10px;
-  padding: 1px 7px;
-  border-radius: 20px;
-  background: var(--accent-light);
-  color: var(--accent);
-  font-weight: bold;
-  margin-left: 6px;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.03em;
+.coach-win   { color: var(--green); font-weight: 600; }
+.format-tag  {
+  display: inline-block; font-size: 10px; padding: 1px 7px;
+  border-radius: 20px; background: var(--accent-light); color: var(--accent);
+  font-weight: 600; margin-left: 6px;
 }
-
-/* FORM ROW */
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 
+/* ── Monospace numerics ────────────────────────────────────────────── */
+.mono { font-family: var(--mono); }
+
+/* ── TRENER/ANALYSE TABLE ──────────────────────────────────────────── */
+.ts-table th { cursor: pointer; }
+.ts-table th:hover { color: var(--text); }
+
+/* ── Custom scrollbar (subtle, themed) ─────────────────────────────── */
+::-webkit-scrollbar { height: 9px; width: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
 @media (max-width: 700px) {
-  .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .metric-grid { grid-template-columns: repeat(2,1fr); }
   .grid2, .form-row, .form-row3 { grid-template-columns: 1fr; }
   .lag-grid-3, .lag-grid-4, .lag-grid-5 { grid-template-columns: 1fr 1fr; }
+  .tabs { width: 100%; }
 }
 </style>
 </head>
@@ -327,11 +423,15 @@ button { cursor: pointer; font-family: inherit; }
 
   <div class="hdr">
     <div class="hdr-left">
-      <h1>Byåsen J2014</h1>
-      <p>Lagadministrasjon · 2024–2026</p>
+      <div class="crest">B</div>
+      <div>
+        <h1>Byåsen <span>J2014</span></h1>
+        <div class="hdr-sub">Lagadministrasjon · 2024–2026</div>
+      </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <span class="hdr-badge">9er fra Vår 2026</span>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Bytt visning" id="theme-btn">🌙</button>
       <button class="btn-sm" onclick="exportData()">Eksporter</button>
     </div>
   </div>
@@ -339,13 +439,13 @@ button { cursor: pointer; font-family: inherit; }
   <div class="tabs">
     <button class="tab active" onclick="showTab('oversikt')">Oversikt</button>
     <button class="tab" onclick="showTab('lag')">Lagsammensetning</button>
-    <button class="tab" onclick="showTab('kamper')">Kamper</button>
     <button class="tab" onclick="showTab('spillere')">Spillere</button>
+    <button class="tab" onclick="showTab('rangering')">Rangering</button>
     <button class="tab" onclick="showTab('analyse')">Analyse</button>
-    <button class="tab" onclick="showTab('trenere')">Trenere</button>
     <button class="tab" onclick="showTab('program')">Kampprogram</button>
     <button class="tab" onclick="showTab('historikk')">Historikk</button>
     <button class="tab" onclick="showTab('oppmote')">Oppmøte</button>
+    <button class="tab" onclick="showTab('statistikk')">Statistikk</button>
   </div>
 
   <!-- OVERSIKT -->
@@ -379,89 +479,80 @@ button { cursor: pointer; font-family: inherit; }
     <div id="lag-view"></div>
   </div>
 
-  <!-- KAMPER -->
-  <div id="tab-kamper" class="section">
-    <div class="card">
-      <div class="card-title">Registrer ny kamp</div>
-      <div class="form-row3">
-        <div><label>Sesong</label><select id="m-season">
-          <option>2026 Vår</option><option>2025 Høst</option><option>2025 Vår</option><option>2024 Høst</option><option>2024 Vår</option>
-        </select></div>
-        <div><label>Dato</label><input type="date" id="m-date"></div>
-        <div><label>Motstander</label><input type="text" id="m-opponent" placeholder="Lagnavn"></div>
-      </div>
-      <div class="form-row3">
-        <div>
-          <label>Mål for / mot</label>
-          <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;">
-            <input type="number" id="m-gf" min="0" style="width:62px;margin:0;" placeholder="0">
-            <span style="color:var(--text3);flex-shrink:0;font-size:18px;">–</span>
-            <input type="number" id="m-ga" min="0" style="width:62px;margin:0;" placeholder="0">
-          </div>
-        </div>
-        <div><label>Lag</label><select id="m-lag">
-          <option value="">Ikke satt</option><option>Byåsen 1</option><option>Byåsen 2</option><option>Byåsen 3</option><option>Byåsen 4</option><option>Byåsen 5</option>
-        </select></div>
-        <div><label>Hjemme / borte</label><select id="m-venue">
-          <option value="H">Hjemme</option><option value="B">Borte</option><option value="N">Nøytral</option>
-        </select></div>
-      </div>
-      <div style="margin-bottom:12px;">
-        <label>Trener(e)</label>
-        <div id="coach-picker"></div>
-      </div>
-      <div style="margin-bottom:12px;">
-        <label>Spillere</label>
-        <input type="text" id="player-search" placeholder="Filtrer spillere..." oninput="renderPlayerPicker()" style="margin-bottom:8px;">
-        <div id="player-picker"></div>
-        <div id="selected-count" style="font-size:12px;color:var(--text2);margin-top:4px;"></div>
-      </div>
-      <div class="form-row">
-        <div><label>Formasjon</label><input type="text" id="m-formation" placeholder="f.eks. 3-3-2 (9er)"></div>
-        <div><label>Notat</label><input type="text" id="m-note" placeholder="Kort notat"></div>
-      </div>
-      <button class="btn-primary" onclick="addMatch()">Legg til kamp</button>
-    </div>
-    <div class="filter-bar">
-      <select id="filter-season" onchange="renderMatches()">
-        <option value="">Alle sesonger</option><option>2026 Vår</option><option>2025 Høst</option><option>2025 Vår</option><option>2024 Høst</option><option>2024 Vår</option>
-      </select>
-      <select id="filter-lag" onchange="renderMatches()">
-        <option value="">Alle lag</option><option>Byåsen 1</option><option>Byåsen 2</option><option>Byåsen 3</option><option>Byåsen 4</option><option>Byåsen 5</option>
-      </select>
-      <select id="filter-result" onchange="renderMatches()">
-        <option value="">Alle resultater</option><option value="W">Seier</option><option value="D">Uavgjort</option><option value="L">Tap</option>
-      </select>
-      <input id="filter-search" placeholder="Søk..." oninput="renderMatches()" style="width:160px;">
-    </div>
-    <div id="matches-list"></div>
-  </div>
-
   <!-- SPILLERE -->
   <div id="tab-spillere" class="section">
-    <div class="card">
-      <div class="card-title">Legg til spiller</div>
-      <div class="form-row3">
-        <div><label>Navn</label><input type="text" id="p-name" placeholder="Fornavn Etternavn"></div>
-        <div><label>Posisjon</label><select id="p-pos">
-          <option value="MV">Målvakt</option><option value="FB">Forsvarsspiller</option><option value="MB">Midtbanespiller</option><option value="AK">Angriper</option><option value="–">Ikke satt</option>
-        </select></div>
-        <div><label>Nummer</label><input type="number" id="p-num" placeholder="#" min="1" max="99"></div>
+    <div id="admin-panel" class="card" style="margin-bottom:14px;border:1.5px solid var(--accent);">
+      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="document.getElementById('admin-body').style.display=document.getElementById('admin-body').style.display==='none'?'block':'none';this.querySelector('.admin-chev').textContent=document.getElementById('admin-body').style.display==='none'?'▼':'▲';">
+        <div class="card-title" style="margin:0;">🔧 Adminpanel · delt visning</div>
+        <span class="admin-chev" style="color:var(--text3);">▼</span>
       </div>
-      <button class="btn-primary" onclick="addPlayer()">Legg til</button>
-    </div>
-    <div class="card" style="padding:0 20px 0;">
-      <div style="padding:14px 0 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-        <span style="font-size:13px;font-weight:bold;">Spillerstall · <span id="player-count" style="color:var(--text2);font-weight:normal;"></span></span>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button class="pos-btn active" onclick="setPosFilter('')">Alle</button>
-          <button class="pos-btn" onclick="setPosFilter('MV')">MV</button>
-          <button class="pos-btn" onclick="setPosFilter('FB')">FB</button>
-          <button class="pos-btn" onclick="setPosFilter('MB')">MB</button>
-          <button class="pos-btn" onclick="setPosFilter('AK')">AK</button>
+      <div id="admin-body" style="display:none;margin-top:14px;">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Velg hva som skal være synlig for andre når du deler lenken. Navn og lagdeling vises alltid. Slå av rangering og grupper for en «ren» visning.</p>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+          <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-right:2px;">Synlig for alle:</span>
+          <button class="admintoggle active" data-av="rank" onclick="toggleAdminView('rank')">Rangering</button>
+          <button class="admintoggle active" data-av="roles" onclick="toggleAdminView('roles')">Posisjon</button>
+          <button class="admintoggle active" data-av="tg" onclick="toggleAdminView('tg')">Treningsgruppe</button>
+          <button class="admintoggle active" data-av="extra" onclick="toggleAdminView('extra')">Ekstra-grupper</button>
+          <button class="admintoggle active" data-av="bdo" onclick="toggleAdminView('bdo')">BDO</button>
         </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input id="share-link-out" readonly style="flex:1;min-width:240px;margin:0;font-size:12px;font-family:var(--mono);" onclick="this.select()">
+          <button class="btn-primary" id="copy-link-btn" onclick="copyShareLink()">Kopier lenke</button>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:8px;">Tips: lenken åpner appen i en låst visningsmodus der mottakeren ikke kan redigere noe.</p>
       </div>
-      <div id="players-table"></div>
+    </div>
+    <div id="viewer-banner" style="display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--accent-deep);">
+      👁️ Du ser en delt visning. Enkelte detaljer kan være skjult av treneren.
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <input id="spiller-search" placeholder="🔍 Søk spiller..." oninput="renderPlayersGrid()" style="flex:1;min-width:180px;margin:0;">
+      <div style="display:flex;gap:3px;background:var(--surface2);border-radius:var(--r-sm);padding:3px;">
+        <button class="sortbtn active" data-sort="navn" onclick="setSpillerSort('navn')">A–Å</button>
+        <button class="sortbtn" data-sort="nivå" onclick="setSpillerSort('nivå')">Nivå</button>
+      </div>
+      <span style="font-size:12px;color:var(--text2);" id="spiller-count"></span>
+    </div>
+    <div id="personal-view-row" style="display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-right:2px;">Vis:</span>
+      <button class="viewtoggle active" data-view="rank" onclick="toggleCardView('rank')">Rangering</button>
+      <button class="viewtoggle active" data-view="roles" onclick="toggleCardView('roles')">Posisjon</button>
+      <button class="viewtoggle active" data-view="tg" onclick="toggleCardView('tg')">Treningsgruppe</button>
+      <button class="viewtoggle active" data-view="extra" onclick="toggleCardView('extra')">Ekstra-grupper</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-right:2px;">Filter:</span>
+      <button class="tagfilter active" data-tag="" onclick="setTagFilter('')">Alle</button>
+      <button class="tagfilter" data-tag="K" onclick="setTagFilter('K')">Keeper</button>
+      <button class="tagfilter" data-tag="F" onclick="setTagFilter('F')">Forsvar</button>
+      <button class="tagfilter" data-tag="M" onclick="setTagFilter('M')">Midtbane</button>
+      <button class="tagfilter" data-tag="A" onclick="setTagFilter('A')">Angrep</button>
+      <span style="width:1px;height:20px;background:var(--border2);margin:0 4px;"></span>
+      <button class="tagfilter" data-tag="TG1" onclick="setTagFilter('TG1')">TG1</button>
+      <button class="tagfilter" data-tag="TG2" onclick="setTagFilter('TG2')">TG2</button>
+      <button class="tagfilter" data-tag="TG3" onclick="setTagFilter('TG3')">TG3</button>
+      <button class="tagfilter" data-tag="R1-2" onclick="setTagFilter('R1-2')">R1-2</button>
+      <button class="tagfilter" data-tag="R2-3" onclick="setTagFilter('R2-3')">R2-3</button>
+      <button class="tagfilter" data-tag="BDO" onclick="setTagFilter('BDO')">BDO</button>
+      <button class="tagfilter" data-tag="J13K" onclick="setTagFilter('J13K')">J13 Kamp</button>
+      <button class="tagfilter" data-tag="J13T" onclick="setTagFilter('J13T')">J13 Trening</button>
+      <button class="tagfilter" data-tag="G12T" onclick="setTagFilter('G12T')">G12 Trening</button>
+    </div>
+    <div id="players-grid"></div>
+  </div>
+
+  <!-- RANGERING -->
+  <div id="tab-rangering" class="section">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <input id="rang-search" placeholder="🔍 Søk spiller..." oninput="renderRangering()" style="flex:1;min-width:180px;margin:0;">
+      <div style="display:flex;gap:3px;background:var(--surface2);border-radius:var(--r-sm);padding:3px;">
+        <button class="sortbtn active" data-rsort="nivå" onclick="setRangSort('nivå')">Nivå</button>
+        <button class="sortbtn" data-rsort="navn" onclick="setRangSort('navn')">A–Å</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div id="rangering-list"></div>
     </div>
   </div>
 
@@ -492,13 +583,6 @@ button { cursor: pointer; font-family: inherit; }
     <div id="program-list"></div>
   </div>
 
-  <!-- TRENERE -->
-  <div id="tab-trenere" class="section">
-    <div class="card" style="padding:0 20px;">
-      <div style="padding:14px 0 12px;font-size:13px;font-weight:bold;">Alle trenere · kampstatistikk</div>
-      <div id="coaches-table"></div>
-    </div>
-  </div>
   <!-- HISTORIKK -->
   <div id="tab-historikk" class="section">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
@@ -562,14 +646,14 @@ button { cursor: pointer; font-family: inherit; }
           📁 Last opp Spond-fil
           <input type="file" accept=".xlsx" onchange="handleSpondUpload(event)" style="display:none;">
         </label>
-        <span id="upload-status" style="font-size:11px;color:var(--accent);font-family:'Courier New',monospace;"></span>
+        <span id="upload-status" style="font-size:11px;color:var(--accent);font-family:var(--mono);"></span>
       </div>
     </div>
     <div class="metric-grid" id="opp-metrics" style="margin-bottom:14px;"></div>
     <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px;">
       <div id="opp-table"></div>
     </div>
-    <p style="font-size:11px;color:var(--text3);margin-bottom:16px;font-family:'Courier New',monospace;">
+    <p style="font-size:11px;color:var(--text3);margin-bottom:16px;font-family:var(--mono);">
       * Treningsfravær: treninger der spillerens lag hadde kamp samme dag teller ikke som fravær (fritatt). Klikk en rute for å overstyre.
     </p>
     <!-- Treningstabell -->
@@ -588,6 +672,10 @@ button { cursor: pointer; font-family: inherit; }
       </div>
       <div style="overflow-x:auto;"><table id="kamp-table" style="width:100%;border-collapse:collapse;font-size:13px;"></table></div>
     </div>
+  </div>
+  <!-- STATISTIKK -->
+  <div id="tab-statistikk" class="section">
+    <div id="statistikk-content"></div>
   </div>
 
 </div>
@@ -680,7 +768,7 @@ let selPlayers=[], selCoaches=[], posFilter='', activeSeason='2026 Vår', season
 const SEASON_ORDER = ['2024 Vår','2024 Høst','2025 Vår','2025 Høst','2026 Vår','2026 Høst','2027 Vår'];
 
 const LAG_COLORS = {
-  'Byåsen 1':'#c0392b','Byåsen 2':'#d4820a','Byåsen 3':'#2d5f3f','Byåsen 4':'#2a4f8c','Byåsen 5':'#6b3fa0'
+  'Byåsen 1':'var(--lag1)','Byåsen 2':'var(--lag2)','Byåsen 3':'var(--lag3)','Byåsen 4':'var(--lag4)','Byåsen 5':'var(--lag5)'
 };
 const LAG_TEXT = {
   'Byåsen 1':'#fff','Byåsen 2':'#fff','Byåsen 3':'#fff','Byåsen 4':'#fff','Byåsen 5':'#fff'
@@ -711,19 +799,19 @@ let currentTab = 'oversikt';
 function showTab(t) {
   currentTab = t;
   document.querySelectorAll('.tab').forEach((el,i) =>
-    el.classList.toggle('active', ['oversikt','lag','kamper','spillere','analyse','trenere','program','historikk','oppmote'][i]===t)
+    el.classList.toggle('active', ['oversikt','lag','spillere','rangering','analyse','program','historikk','oppmote','statistikk'][i]===t)
   );
   document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
   if(t==='oversikt') renderOverview();
   if(t==='lag') renderLag();
-  if(t==='kamper') { renderMatches(); renderPlayerPicker(); renderCoachPicker(); }
-  if(t==='spillere') renderPlayers();
+  if(t==='spillere') renderPlayersGrid();
+  if(t==='rangering') renderRangering();
   if(t==='analyse') renderAnalysis();
-  if(t==='trenere') renderCoachesTable();
   if(t==='program') renderProgram();
   if(t==='historikk') renderHistorikk();
   if(t==='oppmote') renderOppmote();
+  if(t==='statistikk') renderStatistikk();
 }
 
 // ─── LAG ─────────────────────────────────────────────────────────────────────
@@ -742,14 +830,41 @@ function renderLag() {
   const fmt = getFormat(activeSeason);
   const gridClass = lagNames.length>=5?'lag-grid-5':lagNames.length===3?'lag-grid-3':'lag-grid-4';
   document.getElementById('lag-view').innerHTML =
-    (fmt==='9er'?`<div style="margin-bottom:10px;font-size:13px;color:var(--accent);font-weight:bold;">⚽ 9er-fotball · Større tropper</div>`:'')
+    (fmt==='9er'?`<div style="margin-bottom:10px;font-size:13px;color:var(--green);font-weight:500;">⚽ 9er-fotball · Større tropper</div>`:'')
     +`<div class="lag-grid ${gridClass}">`+lagNames.map(lag=>{
       const d = lags[lag]||{coaches:[],players:[]};
       const hc = LAG_COLORS[lag]||'#888', tc = LAG_TEXT[lag]||'#fff';
+      // Snitt-beregninger basert på rangering
+      const onPitch = fmt==='9er' ? 9 : 7;
+      const ranked = d.players
+        .map(p => PLAYER_TAGS[p]?.rank)
+        .filter(r => r != null)
+        .sort((a,b) => b-a);
+      const avg = ranked.length ? (ranked.reduce((s,r)=>s+r,0)/ranked.length) : null;
+      const bestN = ranked.slice(0, onPitch);
+      const bestAvg = bestN.length ? (bestN.reduce((s,r)=>s+r,0)/bestN.length) : null;
+      const avgColor = v => v>=7.5 ? 'var(--green)' : v>=5 ? 'var(--amber)' : 'var(--red)';
+      const snittBox = (avg!=null || bestAvg!=null) ? `
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--border);">
+          <div style="flex:1;padding:9px 14px;text-align:center;border-right:1px solid var(--border);">
+            <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">Snitt lag</div>
+            <div style="font-family:var(--display);font-size:22px;font-weight:700;color:${avg!=null?avgColor(avg):'var(--text3)'};line-height:1.1;">${avg!=null?avg.toFixed(1):'–'}</div>
+          </div>
+          <div style="flex:1;padding:9px 14px;text-align:center;">
+            <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">Beste ${onPitch}</div>
+            <div style="font-family:var(--display);font-size:22px;font-weight:700;color:${bestAvg!=null?avgColor(bestAvg):'var(--text3)'};line-height:1.1;">${bestAvg!=null?bestAvg.toFixed(1):'–'}</div>
+          </div>
+        </div>` : '';
       return `<div class="lag-card">
         <div class="lag-header" style="background:${hc};color:${tc}">${lag} <span style="font-weight:normal;font-size:11px;opacity:0.8">(${d.players.length})</span></div>
-        <div class="lag-coaches">${d.coaches.map(c=>`<div>👤 ${c}</div>`).join('')||'–'}</div>
-        <div class="lag-players">${d.players.map(p=>`<div class="lag-player">${p}</div>`).join('')||'–'}</div>
+        <div class="lag-coaches">${d.coaches.map(c=>`<div class="coach-name">${c}</div>`).join('')||'<span style="font-weight:400;color:var(--text3)">Ingen trenere</span>'}</div>
+        ${snittBox}
+        <div class="lag-players">${d.players.map(p=>{
+          const pr = PLAYER_TAGS[p]?.rank;
+          return `<div class="lag-player" style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+            <span>${p}</span>${pr!=null?`<span class="mono" style="font-size:11px;color:var(--text3);flex-shrink:0;">${pr}</span>`:''}
+          </div>`;
+        }).join('')||'–'}</div>
       </div>`;
     }).join('')+'</div>';
 }
@@ -828,23 +943,383 @@ function setPosFilter(p) {
   renderPlayers();
 }
 
-function renderPlayers() {
-  const el = document.getElementById('players-table');
-  let list = posFilter?players.filter(p=>p.pos===posFilter):[...players];
-  list.sort((a,b)=>a.name.localeCompare(b.name,'no'));
-  document.getElementById('player-count').textContent = `${players.filter(p=>p.active).length} aktive · ${players.filter(p=>!p.active).length} tidligere`;
-  el.innerHTML = '<table><thead><tr><th>Navn</th><th>Status</th><th>Posisjon</th><th>Kamper</th><th></th></tr></thead><tbody>'
-    +list.map(p=>{
-      const cnt = matches.filter(m=>m.players&&m.players.includes(p.id)).length;
-      const posOpts = ['MV','FB','MB','AK','–'].map(v=>`<option value="${v}"${p.pos===v?' selected':''}>${v}</option>`).join('');
-      return `<tr><td style="font-weight:bold">${p.name}</td>
-        <td><span class="badge ${p.active?'badge-green':'badge-gray'}">${p.active?'Aktiv':'Tidligere'}</span></td>
-        <td><select style="width:auto;margin:0;font-size:12px;" onchange="setPos(${p.id},this.value)">${posOpts}</select></td>
-        <td>${cnt}</td><td><button class="btn-danger" onclick="removePlayer(${p.id})">×</button></td></tr>`;
-    }).join('')+'</tbody></table>';
+// ─── SPILLER-TAGGER ──────────────────────────────────────────────────────────
+// roles: K=keeper, M=midtbane, F=forsvar, A=angrep | tg: treningsgruppe | extra: ekstra grupper | lag: serielagsnr | rank: rangering
+const PLAYER_TAGS = {
+  "Aliah Fjeldavli Nordvik":{roles:["A"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:2,rank:null},
+  "Astrid Øverås Karlsen":{roles:[],tg:"TG1",extra:["G12T","J13T","BDO"],lag:3,rank:65},
+  "Elise Fredriksen":{roles:["M"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:2,rank:null},
+  "Emma Øverås Karlsen":{roles:["M"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:3,rank:51},
+  "Erle Granviken":{roles:["A","F"],tg:"TG1",extra:["R1-2","J13T","J13K"],lag:2,rank:null},
+  "Hanna Elvebakk":{roles:["F","A"],tg:"TG1",extra:["J13T","BDO","J13K"],lag:2,rank:null},
+  "Jenny Holsen":{roles:["K","M","F"],tg:"TG1",extra:["J13T","G12T","BDO","J13K"],lag:1,rank:null},
+  "Julie Hirsch":{roles:["A"],tg:"TG1",extra:["R1-2","J13T","BDO","J13K"],lag:3,rank:97},
+  "Leah Håkegård Heineman":{roles:["A"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:1,rank:null},
+  "Nora Elise Rosvold":{roles:["A","K"],tg:"TG1",extra:["J13T","J13K","BDO"],lag:2,rank:null},
+  "Pernille Fevaag Heger":{roles:["F"],tg:"TG1",extra:["J13T","BDO"],lag:1,rank:null},
+  "Aurora Bye-Bakke":{roles:["A"],tg:"TG2",extra:["J13T","J13K"],lag:3,rank:null},
+  "Eline Sandøy":{roles:["F","A"],tg:"TG2",extra:["J13T","J13K"],lag:1,rank:null},
+  "Hafsah Mohamed":{roles:["M","F"],tg:"TG2",extra:["R1-2","J13T","J13K"],lag:3,rank:75},
+  "Hild Midbøe Rognstad":{roles:["F","M"],tg:"TG2",extra:["J13T","BDO","J13K"],lag:3,rank:85},
+  "Ingeborg Johannessen":{roles:["M"],tg:"TG2",extra:["R1-2","J13K","BDO"],lag:4,rank:null},
+  "Jenny Engelsen":{roles:["M","A"],tg:"TG2",extra:["R1-2","BDO","J13K"],lag:1,rank:null},
+  "Mali Olsø-Aune":{roles:["M","A","F"],tg:"TG2",extra:["J13T","J13K"],lag:1,rank:null},
+  "Pernille Eikemo-Nilsen":{roles:["F","M"],tg:"TG2",extra:["J13T","J13K"],lag:2,rank:null},
+  "Runa Buvarp Julsrud":{roles:["M","F"],tg:"TG2",extra:["J13T"],lag:2,rank:null},
+  "Sofie Minde Elveseter":{roles:["A","K"],tg:"TG2",extra:["J13K"],lag:3,rank:29},
+  "Synnøve Halvorsrød Bjerve":{roles:["F"],tg:"TG2",extra:["J13T","J13K"],lag:3,rank:60},
+  "Agnes Sofie Hoen":{roles:["A","K"],tg:"TG3",extra:[],lag:1,rank:null},
+  "Arja Utengen Larsen":{roles:["A"],tg:"TG3",extra:[],lag:2,rank:null},
+  "Bertine Mostervik Røhmen":{roles:["K","F"],tg:"TG3",extra:[],lag:2,rank:null},
+  "Betelhem Daniel":{roles:["A"],tg:"TG3",extra:[],lag:3,rank:null},
+  "Elin Afom Kifle":{roles:["K","A"],tg:"TG3",extra:[],lag:3,rank:66},
+  "Ellen Skei Rasmussen":{roles:["F","K"],tg:"TG3",extra:[],lag:3,rank:73},
+  "Elsa Rennemo":{roles:["F"],tg:"TG3",extra:["J13K"],lag:3,rank:null},
+  "Erika Asklund Hagen":{roles:["F"],tg:"TG3",extra:["J13K"],lag:3,rank:50},
+  "Frida Aamodt":{roles:["M","A"],tg:"TG3",extra:[],lag:2,rank:null},
+  "Ines Eithun Gabrielsen":{roles:["A"],tg:"TG3",extra:[],lag:1,rank:null},
+  "Ingeborg Kjærsgaard Persen":{roles:["K","F"],tg:"TG3",extra:[],lag:2,rank:null},
+  "Linde Lund-Tyvoll":{roles:["M","F"],tg:"TG3",extra:["J13K"],lag:1,rank:null},
+  "Marie Skogan":{roles:["K"],tg:"TG3",extra:["J13K"],lag:1,rank:null},
+  "Maiken Hektoen Vullum":{roles:["A","F"],tg:"TG3",extra:[],lag:1,rank:16},
+  "Milla Aurora Jakobsen":{roles:["A"],tg:"TG3",extra:["J13K"],lag:3,rank:42},
+  "Nora Fredriksli":{roles:["A"],tg:"TG3",extra:["J13K"],lag:2,rank:null},
+  "Oda Gartland":{roles:["K","A"],tg:"TG3",extra:[],lag:null,rank:null},
+  "Pernille Viggen Hansen":{roles:["F"],tg:"TG3",extra:[],lag:2,rank:null},
+  "Sara Hagen":{roles:["F"],tg:"TG3",extra:["J13K"],lag:2,rank:null},
+  "Sigrid Nordengen Lohn":{roles:["K","A","M"],tg:"TG3",extra:[],lag:3,rank:61},
+  "Siri Ormberg":{roles:["M","A","F"],tg:"TG3",extra:["J13K"],lag:2,rank:82},
+  "Solvor Waterloo Farstad":{roles:["M","F"],tg:"TG3",extra:[],lag:2,rank:null},
+};
+
+const ROLE_COLORS = {K:"var(--amber)",M:"var(--green)",F:"var(--blue)",A:"var(--red)"};
+const ROLE_NAMES  = {K:"Keeper",M:"Midtbane",F:"Forsvar",A:"Angrep"};
+const TAG_LABELS  = {"R1-2":"R1-2","R2-3":"R2-3","BDO":"BDO","J13K":"J13 Kamp","J13T":"J13 Trening","G12T":"G12 Trening"};
+const ALL_ROLES   = ["K","F","M","A"];
+const ALL_TG      = ["TG1","TG2","TG3"];
+const ALL_EXTRA   = ["R1-2","R2-3","BDO","J13K","J13T","G12T"];
+
+// Last inn lagrede tag-endringer (overstyrer default PLAYER_TAGS)
+(function loadTagEdits() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('j2014_player_tags')||'{}');
+    Object.entries(saved).forEach(([name, t]) => {
+      if (PLAYER_TAGS[name]) PLAYER_TAGS[name] = {...PLAYER_TAGS[name], ...t};
+    });
+  } catch(e) {}
+})();
+function savePlayerTags() {
+  try { localStorage.setItem('j2014_player_tags', JSON.stringify(PLAYER_TAGS)); } catch(e) {}
 }
 
-// ─── MATCHES ─────────────────────────────────────────────────────────────────
+let tagFilter = '';
+let editingPlayer = null;  // navn på spilleren som redigeres
+let spillerSort = 'navn';  // 'navn' | 'nivå'
+
+// Visningstoggles – hvilke elementer vises på kortene
+let cardView = {roles:true, tg:true, extra:true, rank:true};
+try {
+  const sv = JSON.parse(localStorage.getItem('j2014_cardview')||'null');
+  if (sv) cardView = {...cardView, ...sv};
+} catch(e) {}
+function saveCardView() { try { localStorage.setItem('j2014_cardview', JSON.stringify(cardView)); } catch(e) {} }
+function toggleCardView(key) {
+  cardView[key] = !cardView[key];
+  saveCardView();
+  document.querySelectorAll('.viewtoggle').forEach(b => {
+    if (b.dataset.view) b.classList.toggle('active', cardView[b.dataset.view]);
+  });
+  renderPlayersGrid();
+}
+
+// ─── ADMIN / DELT VISNING ────────────────────────────────────────────────────
+// adminView styrer hva som vises GLOBALT (også for delte lenker).
+// 'viewerMode' = true når appen åpnes via en delt lenke (skrivebeskyttet visning).
+let adminView = {roles:true, tg:true, extra:true, rank:true, bdo:true};
+let viewerMode = false;
+
+(function readShareParams() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const v = params.get('view');
+    if (v !== null) {
+      // Format: r=roles, t=tg, e=extra, k=rank, b=bdo (bokstav present = vis)
+      viewerMode = true;
+      adminView = {
+        roles: v.includes('r'),
+        tg:    v.includes('t'),
+        extra: v.includes('e'),
+        rank:  v.includes('k'),
+        bdo:   v.includes('b'),
+      };
+    } else {
+      const saved = JSON.parse(localStorage.getItem('j2014_adminview')||'null');
+      if (saved) adminView = {...adminView, ...saved};
+    }
+  } catch(e) {}
+})();
+function saveAdminView() { try { localStorage.setItem('j2014_adminview', JSON.stringify(adminView)); } catch(e) {} }
+
+// Effektiv synlighet: i viewerMode styrer adminView alt; ellers personlig cardView ∩ adminView
+function vis(key) {
+  if (key === 'bdo') return adminView.bdo;  // BDO styres kun av admin
+  if (viewerMode) return adminView[key];
+  return cardView[key] && adminView[key];
+}
+
+function toggleAdminView(key) {
+  adminView[key] = !adminView[key];
+  saveAdminView();
+  document.querySelectorAll('.admintoggle').forEach(b => {
+    if (b.dataset.av) b.classList.toggle('active', adminView[b.dataset.av]);
+  });
+  renderPlayersGrid();
+  renderShareLink();
+}
+
+function buildShareLink() {
+  let code = '';
+  if (adminView.roles) code += 'r';
+  if (adminView.tg)    code += 't';
+  if (adminView.extra) code += 'e';
+  if (adminView.rank)  code += 'k';
+  if (adminView.bdo)   code += 'b';
+  const base = window.location.origin + window.location.pathname;
+  return `${base}?view=${code||'_'}`;
+}
+
+function renderShareLink() {
+  const el = document.getElementById('share-link-out');
+  if (el) el.value = buildShareLink();
+}
+
+function copyShareLink() {
+  const link = buildShareLink();
+  const inp = document.getElementById('share-link-out');
+  if (inp) { inp.select(); }
+  navigator.clipboard?.writeText(link).then(() => {
+    const btn = document.getElementById('copy-link-btn');
+    if (btn) { const t = btn.textContent; btn.textContent = '✓ Kopiert'; setTimeout(()=>btn.textContent=t, 2000); }
+  }).catch(()=>{});
+}
+function setSpillerSort(s) {
+  spillerSort = s;
+  document.querySelectorAll('.sortbtn').forEach(b => b.classList.toggle('active', b.dataset.sort===s));
+  renderPlayersGrid();
+}
+
+function setTagFilter(tag) {
+  tagFilter = tag;
+  document.querySelectorAll('.tagfilter').forEach(b => b.classList.toggle('active', b.dataset.tag===tag));
+  renderPlayersGrid();
+}
+
+function toggleEditPlayer(name) {
+  editingPlayer = editingPlayer === name ? null : name;
+  renderPlayersGrid();
+}
+
+// Sett rangering 1-10 (eller null)
+function setRank(name, val) {
+  const t = PLAYER_TAGS[name]; if (!t) return;
+  t.rank = (val === null || val === '' || isNaN(val)) ? null : Math.max(1, Math.min(10, parseInt(val)));
+  savePlayerTags();
+  renderPlayersGrid();
+  renderRangering();
+  if (typeof renderLag === 'function') renderLag();
+}
+
+// Toggle en rolle, tg eller extra-tag på en spiller
+function toggleRole(name, role) {
+  const t = PLAYER_TAGS[name]; if (!t) return;
+  t.roles = t.roles || [];
+  if (t.roles.includes(role)) t.roles = t.roles.filter(r => r !== role);
+  else t.roles = [...t.roles, role];
+  savePlayerTags(); renderPlayersGrid();
+}
+function setPlayerTG(name, tg) {
+  const t = PLAYER_TAGS[name]; if (!t) return;
+  t.tg = (t.tg === tg) ? null : tg;
+  savePlayerTags(); renderPlayersGrid();
+}
+function toggleExtra(name, ex) {
+  const t = PLAYER_TAGS[name]; if (!t) return;
+  t.extra = t.extra || [];
+  if (t.extra.includes(ex)) t.extra = t.extra.filter(e => e !== ex);
+  else t.extra = [...t.extra, ex];
+  savePlayerTags(); renderPlayersGrid();
+}
+
+function renderPlayersGrid() {
+  const el = document.getElementById('players-grid');
+  if (!el) return;
+  const search = (document.getElementById('spiller-search')?.value||'').toLowerCase();
+
+  let names = Object.keys(PLAYER_TAGS);
+  if (tagFilter) {
+    names = names.filter(n => {
+      const t = PLAYER_TAGS[n];
+      if (ALL_ROLES.includes(tagFilter)) return (t.roles||[]).includes(tagFilter);
+      return t.tg===tagFilter || (t.extra||[]).includes(tagFilter);
+    });
+  }
+  if (search) names = names.filter(n => n.toLowerCase().includes(search));
+
+  // Sortering
+  if (spillerSort === 'nivå') {
+    names.sort((a,b) => {
+      const ra = PLAYER_TAGS[a].rank, rb = PLAYER_TAGS[b].rank;
+      if (ra==null && rb==null) return a.localeCompare(b,'no');
+      if (ra==null) return 1;   // urangerte nederst
+      if (rb==null) return -1;
+      return rb - ra;           // høyest først
+    });
+  } else {
+    names.sort((a,b)=>a.localeCompare(b,'no'));
+  }
+
+  document.getElementById('spiller-count').textContent = `${names.length} spillere`;
+
+  if (!names.length) { el.innerHTML = '<div class="empty-state">Ingen spillere matcher filteret</div>'; return; }
+
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;">` +
+    names.map(name => {
+      const t = PLAYER_TAGS[name];
+      const isEditing = editingPlayer === name;
+
+      // Små rolle-kvadrat (kompakt, ved navnet)
+      const roleSquares = vis('roles') ? (t.roles||[]).map(r =>
+        `<span title="${ROLE_NAMES[r]}" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:5px;background:${ROLE_COLORS[r]};color:#fff;font-size:10px;font-weight:700;">${r}</span>`
+      ).join('') : '';
+
+      const tgBadge = (vis('tg') && t.tg) ? `<span style="font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:2px 7px;border-radius:20px;">${t.tg}</span>` : '';
+      const rBadge = vis('extra') ? (t.extra||[]).filter(e=>e.startsWith('R')).map(e =>
+        `<span style="font-size:10px;font-weight:600;color:var(--purple);background:var(--purple-light);padding:2px 7px;border-radius:20px;">${e}</span>`
+      ).join('') : '';
+      // Ekstra-tagger: BDO styres separat (kan holdes synlig selv om resten skjules)
+      const extraTags = (t.extra||[]).filter(e=>!e.startsWith('R')).map(e => {
+        const showThis = (e === 'BDO') ? vis('bdo') : vis('extra');
+        if (!showThis) return '';
+        return `<span style="font-size:10px;font-weight:600;color:var(--amber);background:var(--amber-light);padding:2px 7px;border-radius:20px;">${TAG_LABELS[e]||e}</span>`;
+      }).join('');
+
+      // Rangering-badge (erstatter lag-badge)
+      const rankBadge = (vis('rank') && t.rank) ?
+        `<span title="Rangering" style="display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-size:13px;font-weight:700;min-width:26px;height:26px;padding:0 6px;border-radius:7px;font-family:var(--display);">${t.rank}</span>` :
+        (vis('rank') ? `<span style="display:inline-flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--text3);font-size:11px;font-weight:600;min-width:26px;height:26px;border-radius:7px;">–</span>` : '');
+
+      const tagsRow = `${roleSquares}${tgBadge}${rBadge}${extraTags}`;
+      const hasAnyTag = tagsRow.trim().length > 0;
+
+      // Redigeringspanel
+      let editPanel = '';
+      if (isEditing) {
+        const roleBtns = ALL_ROLES.map(r => {
+          const on = (t.roles||[]).includes(r);
+          return `<button onclick="toggleRole('${name.replace(/'/g,"\\'")}','${r}')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;border:1.5px solid ${on?ROLE_COLORS[r]:'var(--border2)'};background:${on?ROLE_COLORS[r]:'transparent'};color:${on?'#fff':'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer;transition:all 0.12s;">
+            <span style="font-weight:700;">${r}</span> ${ROLE_NAMES[r]}
+          </button>`;
+        }).join('');
+        const tgBtns = ALL_TG.map(g => {
+          const on = t.tg === g;
+          return `<button onclick="setPlayerTG('${name.replace(/'/g,"\\'")}','${g}')" style="padding:5px 11px;border-radius:20px;border:1.5px solid ${on?'var(--accent)':'var(--border2)'};background:${on?'var(--accent)':'transparent'};color:${on?'#fff':'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer;transition:all 0.12s;">${g}</button>`;
+        }).join('');
+        const exBtns = ALL_EXTRA.map(ex => {
+          const on = (t.extra||[]).includes(ex);
+          const col = ex.startsWith('R') ? 'var(--purple)' : 'var(--amber)';
+          return `<button onclick="toggleExtra('${name.replace(/'/g,"\\'")}','${ex}')" style="padding:5px 11px;border-radius:20px;border:1.5px solid ${on?col:'var(--border2)'};background:${on?col:'transparent'};color:${on?'#fff':'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer;transition:all 0.12s;">${TAG_LABELS[ex]||ex}</button>`;
+        }).join('');
+        const rankOpts = ['<option value="">–</option>'].concat(
+          Array.from({length:10},(_, i)=>`<option value="${i+1}"${t.rank===i+1?' selected':''}>${i+1}</option>`)
+        ).join('');
+
+        editPanel = `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="margin-bottom:12px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">Posisjon</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${roleBtns}</div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">Treningsgruppe</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${tgBtns}</div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">Ekstra-grupper</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${exBtns}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">Rangering (1–10)</div>
+            <select onchange="setRank('${name.replace(/'/g,"\\'")}',this.value)" style="width:80px;margin:0;">${rankOpts}</select>
+          </div>
+        </div>`;
+      }
+
+      return `<div class="player-card${isEditing?' editing':''}" style="padding:13px 15px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${vis('rank') ? rankBadge : ''}
+          <div style="flex:1;min-width:0;font-size:14px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
+          ${roleSquares}
+          ${viewerMode ? '' : `<button onclick="toggleEditPlayer('${name.replace(/'/g,"\\'")}')" title="Rediger" style="flex-shrink:0;width:24px;height:24px;border-radius:6px;border:1px solid var(--border2);background:${isEditing?'var(--accent)':'var(--surface)'};color:${isEditing?'#fff':'var(--text2)'};cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.12s;">${isEditing?'✓':'✎'}</button>`}
+        </div>
+        ${(tgBadge||rBadge||extraTags) ? `<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:9px;">${tgBadge}${rBadge}${extraTags}</div>` : ''}
+        ${editPanel}
+      </div>`;
+    }).join('') + `</div>`;
+}
+
+// ─── RANGERING ───────────────────────────────────────────────────────────────
+let rangSort = 'nivå';
+function setRangSort(s) {
+  rangSort = s;
+  document.querySelectorAll('[data-rsort]').forEach(b => b.classList.toggle('active', b.dataset.rsort===s));
+  renderRangering();
+}
+
+function renderRangering() {
+  const el = document.getElementById('rangering-list');
+  if (!el) return;
+  const search = (document.getElementById('rang-search')?.value||'').toLowerCase();
+
+  let names = Object.keys(PLAYER_TAGS);
+  if (search) names = names.filter(n => n.toLowerCase().includes(search));
+
+  if (rangSort === 'navn') {
+    names.sort((a,b)=>a.localeCompare(b,'no'));
+  } else {
+    names.sort((a,b) => {
+      const ra = PLAYER_TAGS[a].rank, rb = PLAYER_TAGS[b].rank;
+      if (ra==null && rb==null) return a.localeCompare(b,'no');
+      if (ra==null) return 1;
+      if (rb==null) return -1;
+      return rb - ra;
+    });
+  }
+
+  const rankColor = v => v>=8 ? 'var(--green)' : v>=5 ? 'var(--amber)' : 'var(--red)';
+
+  el.innerHTML = names.map((name, i) => {
+    const t = PLAYER_TAGS[name];
+    const roleSquares = (t.roles||[]).map(r =>
+      `<span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:4px;background:${ROLE_COLORS[r]};color:#fff;font-size:9px;font-weight:700;">${r}</span>`
+    ).join('');
+    const opts = ['<option value="">–</option>'].concat(
+      Array.from({length:10},(_, n)=>`<option value="${n+1}"${t.rank===n+1?' selected':''}>${n+1}</option>`)
+    ).join('');
+    const barW = t.rank ? t.rank*10 : 0;
+    const col = t.rank ? rankColor(t.rank) : 'var(--border2)';
+
+    return `<div style="display:flex;align-items:center;gap:12px;padding:9px 16px;border-bottom:0.5px solid var(--border);${i%2?'background:var(--surface)':'background:transparent'}">
+      <span class="mono" style="font-size:11px;color:var(--text3);width:22px;text-align:right;">${rangSort==='nivå'&&t.rank?(i+1):''}</span>
+      <span style="flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+      <span style="display:flex;gap:3px;flex-shrink:0;">${roleSquares}</span>
+      <div style="width:90px;height:6px;background:var(--surface2);border-radius:3px;flex-shrink:0;overflow:hidden;">
+        <div style="width:${barW}%;height:100%;background:${col};border-radius:3px;transition:width 0.2s;"></div>
+      </div>
+      <select onchange="setRank('${name.replace(/'/g,"\\'")}',this.value)" style="width:64px;margin:0;flex-shrink:0;font-weight:700;text-align:center;">${opts}</select>
+    </div>`;
+  }).join('');
+}
+
+
 
 function addMatch() {
   const gf=parseInt(document.getElementById('m-gf').value)||0, ga=parseInt(document.getElementById('m-ga').value)||0;
@@ -1027,10 +1502,10 @@ function renderOverview() {
           const d = new Date(m.date||'');
           const datoStr = isNaN(d) ? (m.date||'–') : d.toLocaleDateString('no-NO',{day:'2-digit',month:'2-digit'});
           return `<tr>
-            <td style="font-size:12px;color:var(--text2);font-family:'Courier New',monospace;">${datoStr}</td>
+            <td style="font-size:12px;color:var(--text2);font-family:var(--mono);">${datoStr}</td>
             <td>${lagBadge(m.lag)}</td>
             <td>${m.opponent||m.motstander||'–'}</td>
-            <td>${resultBadge(m.result)} <span style="font-family:'Courier New',monospace;font-size:12px;">${m.goalsFor}–${m.goalsAgainst}</span></td>
+            <td>${resultBadge(m.result)} <span style="font-family:var(--mono);font-size:12px;">${m.goalsFor}–${m.goalsAgainst}</span></td>
           </tr>`;
         }).join('') + '</tbody></table>'
     : '<div class="empty-state">Ingen kamper ennå</div>';
@@ -1051,14 +1526,14 @@ function renderOverview() {
     ? '<table><thead><tr><th>Lag</th><th>K</th><th>S</th><th>U</th><th>T</th><th>Mål</th><th>MF</th></tr></thead><tbody>'
       + lagStats.map(s => {
           const mfStr = s.mf > 0 ? `+${s.mf}` : s.mf;
-          const mfCol = s.mf > 0 ? 'color:var(--accent)' : s.mf < 0 ? 'color:var(--red)' : '';
+          const mfCol = s.mf > 0 ? 'color:var(--green)' : s.mf < 0 ? 'color:var(--red)' : '';
           return `<tr>
             <td>${lagBadge(s.lag)}</td>
             <td>${s.k}</td>
             <td style="color:var(--accent);font-weight:bold">${s.w}</td>
             <td>${s.d}</td>
             <td style="color:var(--red)">${s.l}</td>
-            <td style="font-family:'Courier New',monospace;font-size:12px;">${s.gf}–${s.ga}</td>
+            <td style="font-family:var(--mono);font-size:12px;">${s.gf}–${s.ga}</td>
             <td style="font-weight:bold;${mfCol}">${mfStr}</td>
           </tr>`;
         }).join('') + '</tbody></table>'
@@ -1072,128 +1547,136 @@ function renderOverview() {
 // ─── ANALYSIS ────────────────────────────────────────────────────────────────
 
 function renderAnalysis() {
-  // ── Bygg datasett fra kampprogram ──────────────────────────────────────────
-  // Alle kamper med resultat (fra PROG_RESULTS + manuelt override)
-  const alleKamper = KAMPPROGRAM.map(k => {
-    const key = kampKey(k);
-    const res = getProgResult(key);
-    const absent = getProgAbsent(key);
-    if (!res) return null;
-    // Finn troppen fra 2026 Vår
-    const sd = seasons['2026 Vår'];
-    const lags = sd ? (sd.lags || sd) : {};
-    const tropp = (lags[k.lag]?.players || []);
-    const tilStede = tropp.filter(n => !absent.names.includes(n));
-    return { key, lag: k.lag, dato: k.dato, result: res.result, gf: res.gf, ga: res.ga, tropp, tilStede, absent: absent.names };
-  }).filter(Boolean);
+  const el = document.getElementById('tab-analyse');
+  const shortName = n => { const p = n.split(' '); return p.length >= 2 ? `${p[0]} ${p[p.length-1]}` : n; };
 
-  const spillteKamper = alleKamper.length;
+  // Sørg for at statistikken er oppdatert fra oppmøtedataene
+  recomputeAllStats();
 
-  // ── 1. Mest fraværende ─────────────────────────────────────────────────────
-  const absentCount = {};
-  const invitedCount = {};
-  alleKamper.forEach(k => {
-    k.tropp.forEach(n => { invitedCount[n] = (invitedCount[n]||0) + 1; });
-    k.absent.forEach(n => { absentCount[n] = (absentCount[n]||0) + 1; });
-  });
-  const absentList = Object.entries(absentCount)
-    .map(([name, count]) => ({ name, count, invited: invitedCount[name]||0, pct: Math.round(count/(invitedCount[name]||1)*100) }))
-    .sort((a,b) => b.count - a.count);
+  const allActs = getAllActivities();
+  const treningActs = allActs.filter(a => a.kind === 'trening');
+  const kampActs    = allActs.filter(a => a.kind === 'kamp');
+  const j13Acts     = allActs.filter(a => a.kind === 'j13');
+  const samlingActs = allActs.filter(a => a.kind === 'samling');
 
-  // ── 2. Mest til stede (spilte flest kamper) ────────────────────────────────
-  const presentCount = {};
-  alleKamper.forEach(k => {
-    k.tilStede.forEach(n => { presentCount[n] = (presentCount[n]||0) + 1; });
-  });
-  const presentList = Object.entries(presentCount)
-    .map(([name, count]) => ({ name, count, invited: invitedCount[name]||0 }))
-    .sort((a,b) => b.count - a.count);
+  const KAMP_D = {
+    "Byåsen 1":["2026-04-15","2026-04-19","2026-05-01","2026-05-08","2026-05-14","2026-05-16"],
+    "Byåsen 2":["2026-04-13","2026-04-19","2026-04-29","2026-05-10","2026-05-11"],
+    "Byåsen 3":["2026-04-08","2026-04-15","2026-04-27","2026-05-03","2026-05-10","2026-05-15","2026-05-23"]
+  };
 
-  // ── 3. Spillerpar – hvem har spilt flest kamper sammen ────────────────────
+  // ── 1. Treningsoppmøte (fra SPOND_DATA, kollisjonsjustert) ─────────────────
+  const treningList = SPOND_DATA
+    .map(p => ({ name: p.name, lag: p.lag, tp: p.tp, tt: p.tt, tpct: p.tpct }))
+    .filter(p => p.tt > 0)
+    .sort((a,b) => b.tpct - a.tpct);
+
+  // ── 2. Kampoppmøte (tropp-basert) ─────────────────────────────────────────
+  const kampList = SPOND_DATA
+    .map(p => ({ name: p.name, lag: p.lag, kp: p.kp, kt: p.kt, kpct: p.kpct }))
+    .filter(p => p.kt > 0)
+    .sort((a,b) => b.kpct - a.kpct);
+
+  // ── 3. Mest fraværende på trening (lavest oppmøte%) ────────────────────────
+  const fravList = [...treningList].sort((a,b) => a.tpct - b.tpct).slice(0, 12);
+
+  // ── 4. Spillerpar – flest treninger + kamper sammen ────────────────────────
+  const togetherActs = [...treningActs, ...kampActs];
   const pairs = {};
-  alleKamper.forEach(k => {
-    const pl = k.tilStede;
-    for (let i = 0; i < pl.length; i++) {
-      for (let j = i+1; j < pl.length; j++) {
-        const pk = [pl[i], pl[j]].sort().join('||');
-        if (!pairs[pk]) pairs[pk] = 0;
-        pairs[pk]++;
+  togetherActs.forEach(a => {
+    const present = SPOND_DATA.map(p=>p.name).filter(n => isPlayerPresent(n, a));
+    for (let i = 0; i < present.length; i++) {
+      for (let j = i+1; j < present.length; j++) {
+        const pk = [present[i], present[j]].sort().join('||');
+        pairs[pk] = (pairs[pk]||0) + 1;
       }
     }
   });
   const topPairs = Object.entries(pairs)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([pk, count]) => {
-      const [n1, n2] = pk.split('||');
-      const short = n => { const p = n.split(' '); return p.length >= 2 ? `${p[0]} ${p[p.length-1]}` : n; };
-      return { n1: short(n1), n2: short(n2), count };
-    });
+    .sort((a,b) => b[1]-a[1]).slice(0, 10)
+    .map(([pk, count]) => { const [n1,n2] = pk.split('||'); return { n1: shortName(n1), n2: shortName(n2), count }; });
 
-  // ── 4. Lånekamper (fra loans i historikk) ─────────────────────────────────
-  const loanCount = {};
-  Object.values(loans).forEach(sesLoans => {
-    sesLoans.forEach(l => { loanCount[l.name] = (loanCount[l.name]||0) + 1; });
+  // ── 5. J13-kamper (spilt for 2013) ─────────────────────────────────────────
+  const j13Count = {};
+  j13Acts.forEach(a => {
+    SPOND_DATA.forEach(p => { if (isPlayerPresent(p.name, a)) j13Count[p.name] = (j13Count[p.name]||0)+1; });
   });
-  const loanList = Object.entries(loanCount).sort((a,b) => b[1]-a[1]);
+  const j13List = Object.entries(j13Count).sort((a,b)=>b[1]-a[1]);
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-  const el = document.getElementById('tab-analyse');
+  // ── 6. Lånekamper (fra kampprogram-overstyringer) ──────────────────────────
+  const loanCount = {};
+  Object.values(progOverride).forEach(ov => {
+    (ov.loanNames||[]).forEach(n => { loanCount[n] = (loanCount[n]||0)+1; });
+  });
+  const loanList = Object.entries(loanCount).sort((a,b)=>b[1]-a[1]);
 
-  const shortName = n => { const p = n.split(' '); return p.length >= 2 ? `${p[0]} ${p[p.length-1]}` : n; };
+  const totalTrening = treningActs.length;
+  const totalKamp = kampActs.length;
 
-  el.innerHTML = spillteKamper === 0
-    ? '<div class="empty-state" style="padding:3rem;">Ingen kamper med resultat ennå. Legg inn resultater i Kampprogram-fanen.</div>'
-    : `
+  const pctColor = p => p>=70 ? 'var(--green)' : p>=50 ? 'var(--amber)' : 'var(--red)';
+  const lagDot = lag => `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${LAG_COLORS[lag]||'var(--text3)'};margin-right:5px;"></span>`;
+
+  function attTable(list, valKey, totKey, pctKey) {
+    return `<table><thead><tr><th>Spiller</th><th>Lag</th><th style="text-align:right">Deltatt</th><th style="text-align:right">%</th></tr></thead><tbody>
+      ${list.map(p => `<tr>
+        <td style="font-weight:600;">${shortName(p.name)}</td>
+        <td style="font-size:11px;color:var(--text2);">${lagDot(p.lag)}${p.lag.replace('Byåsen ','B')}</td>
+        <td style="text-align:right;font-family:var(--mono);font-size:12px;">${p[valKey]}/${p[totKey]}</td>
+        <td style="text-align:right;font-weight:700;color:${pctColor(p[pctKey])};">${p[pctKey]}%</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  }
+
+  if (totalTrening === 0 && totalKamp === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:3rem;">Ingen oppmøtedata ennå. Last opp en Spond-fil i Oppmøte-fanen.</div>';
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="metric-grid" style="margin-bottom:14px;">
+      <div class="metric"><div class="metric-label">Treninger</div><div class="metric-val">${totalTrening}</div></div>
+      <div class="metric"><div class="metric-label">Kamper</div><div class="metric-val">${totalKamp}</div></div>
+      <div class="metric"><div class="metric-label">Snitt treningsoppmøte</div><div class="metric-val">${treningList.length?Math.round(treningList.reduce((s,p)=>s+p.tpct,0)/treningList.length):0}<span style="font-size:16px;">%</span></div></div>
+      <div class="metric"><div class="metric-label">J13-kamper spilt</div><div class="metric-val">${j13Acts.length}</div></div>
+    </div>
+
     <div class="grid2" style="margin-bottom:14px;">
-
       <div class="card">
-        <div class="card-title">Mest fraværende · 2026 Vår</div>
-        ${absentList.length ? `<table><thead><tr><th>Spiller</th><th>Fravær</th><th>Invitert</th><th>%</th></tr></thead><tbody>
-          ${absentList.map(s => `<tr>
-            <td>${shortName(s.name)}</td>
-            <td style="color:var(--red);font-weight:bold">${s.count}</td>
-            <td style="color:var(--text2)">${s.invited}</td>
-            <td style="color:var(--red)">${s.pct}%</td>
-          </tr>`).join('')}
-        </tbody></table>` : '<div class="empty-state">Ingen fraværsdata</div>'}
+        <div class="card-title">Beste treningsoppmøte</div>
+        ${attTable(treningList.slice(0,12), 'tp','tt','tpct')}
       </div>
-
       <div class="card">
-        <div class="card-title">Flest kamper spilt · 2026 Vår</div>
-        ${presentList.length ? `<table><thead><tr><th>Spiller</th><th>Kamper</th><th>Av</th></tr></thead><tbody>
-          ${presentList.map(s => `<tr>
-            <td>${shortName(s.name)}</td>
-            <td style="color:var(--accent);font-weight:bold">${s.count}</td>
-            <td style="color:var(--text2)">${s.invited}</td>
-          </tr>`).join('')}
-        </tbody></table>` : '<div class="empty-state">Ingen data</div>'}
+        <div class="card-title">Mest fraværende på trening</div>
+        ${attTable(fravList, 'tp','tt','tpct')}
       </div>
+    </div>
 
+    <div class="grid2" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-title">Beste kampoppmøte</div>
+        ${attTable(kampList.slice(0,12), 'kp','kt','kpct')}
+      </div>
+      <div class="card">
+        <div class="card-title">Spiller mest sammen · topp 10 par</div>
+        ${topPairs.length ? `<table><thead><tr><th>Spillerpar</th><th style="text-align:right">Økter</th></tr></thead><tbody>
+          ${topPairs.map((p,i) => `<tr><td>${i+1}. ${p.n1} + ${p.n2}</td><td style="text-align:right;font-weight:700;">${p.count}</td></tr>`).join('')}
+        </tbody></table>` : '<div class="empty-state">Ikke nok data</div>'}
+      </div>
     </div>
 
     <div class="grid2">
-
       <div class="card">
-        <div class="card-title">Spiller mest sammen · topp 10 par</div>
-        ${topPairs.length ? `<table><thead><tr><th>Spillerpar</th><th>Kamper</th></tr></thead><tbody>
-          ${topPairs.map((p,i) => `<tr>
-            <td>${i+1}. ${p.n1} + ${p.n2}</td>
-            <td style="font-weight:bold">${p.count}</td>
-          </tr>`).join('')}
-        </tbody></table>` : '<div class="empty-state">Ikke nok data ennå</div>'}
+        <div class="card-title">Spilt J13-kamp (2013)</div>
+        ${j13List.length ? `<table><thead><tr><th>Spiller</th><th style="text-align:right">J13-kamper</th></tr></thead><tbody>
+          ${j13List.map(([name,count]) => `<tr><td style="font-weight:600;">${shortName(name)}</td><td style="text-align:right;font-weight:700;color:var(--purple);">${count}</td></tr>`).join('')}
+        </tbody></table>` : '<div class="empty-state">Ingen J13-kamper ennå</div>'}
       </div>
-
       <div class="card">
-        <div class="card-title">Flest lånekamper registrert</div>
-        ${loanList.length ? `<table><thead><tr><th>Spiller</th><th>Lånekamper</th></tr></thead><tbody>
-          ${loanList.map(([name, count]) => `<tr>
-            <td>${shortName(name)}</td>
-            <td style="font-weight:bold">${count}</td>
-          </tr>`).join('')}
-        </tbody></table>` : '<div class="empty-state">Ingen lånespillere registrert i Historikk-fanen</div>'}
+        <div class="card-title">Flest lånekamper</div>
+        ${loanList.length ? `<table><thead><tr><th>Spiller</th><th style="text-align:right">Lånekamper</th></tr></thead><tbody>
+          ${loanList.map(([name,count]) => `<tr><td style="font-weight:600;">${shortName(name)}</td><td style="text-align:right;font-weight:700;color:var(--accent);">${count}</td></tr>`).join('')}
+        </tbody></table>` : '<div class="empty-state">Ingen lånespillere registrert i Kampprogram-fanen</div>'}
       </div>
-
     </div>`;
 }
 
@@ -1365,6 +1848,14 @@ function saveKampData(key) {
     absentNames.push(cb.dataset.name);
   });
   if (absentNames.length) progOverride[key].absentNames = absentNames;
+  else delete progOverride[key].absentNames;
+  // Collect loan players from checkboxes
+  const loanNames = [];
+  document.querySelectorAll('input[data-loan="'+key+'"]:checked').forEach(cb => {
+    loanNames.push(cb.dataset.name);
+  });
+  if (loanNames.length) progOverride[key].loanNames = loanNames;
+  else delete progOverride[key].loanNames;
   if (noteEl && noteEl.value.trim()) progOverride[key].note = noteEl.value.trim();
   saveProgOverride();
   activePanelKey = null;
@@ -1415,6 +1906,19 @@ function renderProgram() {
     return ld.players.slice().sort((a, b) => a.localeCompare(b, 'no'));
   }
 
+  // Spillere fra ANDRE lag (kan lånes inn) – gruppert per lag
+  function getOtherLagPlayers(lagNavn) {
+    const sd = seasons['2026 Vår'];
+    if (!sd) return {};
+    const lags = sd.lags || sd;
+    const out = {};
+    Object.keys(lags).sort().forEach(l => {
+      if (l === lagNavn) return;
+      out[l] = (lags[l].players || []).slice().sort((a,b)=>a.localeCompare(b,'no'));
+    });
+    return out;
+  }
+
   el.innerHTML = Object.entries(byMonth).map(([month, kamper]) => {
     const label = monthNames[month] || month;
     const spilt = kamper.filter(k => getProgResult(kampKey(k)));
@@ -1445,7 +1949,7 @@ function renderProgram() {
       if (res) {
         const rb = resultBadge(res.result);
         const src = res.manual ? '' : '';
-        resultCell = `${rb} <span style="font-family:'Courier New',monospace;font-size:12px;">${res.gf}–${res.ga}</span>`;
+        resultCell = `${rb} <span style="font-family:var(--mono);font-size:12px;">${res.gf}–${res.ga}</span>`;
       }
 
       // Fraværscelle
@@ -1480,6 +1984,25 @@ function renderProgram() {
         const curGa = res ? res.ga : '';
         const curNote = ov.note || '';
 
+        // Lånespillere – velg fra andre lag
+        const currentLoans = ov.loanNames || [];
+        const otherLag = getOtherLagPlayers(k.lag);
+        const loanGroups = Object.entries(otherLag).map(([l, plrs]) => {
+          const chips = plrs.map(name => {
+            const p = name.split(' ');
+            const displayName = p.length >= 2 ? `${p[0]} ${p[p.length-1]}` : name;
+            const isLoan = currentLoans.includes(name);
+            return `<label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;margin:2px;background:${isLoan?'var(--accent-light)':'var(--surface)'};color:${isLoan?'var(--accent)':'var(--text)'};">
+              <input type="checkbox" data-loan="${key}" data-name="${name}" ${isLoan?'checked':''} style="width:auto;margin:0;" onchange="this.closest('label').style.background=this.checked?'var(--accent-light)':'var(--surface)';this.closest('label').style.color=this.checked?'var(--accent)':'var(--text)';">
+              ${displayName}
+            </label>`;
+          }).join('');
+          return `<div style="margin-bottom:8px;">
+            <div style="font-size:10px;font-weight:700;color:${LAG_COLORS[l]||'var(--text3)'};text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">${l}</div>
+            <div>${chips}</div>
+          </div>`;
+        }).join('');
+
         panelHtml = `<tr id="panel-${sid}"><td colspan="8" style="padding:0;">
           <div style="background:var(--surface2);border-top:1px solid var(--border);padding:14px 16px;">
             <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px;">
@@ -1496,23 +2019,37 @@ function renderProgram() {
                 <input type="text" id="kd-note-${sid}" value="${curNote}" placeholder="Kort notat" style="width:180px;margin:0;">
               </div>
               <button class="btn-primary" onclick="saveKampData('${key}')">Lagre</button>
-              ${(res && res.manual) || ov.absentNames ? `<button class="btn-sm" onclick="clearKampData('${key}')">Nullstill</button>` : ''}
+              ${(res && res.manual) || ov.absentNames || ov.loanNames ? `<button class="btn-sm" onclick="clearKampData('${key}')">Nullstill</button>` : ''}
               <button class="btn-sm" onclick="activePanelKey=null;renderProgram()">Lukk</button>
             </div>
-            <div>
+            <div style="margin-bottom:14px;">
               <label style="display:block;margin-bottom:8px;">Fraværende <span style="font-size:11px;color:var(--text3);font-weight:normal;">(kryss av hvem som ikke spilte)</span></label>
               <div>${playerCheckboxes || '<span style="font-size:12px;color:var(--text3);">Ingen spillere i 2026 Vår-oppsettet</span>'}</div>
+            </div>
+            <div>
+              <label style="display:block;margin-bottom:8px;">Lånespillere <span style="font-size:11px;color:var(--text3);font-weight:normal;">(velg spillere lånt inn fra andre lag)</span></label>
+              <div>${loanGroups || '<span style="font-size:12px;color:var(--text3);">Ingen andre lag</span>'}</div>
             </div>
           </div>
         </td></tr>`;
       }
 
+      // Lånespillere-visning
+      let loanCell = '';
+      if (ov.loanNames && ov.loanNames.length) {
+        const lns = ov.loanNames.map(n => {
+          const p = n.split(' ');
+          return p.length >= 2 ? `${p[0]} ${p[p.length-1]}` : n;
+        });
+        loanCell = ` <span style="font-size:11px;color:var(--accent);">↻ ${lns.join(', ')}</span>`;
+      }
+
       return `<tr style="${rowBg}cursor:pointer;" onclick="togglePanel('${key}')">
-        <td style="font-size:12px;font-family:'Courier New',monospace;white-space:nowrap;">${datoStr} <span style="color:var(--text3)">${dagNavn}</span></td>
-        <td style="font-size:12px;font-family:'Courier New',monospace;color:var(--text2);">${k.tid}</td>
+        <td style="font-size:12px;font-family:var(--mono);white-space:nowrap;">${datoStr} <span style="color:var(--text3)">${dagNavn}</span></td>
+        <td style="font-size:12px;font-family:var(--mono);color:var(--text2);">${k.tid}</td>
         <td>${lagBadge(k.lag)}</td>
         <td>${venueBadge}</td>
-        <td><strong>${k.motstander}</strong>${ov.note ? ` <span style="font-size:11px;color:var(--text3);">· ${ov.note}</span>` : ''}
+        <td><strong>${k.motstander}</strong>${ov.note ? ` <span style="font-size:11px;color:var(--text3);">· ${ov.note}</span>` : ''}${loanCell}
           <span style="float:right;color:var(--text3);font-size:11px;">${isOpen?'▲':'▼'}</span></td>
         <td>${resultCell}</td>
         <td style="font-size:11px;max-width:180px;">${absentCell}</td>
@@ -1756,10 +2293,10 @@ function renderHistStat(sesong, lagFilter) {
     const gf=km.reduce((s,r)=>s+r.gf,0), ga=km.reduce((s,r)=>s+r.ga,0);
     const c = LAG_COLORS[lag]||'#888';
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow);">
-      <div style="font-size:11px;font-weight:bold;color:${c};font-family:'Courier New',monospace;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;">${lag}</div>
+      <div style="font-size:11px;font-weight:bold;color:${c};font-family:var(--mono);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;">${lag}</div>
       <div style="font-size:22px;font-weight:normal;letter-spacing:-0.03em;margin-bottom:4px;">${km.length}K</div>
-      <div style="font-size:12px;font-family:'Courier New',monospace;">
-        <span style="color:var(--accent);font-weight:bold;">${w}S</span> · ${d}U · <span style="color:var(--red);">${l}T</span>
+      <div style="font-size:12px;font-family:var(--mono);">
+        <span style="color:var(--green);font-weight:500;">${w}S</span> · ${d}U · <span style="color:var(--red);">${l}T</span>
         &nbsp;|&nbsp; ${gf}–${ga}
       </div>
     </div>`;
@@ -1797,7 +2334,7 @@ function renderHistorikk() {
         + sesLoans.map(l => `<tr>
           <td style="font-weight:bold">${l.name}</td>
           <td>${l.team}</td>
-          <td style="font-size:12px;color:var(--text2);font-family:'Courier New',monospace;">${l.date||'–'}</td>
+          <td style="font-size:12px;color:var(--text2);font-family:var(--mono);">${l.date||'–'}</td>
           <td style="font-size:12px;color:var(--text2);">${l.note}</td>
           <td><button class="btn-danger" onclick="removeLoan(${l.id})">×</button></td>
         </tr>`).join('')
@@ -1831,11 +2368,11 @@ function renderHistorikk() {
       const datoStr=d2.toLocaleDateString('no-NO',{day:'2-digit',month:'2-digit'});
       const vb=r.venue==='H'?'<span class="badge badge-green">H</span>':'<span class="badge badge-red">B</span>';
       return `<tr>
-        <td style="font-size:12px;font-family:'Courier New',monospace;white-space:nowrap;">${datoStr} <span style="color:var(--text3)">${dagNavn}</span></td>
+        <td style="font-size:12px;font-family:var(--mono);white-space:nowrap;">${datoStr} <span style="color:var(--text3)">${dagNavn}</span></td>
         <td style="font-size:11px;color:var(--text3);">${r.runde}</td>
         <td>${vb}</td>
         <td><strong>${r.motstander}</strong></td>
-        <td>${resultBadge(r.result)} <span style="font-family:'Courier New',monospace;font-size:12px;">${r.gf}–${r.ga}</span></td>
+        <td>${resultBadge(r.result)} <span style="font-family:var(--mono);font-size:12px;">${r.gf}–${r.ga}</span></td>
         <td style="font-size:12px;color:var(--text2);">${r.bane}</td>
       </tr>`;
     }).join('')}</tbody></table></div>`;
@@ -1847,89 +2384,93 @@ function setHistSesong(s) { activeHistSesong = s; renderHistorikk(); }
 // ─── OPPMØTE ─────────────────────────────────────────────────────────────────
 
 const SPOND_DATA = [
-  {"name":"Eline Sandøy",               "lag":"Byåsen 1","tp":9,"tt":12,"tex":1,"tpct":75,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Jenny Holsen",               "lag":"Byåsen 1","tp":7,"tt":12,"tex":1,"tpct":58,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Maiken Hektoen Vullum",      "lag":"Byåsen 1","tp":8,"tt":12,"tex":1,"tpct":67,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Leah Håkegård Heineman",     "lag":"Byåsen 1","tp":6,"tt":12,"tex":1,"tpct":50,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Pernille Fevaag Heger",      "lag":"Byåsen 1","tp":8,"tt":12,"tex":1,"tpct":67,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
-  {"name":"Marie Skogan",               "lag":"Byåsen 1","tp":7,"tt":12,"tex":1,"tpct":58,"kp":5,"kt":6,"kpct":83,"sam":0,"j13":0},
-  {"name":"Mali Olsø-Aune",             "lag":"Byåsen 1","tp":3,"tt":12,"tex":1,"tpct":25,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":1},
-  {"name":"Linde Lund-Tyvoll",          "lag":"Byåsen 1","tp":2,"tt":12,"tex":1,"tpct":17,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
-  {"name":"Ines Eithun Gabrielsen",     "lag":"Byåsen 1","tp":2,"tt":12,"tex":1,"tpct":17,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
-  {"name":"Agnes Sofie Hoen",           "lag":"Byåsen 1","tp":7,"tt":12,"tex":1,"tpct":58,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":0},
-  {"name":"Aurora Bye-Bakke",           "lag":"Byåsen 1","tp":4,"tt":12,"tex":1,"tpct":33,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":1},
-  {"name":"Jenny Engelsen",             "lag":"Byåsen 1","tp":5,"tt":12,"tex":1,"tpct":42,"kp":4,"kt":6,"kpct":67,"sam":0,"j13":0},
-  {"name":"Ingeborg Johannessen",       "lag":"Byåsen 1","tp":4,"tt":12,"tex":1,"tpct":33,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":0},
-  {"name":"Solvor Waterloo Farstad",    "lag":"Byåsen 1","tp":11,"tt":12,"tex":1,"tpct":92,"kp":4,"kt":6,"kpct":67,"sam":0,"j13":0},
-  {"name":"Oda Gartland",               "lag":"Byåsen 1","tp":5,"tt":12,"tex":1,"tpct":42,"kp":3,"kt":6,"kpct":50,"sam":1,"j13":0},
-  {"name":"Siri Ormberg",               "lag":"Byåsen 2","tp":10,"tt":10,"tex":3,"tpct":100,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
-  {"name":"Hanna Elvebakk",             "lag":"Byåsen 2","tp":8,"tt":10,"tex":3,"tpct":80,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":1},
-  {"name":"Pernille Eikemo-Nilsen",     "lag":"Byåsen 2","tp":6,"tt":10,"tex":3,"tpct":60,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":1},
-  {"name":"Aliah Fjeldavli Nordvik",    "lag":"Byåsen 2","tp":3,"tt":10,"tex":3,"tpct":30,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
-  {"name":"Runa Buvarp Julsrud",        "lag":"Byåsen 2","tp":3,"tt":10,"tex":3,"tpct":30,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
-  {"name":"Nora Elise Rosvold",         "lag":"Byåsen 2","tp":5,"tt":10,"tex":3,"tpct":50,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
-  {"name":"Frida Aamodt",               "lag":"Byåsen 2","tp":5,"tt":10,"tex":3,"tpct":50,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
-  {"name":"Elise Fredriksen",           "lag":"Byåsen 2","tp":5,"tt":10,"tex":3,"tpct":50,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
-  {"name":"Erle Granviken",             "lag":"Byåsen 2","tp":8,"tt":10,"tex":3,"tpct":80,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
-  {"name":"Arja Utengen Larsen",        "lag":"Byåsen 2","tp":6,"tt":10,"tex":3,"tpct":60,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
-  {"name":"Ingeborg Kjærsgaard Persen", "lag":"Byåsen 2","tp":6,"tt":10,"tex":3,"tpct":60,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
-  {"name":"Sara Hagen",                 "lag":"Byåsen 2","tp":5,"tt":10,"tex":3,"tpct":50,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
-  {"name":"Nora Fredriksli",            "lag":"Byåsen 2","tp":4,"tt":10,"tex":3,"tpct":40,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
-  {"name":"Pernille Viggen Hansen",     "lag":"Byåsen 2","tp":4,"tt":10,"tex":3,"tpct":40,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
-  {"name":"Bertine Mostervik Røhmen",   "lag":"Byåsen 2","tp":2,"tt":10,"tex":3,"tpct":20,"kp":3,"kt":5,"kpct":60,"sam":1,"j13":0},
-  {"name":"Hild Midbøe Rognstad",       "lag":"Byåsen 3","tp":9,"tt":10,"tex":3,"tpct":90,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Emma Øverås Karlsen",        "lag":"Byåsen 3","tp":5,"tt":10,"tex":3,"tpct":50,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Astrid Øverås Karlsen",      "lag":"Byåsen 3","tp":5,"tt":10,"tex":3,"tpct":50,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Elin Afom Kifle",            "lag":"Byåsen 3","tp":4,"tt":10,"tex":3,"tpct":40,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Hafsah Mohamed",             "lag":"Byåsen 3","tp":4,"tt":10,"tex":3,"tpct":40,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
-  {"name":"Julie Hirsch",               "lag":"Byåsen 3","tp":3,"tt":10,"tex":3,"tpct":30,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":1},
-  {"name":"Erika Asklund Hagen",        "lag":"Byåsen 3","tp":1,"tt":10,"tex":3,"tpct":10,"kp":6,"kt":6,"kpct":100,"sam":0,"j13":0},
-  {"name":"Elsa Rennemo",               "lag":"Byåsen 3","tp":9,"tt":10,"tex":3,"tpct":90,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
-  {"name":"Synnøve Halvorsrød Bjerve",  "lag":"Byåsen 3","tp":7,"tt":10,"tex":3,"tpct":70,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":1},
-  {"name":"Sigrid Nordengen Lohn",      "lag":"Byåsen 3","tp":5,"tt":10,"tex":3,"tpct":50,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
-  {"name":"Sofie Minde Elveseter",      "lag":"Byåsen 3","tp":3,"tt":10,"tex":3,"tpct":30,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
-  {"name":"Ellen Skei Rasmussen",       "lag":"Byåsen 3","tp":8,"tt":10,"tex":3,"tpct":80,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":0},
-  {"name":"Milla Aurora Jakobsen",      "lag":"Byåsen 3","tp":4,"tt":10,"tex":3,"tpct":40,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":0},
-  {"name":"Betelhem Daniel",            "lag":"Byåsen 3","tp":2,"tt":10,"tex":3,"tpct":20,"kp":2,"kt":6,"kpct":33,"sam":1,"j13":0},
+  {"name":"Eline Sandøy",               "lag":"Byåsen 1","tp":11,"tt":15,"tex":1,"tpct":73,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
+  {"name":"Jenny Holsen",               "lag":"Byåsen 1","tp":9,"tt":15,"tex":1,"tpct":60,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
+  {"name":"Maiken Hektoen Vullum",      "lag":"Byåsen 1","tp":10,"tt":15,"tex":1,"tpct":67,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
+  {"name":"Leah Håkegård Heineman",     "lag":"Byåsen 1","tp":6,"tt":15,"tex":1,"tpct":40,"kp":6,"kt":6,"kpct":100,"sam":1,"j13":0},
+  {"name":"Pernille Fevaag Heger",      "lag":"Byåsen 1","tp":10,"tt":15,"tex":1,"tpct":67,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
+  {"name":"Marie Skogan",               "lag":"Byåsen 1","tp":8,"tt":15,"tex":1,"tpct":53,"kp":5,"kt":6,"kpct":83,"sam":0,"j13":0},
+  {"name":"Mali Olsø-Aune",             "lag":"Byåsen 1","tp":3,"tt":15,"tex":1,"tpct":20,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":1},
+  {"name":"Linde Lund-Tyvoll",          "lag":"Byåsen 1","tp":3,"tt":15,"tex":1,"tpct":20,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
+  {"name":"Ines Eithun Gabrielsen",     "lag":"Byåsen 1","tp":3,"tt":15,"tex":1,"tpct":20,"kp":5,"kt":6,"kpct":83,"sam":1,"j13":0},
+  {"name":"Agnes Sofie Hoen",           "lag":"Byåsen 1","tp":10,"tt":15,"tex":1,"tpct":67,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":0},
+  {"name":"Aurora Bye-Bakke",           "lag":"Byåsen 1","tp":5,"tt":15,"tex":1,"tpct":33,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":1},
+  {"name":"Jenny Engelsen",             "lag":"Byåsen 1","tp":7,"tt":15,"tex":1,"tpct":47,"kp":4,"kt":6,"kpct":67,"sam":0,"j13":0},
+  {"name":"Ingeborg Johannessen",       "lag":"Byåsen 1","tp":6,"tt":15,"tex":1,"tpct":40,"kp":4,"kt":6,"kpct":67,"sam":1,"j13":0},
+  {"name":"Solvor Waterloo Farstad",    "lag":"Byåsen 1","tp":12,"tt":15,"tex":1,"tpct":80,"kp":4,"kt":6,"kpct":67,"sam":0,"j13":0},
+  {"name":"Oda Gartland",               "lag":"Byåsen 1","tp":6,"tt":15,"tex":1,"tpct":40,"kp":3,"kt":6,"kpct":50,"sam":1,"j13":0},
+  {"name":"Siri Ormberg",               "lag":"Byåsen 2","tp":12,"tt":13,"tex":3,"tpct":92,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
+  {"name":"Hanna Elvebakk",             "lag":"Byåsen 2","tp":10,"tt":13,"tex":3,"tpct":77,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":1},
+  {"name":"Pernille Eikemo-Nilsen",     "lag":"Byåsen 2","tp":8,"tt":13,"tex":3,"tpct":62,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":1},
+  {"name":"Aliah Fjeldavli Nordvik",    "lag":"Byåsen 2","tp":5,"tt":13,"tex":3,"tpct":38,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
+  {"name":"Runa Buvarp Julsrud",        "lag":"Byåsen 2","tp":5,"tt":13,"tex":3,"tpct":38,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
+  {"name":"Nora Elise Rosvold",         "lag":"Byåsen 2","tp":7,"tt":13,"tex":3,"tpct":54,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
+  {"name":"Frida Aamodt",               "lag":"Byåsen 2","tp":7,"tt":13,"tex":3,"tpct":54,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
+  {"name":"Elise Fredriksen",           "lag":"Byåsen 2","tp":6,"tt":13,"tex":3,"tpct":46,"kp":5,"kt":5,"kpct":100,"sam":1,"j13":0},
+  {"name":"Erle Granviken",             "lag":"Byåsen 2","tp":9,"tt":13,"tex":3,"tpct":69,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":1},
+  {"name":"Arja Utengen Larsen",        "lag":"Byåsen 2","tp":8,"tt":13,"tex":3,"tpct":62,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
+  {"name":"Ingeborg Kjærsgaard Persen", "lag":"Byåsen 2","tp":8,"tt":13,"tex":3,"tpct":62,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
+  {"name":"Sara Hagen",                 "lag":"Byåsen 2","tp":7,"tt":13,"tex":3,"tpct":54,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
+  {"name":"Nora Fredriksli",            "lag":"Byåsen 2","tp":5,"tt":13,"tex":3,"tpct":38,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
+  {"name":"Pernille Viggen Hansen",     "lag":"Byåsen 2","tp":6,"tt":13,"tex":3,"tpct":46,"kp":4,"kt":5,"kpct":80,"sam":1,"j13":0},
+  {"name":"Bertine Mostervik Røhmen",   "lag":"Byåsen 2","tp":2,"tt":13,"tex":3,"tpct":15,"kp":3,"kt":5,"kpct":60,"sam":1,"j13":0},
+  {"name":"Hild Midbøe Rognstad",       "lag":"Byåsen 3","tp":12,"tt":13,"tex":3,"tpct":92,"kp":7,"kt":7,"kpct":100,"sam":1,"j13":0},
+  {"name":"Emma Øverås Karlsen",        "lag":"Byåsen 3","tp":7,"tt":13,"tex":3,"tpct":54,"kp":7,"kt":7,"kpct":100,"sam":1,"j13":0},
+  {"name":"Astrid Øverås Karlsen",      "lag":"Byåsen 3","tp":7,"tt":13,"tex":3,"tpct":54,"kp":7,"kt":7,"kpct":100,"sam":1,"j13":0},
+  {"name":"Elin Afom Kifle",            "lag":"Byåsen 3","tp":5,"tt":13,"tex":3,"tpct":38,"kp":7,"kt":7,"kpct":100,"sam":1,"j13":0},
+  {"name":"Hafsah Mohamed",             "lag":"Byåsen 3","tp":4,"tt":13,"tex":3,"tpct":31,"kp":7,"kt":7,"kpct":100,"sam":1,"j13":0},
+  {"name":"Julie Hirsch",               "lag":"Byåsen 3","tp":6,"tt":13,"tex":3,"tpct":46,"kp":7,"kt":7,"kpct":100,"sam":1,"j13":1},
+  {"name":"Erika Asklund Hagen",        "lag":"Byåsen 3","tp":1,"tt":13,"tex":3,"tpct":8,"kp":6,"kt":7,"kpct":86,"sam":0,"j13":0},
+  {"name":"Elsa Rennemo",               "lag":"Byåsen 3","tp":10,"tt":13,"tex":3,"tpct":77,"kp":6,"kt":7,"kpct":86,"sam":1,"j13":0},
+  {"name":"Synnøve Halvorsrød Bjerve",  "lag":"Byåsen 3","tp":9,"tt":13,"tex":3,"tpct":69,"kp":5,"kt":7,"kpct":71,"sam":1,"j13":1},
+  {"name":"Sigrid Nordengen Lohn",      "lag":"Byåsen 3","tp":7,"tt":13,"tex":3,"tpct":54,"kp":5,"kt":7,"kpct":71,"sam":1,"j13":0},
+  {"name":"Sofie Minde Elveseter",      "lag":"Byåsen 3","tp":5,"tt":13,"tex":3,"tpct":38,"kp":6,"kt":7,"kpct":86,"sam":1,"j13":0},
+  {"name":"Ellen Skei Rasmussen",       "lag":"Byåsen 3","tp":9,"tt":13,"tex":3,"tpct":69,"kp":4,"kt":7,"kpct":57,"sam":1,"j13":0},
+  {"name":"Milla Aurora Jakobsen",      "lag":"Byåsen 3","tp":6,"tt":13,"tex":3,"tpct":46,"kp":5,"kt":7,"kpct":71,"sam":1,"j13":0},
+  {"name":"Betelhem Daniel",            "lag":"Byåsen 3","tp":2,"tt":13,"tex":3,"tpct":15,"kp":0,"kt":7,"kpct":0,"sam":1,"j13":0},
 ];
 
 // Aktiviteter per dato for heatmap
 const SPOND_ACTIVITIES = [
   {dato:"2026-04-08", kind:"kamp",    lag:"Byåsen 3",  label:"Kamp Byåsen 3",   present:["Hild Midbøe Rognstad","Synnøve Halvorsrød Bjerve","Ellen Skei Rasmussen","Emma Øverås Karlsen","Astrid Øverås Karlsen","Sigrid Nordengen Lohn","Elin Afom Kifle","Hafsah Mohamed","Julie Hirsch","Milla Aurora Jakobsen","Sofie Minde Elveseter","Erika Asklund Hagen"]},
-  {dato:"2026-04-09", kind:"trening", lag:null,         label:"Trening",         present:["Siri Ormberg","Maiken Hektoen Vullum","Solvor Waterloo Farstad","Hanna Elvebakk","Pernille Eikemo-Nilsen","Ellen Skei Rasmussen","Erle Granviken","Agnes Sofie Hoen","Marie Skogan","Arja Utengen Larsen","Sigrid Nordengen Lohn","Elin Afom Kifle","Ingeborg Kjærsgaard Persen","Frida Aamodt","Mali Olsø-Aune","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Nora Fredriksli","Betelhem Daniel"]},
-  {dato:"2026-04-10", kind:"samling", lag:null,         label:"⭐ Meråker",      present:["Eline Sandøy","Siri Ormberg","Hild Midbøe Rognstad","Maiken Hektoen Vullum","Jenny Holsen","Elsa Rennemo","Hanna Elvebakk","Pernille Fevaag Heger","Synnøve Halvorsrød Bjerve","Pernille Eikemo-Nilsen","Ellen Skei Rasmussen","Leah Håkegård Heineman","Erle Granviken","Emma Øverås Karlsen","Astrid Øverås Karlsen","Agnes Sofie Hoen","Arja Utengen Larsen","Sigrid Nordengen Lohn","Nora Elise Rosvold","Elin Afom Kifle","Ingeborg Kjærsgaard Persen","Frida Aamodt","Hafsah Mohamed","Sara Hagen","Elise Fredriksen","Julie Hirsch","Aurora Bye-Bakke","Mali Olsø-Aune","Milla Aurora Jakobsen","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Sofie Minde Elveseter","Pernille Viggen Hansen","Ingeborg Johannessen","Oda Gartland","Nora Fredriksli","Linde Lund-Tyvoll","Ines Eithun Gabrielsen","Bertine Mostervik Røhmen","Betelhem Daniel"]},
-  {dato:"2026-04-13", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Hild Midbøe Rognstad","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Elsa Rennemo","Pernille Fevaag Heger","Ellen Skei Rasmussen","Leah Håkegård Heineman","Agnes Sofie Hoen","Marie Skogan","Elin Afom Kifle","Hafsah Mohamed","Sofie Minde Elveseter","Oda Gartland","Jenny Engelsen","Ines Eithun Gabrielsen","Erika Asklund Hagen"]},
+  {dato:"2026-04-09", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Aliah Fjeldavli Nordvik", "Arja Utengen Larsen", "Betelhem Daniel", "Elin Afom Kifle", "Ellen Skei Rasmussen", "Erle Granviken", "Frida Aamodt", "Hanna Elvebakk", "Ingeborg Kjærsgaard Persen", "Maiken Hektoen Vullum", "Mali Olsø-Aune", "Marie Skogan", "Nora Fredriksli", "Pernille Eikemo-Nilsen", "Runa Buvarp Julsrud", "Sigrid Nordengen Lohn", "Siri Ormberg", "Solvor Waterloo Farstad"]},
+  {dato:"2026-04-10", kind:"samling", lag:null, label:"⭐ Meråker", present:["Agnes Sofie Hoen", "Aliah Fjeldavli Nordvik", "Arja Utengen Larsen", "Astrid Øverås Karlsen", "Aurora Bye-Bakke", "Bertine Mostervik Røhmen", "Betelhem Daniel", "Elin Afom Kifle", "Eline Sandøy", "Elise Fredriksen", "Ellen Skei Rasmussen", "Elsa Rennemo", "Emma Øverås Karlsen", "Erle Granviken", "Frida Aamodt", "Hafsah Mohamed", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Ines Eithun Gabrielsen", "Ingeborg Johannessen", "Ingeborg Kjærsgaard Persen", "Jenny Holsen", "Julie Hirsch", "Leah Håkegård Heineman", "Linde Lund-Tyvoll", "Maiken Hektoen Vullum", "Mali Olsø-Aune", "Milla Aurora Jakobsen", "Nora Elise Rosvold", "Nora Fredriksli", "Oda Gartland", "Pernille Eikemo-Nilsen", "Pernille Fevaag Heger", "Pernille Viggen Hansen", "Runa Buvarp Julsrud", "Sara Hagen", "Sigrid Nordengen Lohn", "Siri Ormberg", "Sofie Minde Elveseter", "Synnøve Halvorsrød Bjerve"]},
   {dato:"2026-04-13", kind:"kamp",    lag:"Byåsen 2",  label:"Kamp Byåsen 2",   present:["Siri Ormberg","Hanna Elvebakk","Pernille Eikemo-Nilsen","Erle Granviken","Arja Utengen Larsen","Nora Elise Rosvold","Ingeborg Kjærsgaard Persen","Frida Aamodt","Sara Hagen","Elise Fredriksen","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Pernille Viggen Hansen"]},
+  {dato:"2026-04-13", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Elin Afom Kifle", "Eline Sandøy", "Ellen Skei Rasmussen", "Elsa Rennemo", "Erika Asklund Hagen", "Hafsah Mohamed", "Hild Midbøe Rognstad", "Ines Eithun Gabrielsen", "Jenny Engelsen", "Jenny Holsen", "Leah Håkegård Heineman", "Maiken Hektoen Vullum", "Marie Skogan", "Oda Gartland", "Pernille Fevaag Heger", "Sofie Minde Elveseter", "Solvor Waterloo Farstad"]},
   {dato:"2026-04-15", kind:"kamp",    lag:"Byåsen 1",  label:"Kamp Byåsen 1",   present:["Eline Sandøy","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Pernille Fevaag Heger","Leah Håkegård Heineman","Agnes Sofie Hoen","Marie Skogan","Aurora Bye-Bakke","Mali Olsø-Aune","Ingeborg Johannessen","Oda Gartland","Jenny Engelsen","Linde Lund-Tyvoll","Ines Eithun Gabrielsen"]},
   {dato:"2026-04-15", kind:"kamp",    lag:"Byåsen 3",  label:"Kamp Byåsen 3",   present:["Hild Midbøe Rognstad","Elsa Rennemo","Ellen Skei Rasmussen","Emma Øverås Karlsen","Astrid Øverås Karlsen","Sigrid Nordengen Lohn","Elin Afom Kifle","Hafsah Mohamed","Julie Hirsch","Sofie Minde Elveseter","Erika Asklund Hagen","Betelhem Daniel"]},
-  {dato:"2026-04-16", kind:"trening", lag:null,         label:"Trening",         present:["Siri Ormberg","Hild Midbøe Rognstad","Maiken Hektoen Vullum","Solvor Waterloo Farstad","Elsa Rennemo","Hanna Elvebakk","Pernille Eikemo-Nilsen","Ellen Skei Rasmussen","Leah Håkegård Heineman","Erle Granviken","Agnes Sofie Hoen","Arja Utengen Larsen","Sigrid Nordengen Lohn","Nora Elise Rosvold","Elin Afom Kifle","Ingeborg Kjærsgaard Persen","Frida Aamodt","Hafsah Mohamed","Julie Hirsch","Mali Olsø-Aune","Milla Aurora Jakobsen","Pernille Viggen Hansen","Ingeborg Johannessen","Nora Fredriksli","Betelhem Daniel"]},
+  {dato:"2026-04-16", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Arja Utengen Larsen", "Betelhem Daniel", "Elin Afom Kifle", "Ellen Skei Rasmussen", "Elsa Rennemo", "Erle Granviken", "Frida Aamodt", "Hafsah Mohamed", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Ingeborg Johannessen", "Ingeborg Kjærsgaard Persen", "Julie Hirsch", "Leah Håkegård Heineman", "Maiken Hektoen Vullum", "Mali Olsø-Aune", "Milla Aurora Jakobsen", "Nora Elise Rosvold", "Nora Fredriksli", "Pernille Eikemo-Nilsen", "Pernille Viggen Hansen", "Sigrid Nordengen Lohn", "Siri Ormberg", "Solvor Waterloo Farstad"]},
+  {dato:"2026-04-18", kind:"j13", lag:null, label:"J13: Byåsen – Astor 2", present:["Synnøve Halvorsrød Bjerve", "Julie Hirsch"]},
   {dato:"2026-04-19", kind:"kamp",    lag:"Byåsen 1",  label:"Kamp Byåsen 1",   present:["Eline Sandøy","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Pernille Fevaag Heger","Leah Håkegård Heineman","Marie Skogan","Sara Hagen","Aurora Bye-Bakke","Ingeborg Johannessen","Jenny Engelsen","Linde Lund-Tyvoll"]},
   {dato:"2026-04-19", kind:"kamp",    lag:"Byåsen 2",  label:"Kamp Byåsen 2",   present:["Siri Ormberg","Hanna Elvebakk","Pernille Eikemo-Nilsen","Erle Granviken","Arja Utengen Larsen","Nora Elise Rosvold","Ingeborg Kjærsgaard Persen","Frida Aamodt","Elise Fredriksen","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Pernille Viggen Hansen","Nora Fredriksli","Bertine Mostervik Røhmen"]},
-  {dato:"2026-04-20", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Siri Ormberg","Hild Midbøe Rognstad","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Elsa Rennemo","Hanna Elvebakk","Pernille Fevaag Heger","Synnøve Halvorsrød Bjerve","Pernille Eikemo-Nilsen","Ellen Skei Rasmussen","Erle Granviken","Agnes Sofie Hoen","Marie Skogan","Arja Utengen Larsen","Sigrid Nordengen Lohn","Nora Elise Rosvold","Elin Afom Kifle","Ingeborg Kjærsgaard Persen","Frida Aamodt","Hafsah Mohamed","Sara Hagen","Aurora Bye-Bakke","Mali Olsø-Aune","Milla Aurora Jakobsen","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Pernille Viggen Hansen","Nora Fredriksli","Jenny Engelsen","Bertine Mostervik Røhmen"]},
-  {dato:"2026-04-23", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Siri Ormberg","Hild Midbøe Rognstad","Solvor Waterloo Farstad","Elsa Rennemo","Hanna Elvebakk","Synnøve Halvorsrød Bjerve","Ellen Skei Rasmussen","Erle Granviken","Marie Skogan","Elise Fredriksen","Aurora Bye-Bakke"]},
+  {dato:"2026-04-20", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Aliah Fjeldavli Nordvik", "Arja Utengen Larsen", "Aurora Bye-Bakke", "Bertine Mostervik Røhmen", "Elin Afom Kifle", "Eline Sandøy", "Ellen Skei Rasmussen", "Elsa Rennemo", "Erle Granviken", "Frida Aamodt", "Hafsah Mohamed", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Ingeborg Kjærsgaard Persen", "Jenny Engelsen", "Jenny Holsen", "Maiken Hektoen Vullum", "Mali Olsø-Aune", "Marie Skogan", "Milla Aurora Jakobsen", "Nora Elise Rosvold", "Nora Fredriksli", "Pernille Eikemo-Nilsen", "Pernille Fevaag Heger", "Pernille Viggen Hansen", "Runa Buvarp Julsrud", "Sara Hagen", "Sigrid Nordengen Lohn", "Siri Ormberg", "Solvor Waterloo Farstad", "Synnøve Halvorsrød Bjerve"]},
+  {dato:"2026-04-21", kind:"j13", lag:null, label:"J13: Vestbyen/Sverresborg – Byåsen", present:["Aurora Bye-Bakke", "Mali Olsø-Aune"]},
+  {dato:"2026-04-23", kind:"trening", lag:null, label:"Trening", present:["Aurora Bye-Bakke", "Eline Sandøy", "Elise Fredriksen", "Ellen Skei Rasmussen", "Elsa Rennemo", "Erle Granviken", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Marie Skogan", "Siri Ormberg", "Solvor Waterloo Farstad", "Synnøve Halvorsrød Bjerve"]},
   {dato:"2026-04-27", kind:"kamp",    lag:"Byåsen 3",  label:"Kamp Byåsen 3",   present:["Hild Midbøe Rognstad","Elsa Rennemo","Synnøve Halvorsrød Bjerve","Ellen Skei Rasmussen","Emma Øverås Karlsen","Astrid Øverås Karlsen","Sigrid Nordengen Lohn","Elin Afom Kifle","Hafsah Mohamed","Julie Hirsch","Sofie Minde Elveseter","Erika Asklund Hagen","Betelhem Daniel"]},
-  {dato:"2026-04-27", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Siri Ormberg","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Hanna Elvebakk","Pernille Fevaag Heger","Agnes Sofie Hoen","Nora Elise Rosvold","Ingeborg Kjærsgaard Persen","Sara Hagen","Elise Fredriksen","Aurora Bye-Bakke","Pernille Viggen Hansen","Ingeborg Johannessen","Nora Fredriksli"]},
+  {dato:"2026-04-27", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Aurora Bye-Bakke", "Eline Sandøy", "Elise Fredriksen", "Hanna Elvebakk", "Ingeborg Johannessen", "Ingeborg Kjærsgaard Persen", "Jenny Holsen", "Maiken Hektoen Vullum", "Nora Elise Rosvold", "Nora Fredriksli", "Pernille Fevaag Heger", "Pernille Viggen Hansen", "Sara Hagen", "Siri Ormberg", "Solvor Waterloo Farstad"]},
   {dato:"2026-04-29", kind:"kamp",    lag:"Byåsen 2",  label:"Kamp Byåsen 2",   present:["Siri Ormberg","Hanna Elvebakk","Pernille Eikemo-Nilsen","Erle Granviken","Arja Utengen Larsen","Nora Elise Rosvold","Ingeborg Kjærsgaard Persen","Frida Aamodt","Sara Hagen","Elise Fredriksen","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Nora Fredriksli"]},
-  {dato:"2026-04-30", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Siri Ormberg","Hild Midbøe Rognstad","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Elsa Rennemo","Pernille Fevaag Heger","Synnøve Halvorsrød Bjerve","Pernille Eikemo-Nilsen","Erle Granviken","Emma Øverås Karlsen","Astrid Øverås Karlsen","Agnes Sofie Hoen","Arja Utengen Larsen","Sara Hagen","Elise Fredriksen","Julie Hirsch","Oda Gartland","Ines Eithun Gabrielsen"]},
+  {dato:"2026-04-30", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Arja Utengen Larsen", "Astrid Øverås Karlsen", "Eline Sandøy", "Elise Fredriksen", "Elsa Rennemo", "Emma Øverås Karlsen", "Erle Granviken", "Hild Midbøe Rognstad", "Ines Eithun Gabrielsen", "Jenny Holsen", "Julie Hirsch", "Maiken Hektoen Vullum", "Oda Gartland", "Pernille Eikemo-Nilsen", "Pernille Fevaag Heger", "Sara Hagen", "Siri Ormberg", "Solvor Waterloo Farstad", "Synnøve Halvorsrød Bjerve"]},
   {dato:"2026-05-01", kind:"kamp",    lag:"Byåsen 1",  label:"Kamp Byåsen 1",   present:["Eline Sandøy","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Pernille Fevaag Heger","Leah Håkegård Heineman","Agnes Sofie Hoen","Marie Skogan","Mali Olsø-Aune","Ingeborg Johannessen","Oda Gartland","Ines Eithun Gabrielsen"]},
   {dato:"2026-05-03", kind:"kamp",    lag:"Byåsen 3",  label:"Kamp Byåsen 3",   present:["Hild Midbøe Rognstad","Jenny Holsen","Elsa Rennemo","Synnøve Halvorsrød Bjerve","Emma Øverås Karlsen","Astrid Øverås Karlsen","Elin Afom Kifle","Hafsah Mohamed","Julie Hirsch","Milla Aurora Jakobsen","Erika Asklund Hagen"]},
-  {dato:"2026-05-03", kind:"trening", lag:null,         label:"Basistrening",    present:["Siri Ormberg","Hanna Elvebakk","Pernille Fevaag Heger","Pernille Eikemo-Nilsen","Leah Håkegård Heineman","Erle Granviken","Agnes Sofie Hoen","Marie Skogan","Arja Utengen Larsen","Ingeborg Kjærsgaard Persen","Aliah Fjeldavli Nordvik","Oda Gartland","Jenny Engelsen"]},
-  {dato:"2026-05-04", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Siri Ormberg","Hild Midbøe Rognstad","Jenny Holsen","Solvor Waterloo Farstad","Elsa Rennemo","Hanna Elvebakk","Pernille Fevaag Heger","Synnøve Halvorsrød Bjerve","Pernille Eikemo-Nilsen","Leah Håkegård Heineman","Emma Øverås Karlsen","Astrid Øverås Karlsen","Marie Skogan","Sigrid Nordengen Lohn","Nora Elise Rosvold","Ingeborg Kjærsgaard Persen","Frida Aamodt","Hafsah Mohamed","Sara Hagen","Elise Fredriksen","Milla Aurora Jakobsen","Oda Gartland","Bertine Mostervik Røhmen"]},
-  {dato:"2026-05-07", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Siri Ormberg","Hild Midbøe Rognstad","Jenny Holsen","Solvor Waterloo Farstad","Elsa Rennemo","Pernille Fevaag Heger","Synnøve Halvorsrød Bjerve","Ellen Skei Rasmussen","Erle Granviken","Emma Øverås Karlsen","Astrid Øverås Karlsen","Marie Skogan","Nora Elise Rosvold","Elise Fredriksen","Runa Buvarp Julsrud","Sofie Minde Elveseter","Pernille Viggen Hansen","Ingeborg Johannessen","Jenny Engelsen","Linde Lund-Tyvoll"]},
+  {dato:"2026-05-03", kind:"trening", lag:null, label:"Basistrening", present:["Agnes Sofie Hoen", "Aliah Fjeldavli Nordvik", "Arja Utengen Larsen", "Erle Granviken", "Hanna Elvebakk", "Ingeborg Kjærsgaard Persen", "Jenny Engelsen", "Leah Håkegård Heineman", "Marie Skogan", "Oda Gartland", "Pernille Eikemo-Nilsen", "Pernille Fevaag Heger", "Siri Ormberg"]},
+  {dato:"2026-05-04", kind:"trening", lag:null, label:"Trening", present:["Astrid Øverås Karlsen", "Bertine Mostervik Røhmen", "Eline Sandøy", "Elise Fredriksen", "Elsa Rennemo", "Emma Øverås Karlsen", "Frida Aamodt", "Hafsah Mohamed", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Ingeborg Kjærsgaard Persen", "Jenny Holsen", "Leah Håkegård Heineman", "Marie Skogan", "Milla Aurora Jakobsen", "Nora Elise Rosvold", "Oda Gartland", "Pernille Eikemo-Nilsen", "Pernille Fevaag Heger", "Sara Hagen", "Sigrid Nordengen Lohn", "Siri Ormberg", "Solvor Waterloo Farstad", "Synnøve Halvorsrød Bjerve"]},
+  {dato:"2026-05-06", kind:"j13", lag:null, label:"J13: Tiller 2 – Byåsen", present:["Hanna Elvebakk", "Pernille Eikemo-Nilsen"]},
+  {dato:"2026-05-07", kind:"trening", lag:null, label:"Trening", present:["Astrid Øverås Karlsen", "Eline Sandøy", "Elise Fredriksen", "Ellen Skei Rasmussen", "Elsa Rennemo", "Emma Øverås Karlsen", "Erle Granviken", "Hild Midbøe Rognstad", "Ingeborg Johannessen", "Jenny Engelsen", "Jenny Holsen", "Linde Lund-Tyvoll", "Marie Skogan", "Nora Elise Rosvold", "Pernille Fevaag Heger", "Pernille Viggen Hansen", "Runa Buvarp Julsrud", "Siri Ormberg", "Sofie Minde Elveseter", "Solvor Waterloo Farstad", "Synnøve Halvorsrød Bjerve"]},
   {dato:"2026-05-08", kind:"kamp",    lag:"Byåsen 1",  label:"Kamp Byåsen 1",   present:["Eline Sandøy","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Leah Håkegård Heineman","Marie Skogan","Aurora Bye-Bakke","Mali Olsø-Aune","Ingeborg Johannessen","Oda Gartland","Jenny Engelsen","Linde Lund-Tyvoll","Ines Eithun Gabrielsen"]},
   {dato:"2026-05-10", kind:"kamp",    lag:"Byåsen 2",  label:"Kamp Byåsen 2",   present:["Siri Ormberg","Hanna Elvebakk","Pernille Eikemo-Nilsen","Arja Utengen Larsen","Nora Elise Rosvold","Ingeborg Kjærsgaard Persen","Frida Aamodt","Sara Hagen","Elise Fredriksen","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Pernille Viggen Hansen","Nora Fredriksli","Bertine Mostervik Røhmen"]},
   {dato:"2026-05-10", kind:"kamp",    lag:"Byåsen 3",  label:"Kamp Byåsen 3",   present:["Hild Midbøe Rognstad","Elsa Rennemo","Synnøve Halvorsrød Bjerve","Emma Øverås Karlsen","Astrid Øverås Karlsen","Sigrid Nordengen Lohn","Elin Afom Kifle","Hafsah Mohamed","Julie Hirsch","Milla Aurora Jakobsen","Sofie Minde Elveseter","Erika Asklund Hagen"]},
-  {dato:"2026-05-10", kind:"trening", lag:null,         label:"Basistrening",    present:["Eline Sandøy","Maiken Hektoen Vullum","Solvor Waterloo Farstad","Leah Håkegård Heineman"]},
-  {dato:"2026-05-11", kind:"trening", lag:null,         label:"Trening",         present:["Eline Sandøy","Hild Midbøe Rognstad","Maiken Hektoen Vullum","Jenny Holsen","Solvor Waterloo Farstad","Elsa Rennemo","Pernille Fevaag Heger","Synnøve Halvorsrød Bjerve","Ellen Skei Rasmussen","Leah Håkegård Heineman","Emma Øverås Karlsen","Astrid Øverås Karlsen","Sigrid Nordengen Lohn","Julie Hirsch","Aurora Bye-Bakke","Milla Aurora Jakobsen","Sofie Minde Elveseter","Ingeborg Johannessen","Oda Gartland","Jenny Engelsen","Linde Lund-Tyvoll"]},
+  {dato:"2026-05-10", kind:"trening", lag:null, label:"Basistrening", present:["Eline Sandøy", "Leah Håkegård Heineman", "Maiken Hektoen Vullum", "Solvor Waterloo Farstad"]},
   {dato:"2026-05-11", kind:"kamp",    lag:"Byåsen 2",  label:"Kamp Byåsen 2",   present:["Siri Ormberg","Hanna Elvebakk","Pernille Eikemo-Nilsen","Erle Granviken","Nora Elise Rosvold","Frida Aamodt","Sara Hagen","Elise Fredriksen","Aliah Fjeldavli Nordvik","Runa Buvarp Julsrud","Pernille Viggen Hansen","Nora Fredriksli","Bertine Mostervik Røhmen"]},
+  {dato:"2026-05-11", kind:"trening", lag:null, label:"Trening", present:["Astrid Øverås Karlsen", "Aurora Bye-Bakke", "Eline Sandøy", "Ellen Skei Rasmussen", "Elsa Rennemo", "Emma Øverås Karlsen", "Hild Midbøe Rognstad", "Ingeborg Johannessen", "Jenny Engelsen", "Jenny Holsen", "Julie Hirsch", "Leah Håkegård Heineman", "Linde Lund-Tyvoll", "Maiken Hektoen Vullum", "Milla Aurora Jakobsen", "Oda Gartland", "Pernille Fevaag Heger", "Sigrid Nordengen Lohn", "Sofie Minde Elveseter", "Solvor Waterloo Farstad", "Synnøve Halvorsrød Bjerve"]},
   {dato:"2026-05-14", kind:"kamp",    lag:"Byåsen 1",  label:"Kamp Byåsen 1",   present:["Eline Sandøy","Maiken Hektoen Vullum","Jenny Holsen","Pernille Fevaag Heger","Leah Håkegård Heineman","Agnes Sofie Hoen","Aurora Bye-Bakke","Mali Olsø-Aune","Jenny Engelsen","Linde Lund-Tyvoll","Ines Eithun Gabrielsen"]},
-  {dato:"2026-05-14", kind:"trening", lag:null,         label:"Trening",         present:["Siri Ormberg","Hild Midbøe Rognstad","Elsa Rennemo","Hanna Elvebakk","Synnøve Halvorsrød Bjerve","Ellen Skei Rasmussen","Erle Granviken","Emma Øverås Karlsen","Astrid Øverås Karlsen","Arja Utengen Larsen","Frida Aamodt","Sara Hagen"]},
+  {dato:"2026-05-14", kind:"trening", lag:null, label:"Trening", present:["Arja Utengen Larsen", "Astrid Øverås Karlsen", "Ellen Skei Rasmussen", "Elsa Rennemo", "Emma Øverås Karlsen", "Erle Granviken", "Frida Aamodt", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Sara Hagen", "Siri Ormberg", "Synnøve Halvorsrød Bjerve"]},
   {dato:"2026-05-15", kind:"kamp",    lag:"Byåsen 3",  label:"Kamp Byåsen 3",   present:["Hild Midbøe Rognstad","Elsa Rennemo","Synnøve Halvorsrød Bjerve","Ellen Skei Rasmussen","Emma Øverås Karlsen","Astrid Øverås Karlsen","Sigrid Nordengen Lohn","Elin Afom Kifle","Hafsah Mohamed","Julie Hirsch","Milla Aurora Jakobsen","Sofie Minde Elveseter","Erika Asklund Hagen"]},
   {dato:"2026-05-16", kind:"kamp",    lag:"Byåsen 1",  label:"Kamp Byåsen 1",   present:["Eline Sandøy","Maiken Hektoen Vullum","Jenny Holsen","Pernille Fevaag Heger","Leah Håkegård Heineman","Agnes Sofie Hoen","Marie Skogan","Mali Olsø-Aune","Linde Lund-Tyvoll","Ines Eithun Gabrielsen"]},
-  // J13-kamper
-  {dato:"2026-04-18", kind:"j13",     lag:null,         label:"J13: Byåsen – Astor 2",              present:["Synnøve Halvorsrød Bjerve","Julie Hirsch"]},
-  {dato:"2026-04-21", kind:"j13",     lag:null,         label:"J13: Vestbyen/Sverresborg – Byåsen",  present:["Aurora Bye-Bakke","Mali Olsø-Aune"]},
-  {dato:"2026-05-06", kind:"j13",     lag:null,         label:"J13: Tiller 2 – Byåsen",             present:["Hanna Elvebakk","Pernille Eikemo-Nilsen"]},
+  {dato:"2026-05-18", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Aliah Fjeldavli Nordvik", "Arja Utengen Larsen", "Astrid Øverås Karlsen", "Aurora Bye-Bakke", "Elin Afom Kifle", "Eline Sandøy", "Elise Fredriksen", "Ellen Skei Rasmussen", "Emma Øverås Karlsen", "Frida Aamodt", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Ingeborg Johannessen", "Ingeborg Kjærsgaard Persen", "Jenny Engelsen", "Jenny Holsen", "Julie Hirsch", "Linde Lund-Tyvoll", "Maiken Hektoen Vullum", "Milla Aurora Jakobsen", "Nora Elise Rosvold", "Pernille Eikemo-Nilsen", "Pernille Fevaag Heger", "Pernille Viggen Hansen", "Runa Buvarp Julsrud", "Sara Hagen", "Sigrid Nordengen Lohn", "Siri Ormberg", "Sofie Minde Elveseter", "Synnøve Halvorsrød Bjerve"]},
+  {dato:"2026-05-21", kind:"trening", lag:null, label:"Trening", present:["Agnes Sofie Hoen", "Aliah Fjeldavli Nordvik", "Arja Utengen Larsen", "Astrid Øverås Karlsen", "Eline Sandøy", "Elsa Rennemo", "Emma Øverås Karlsen", "Erle Granviken", "Frida Aamodt", "Hanna Elvebakk", "Hild Midbøe Rognstad", "Ines Eithun Gabrielsen", "Ingeborg Johannessen", "Ingeborg Kjærsgaard Persen", "Jenny Engelsen", "Jenny Holsen", "Julie Hirsch", "Maiken Hektoen Vullum", "Marie Skogan", "Milla Aurora Jakobsen", "Nora Elise Rosvold", "Nora Fredriksli", "Oda Gartland", "Pernille Fevaag Heger", "Pernille Viggen Hansen", "Runa Buvarp Julsrud", "Sara Hagen", "Sigrid Nordengen Lohn", "Siri Ormberg", "Sofie Minde Elveseter", "Solvor Waterloo Farstad", "Synnøve Halvorsrød Bjerve"]},
+  {dato:"2026-05-22", kind:"j13", lag:null, label:"J13: Byåsen 2 – Flatås 2", present:["Erle Granviken"]},
+  {dato:"2026-05-23", kind:"kamp",    lag:"Byåsen 3",  label:"Kamp Byåsen 3",   present:["Emma Øverås Karlsen","Astrid Øverås Karlsen","Elin Afom Kifle","Hafsah Mohamed","Hild Midbøe Rognstad","Julie Hirsch","Pernille Fevaag Heger","Sofie Minde Elveseter","Elsa Rennemo","Milla Aurora Jakobsen"]},
+  {dato:"2026-05-24", kind:"trening", lag:null, label:"Basistrening", present:["Agnes Sofie Hoen", "Hild Midbøe Rognstad", "Julie Hirsch", "Pernille Eikemo-Nilsen"]},
 ];
 
 // Sort state
@@ -1962,11 +2503,11 @@ function renderOppmote() {
     <div class="metric"><div class="metric-label">Snitt trening%</div><div class="metric-val">${avgT}%</div></div>
     <div class="metric"><div class="metric-label">Snitt kamp%</div><div class="metric-val">${avgK}%</div></div>
     <div class="metric"><div class="metric-label">Under 40% trening</div><div class="metric-val" style="color:var(--red)">${lowT}</div></div>
-    <div class="metric"><div class="metric-label">Spilte J13-kamp</div><div class="metric-val" style="color:var(--accent2)">${j13count}</div></div>`;
+    <div class="metric"><div class="metric-label">Spilte J13-kamp</div><div class="metric-val" style="color:var(--purple)">${j13count}</div></div>`;
 
   function pctBar(pct) {
     if (pct === null || pct === undefined) return '–';
-    const c = pct>=70?'#2d5f3f':pct>=50?'#c8973a':'#b83232';
+    const c = pct>=70?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
     return `<div style="display:flex;align-items:center;gap:6px;">
       <div style="width:72px;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;">
         <div style="width:${pct}%;height:100%;background:${c};border-radius:4px;"></div>
@@ -1987,11 +2528,11 @@ function renderOppmote() {
     <td style="font-weight:bold;white-space:nowrap;">${shortName(r.name)}</td>
     <td>${lagBadge(r.lag)}</td>
     <td>${pctBar(r.tpct)}</td>
-    <td style="font-size:11px;color:var(--text2);font-family:'Courier New',monospace;">${r.tp}/${r.tt}<span style="color:var(--text3)"> +${r.tex}fri</span></td>
+    <td style="font-size:11px;color:var(--text2);font-family:var(--mono);">${r.tp}/${r.tt}<span style="color:var(--text3)"> +${r.tex}fri</span></td>
     <td>${pctBar(r.kpct)}</td>
-    <td style="font-size:11px;color:var(--text2);font-family:'Courier New',monospace;">${r.kp}/${r.kt}</td>
+    <td style="font-size:11px;color:var(--text2);font-family:var(--mono);">${r.kp}/${r.kt}</td>
     <td style="text-align:center;">${r.sam?'<span style="color:var(--accent)">✓</span>':'<span style="color:var(--text3)">–</span>'}</td>
-    <td style="text-align:center;">${r.j13?`<span style="color:var(--accent2);font-weight:bold">${r.j13}</span>`:'<span style="color:var(--text3)">–</span>'}</td>
+    <td style="text-align:center;">${r.j13?`<span style="color:var(--purple);font-weight:bold">${r.j13}</span>`:'<span style="color:var(--text3)">–</span>'}</td>
   </tr>`).join('');
 
   document.getElementById('opp-table').innerHTML = `
@@ -2089,13 +2630,14 @@ function toggleOverride(dato, name, label) {
   saveOppOverrides();
   recomputeAllStats();
   renderOppmote();
+  if (document.getElementById('tab-analyse')?.classList.contains('active')) renderAnalysis();
 }
 
 function recomputeAllStats() {
   const KAMP_D = {
     "Byåsen 1":["2026-04-15","2026-04-19","2026-05-01","2026-05-08","2026-05-14","2026-05-16"],
     "Byåsen 2":["2026-04-13","2026-04-19","2026-04-29","2026-05-10","2026-05-11"],
-    "Byåsen 3":["2026-04-08","2026-04-15","2026-04-27","2026-05-03","2026-05-10","2026-05-15"]
+    "Byåsen 3":["2026-04-08","2026-04-15","2026-04-27","2026-05-03","2026-05-10","2026-05-15","2026-05-23"]
   };
   const allActs = getAllActivities();
   SPOND_DATA.forEach(entry => {
@@ -2179,7 +2721,10 @@ async function handleSpondUpload(event) {
 
     status.textContent = `✓ ${added.length} nye aktiviteter lagt til`;
     setTimeout(()=>status.textContent='', 4000);
+    recomputeAllStats();
     renderOppmote();
+    renderAnalysis();
+    renderStatistikk();
   } catch(e) {
     status.textContent = '✗ Feil ved lesing: '+e.message;
     console.error(e);
@@ -2217,7 +2762,7 @@ function renderAttendanceTables() {
   const KAMP_D = {
     "Byåsen 1":["2026-04-15","2026-04-19","2026-05-01","2026-05-08","2026-05-14","2026-05-16"],
     "Byåsen 2":["2026-04-13","2026-04-19","2026-04-29","2026-05-10","2026-05-11"],
-    "Byåsen 3":["2026-04-08","2026-04-15","2026-04-27","2026-05-03","2026-05-10","2026-05-15"]
+    "Byåsen 3":["2026-04-08","2026-04-15","2026-04-27","2026-05-03","2026-05-10","2026-05-15","2026-05-23"]
   };
 
   const allActs = getAllActivities();
@@ -2235,14 +2780,14 @@ function renderAttendanceTables() {
     return dir*((a[col]||0)-(b[col]||0));
   });
 
-  const LAG_COLORS = {'Byåsen 1':'#c0392b','Byåsen 2':'#d4820a','Byåsen 3':'#2d5f3f'};
+  const LAG_COLORS = {'Byåsen 1':'var(--lag1)','Byåsen 2':'var(--lag2)','Byåsen 3':'var(--lag3)'};
   const shortDate = d => { const p=d.slice(5).split('-'); return p[1].replace(/^0/,'')+'/'+p[0].replace(/^0/,''); };
-  const fargePct = p => p>=70?'#2d5f3f':p>=50?'#c8973a':'#b83232';
+  const fargePct = p => p>=70?'var(--green)':p>=50?'var(--amber)':'var(--red)';
 
   function dot(present, excused, hasOverride) {
-    if (excused) return `<div style="width:18px;height:18px;border-radius:4px;background:#f0efeb;color:#bbb;font-size:10px;display:inline-flex;align-items:center;justify-content:center;${hasOverride?'outline:1.5px solid #f5a623;':''}">K</div>`;
-    if (present) return `<div style="width:18px;height:18px;border-radius:4px;background:#EAF3DE;color:#3B6D11;font-size:10px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;${hasOverride?'outline:1.5px solid #f5a623;':''}">✓</div>`;
-    return `<div style="width:18px;height:18px;border-radius:4px;background:#fceaea;color:#c0392b;font-size:10px;display:inline-flex;align-items:center;justify-content:center;${hasOverride?'outline:1.5px solid #f5a623;':''}">–</div>`;
+    if (excused) return `<div style="width:18px;height:18px;border-radius:4px;background:var(--surface2);color:var(--text3);font-size:10px;display:inline-flex;align-items:center;justify-content:center;${hasOverride?'outline:1.5px solid var(--override);':''}">K</div>`;
+    if (present) return `<div style="width:18px;height:18px;border-radius:4px;background:var(--green-light);color:var(--green-dark);font-size:10px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;${hasOverride?'outline:1.5px solid var(--override);':''}">✓</div>`;
+    return `<div style="width:18px;height:18px;border-radius:4px;background:var(--red-light);color:var(--red);font-size:10px;display:inline-flex;align-items:center;justify-content:center;${hasOverride?'outline:1.5px solid var(--override);':''}">–</div>`;
   }
 
   function buildTable(tableId, acts, isKamp) {
@@ -2253,7 +2798,7 @@ function renderAttendanceTables() {
     const dateCols = acts.map(a => {
       const label = a.kind==='samling' ? '⭐' : a.kind==='j13' ? 'J13' :
         (a.lag ? a.lag.replace('Byåsen ','B') : (isKamp?'K':'T'));
-      const color = {kamp:'#2a4f8c',trening:'#2d5f3f',samling:'#c8973a',j13:'#8b2be2'}[a.kind]||'#888';
+      const color = {kamp:'var(--blue)',trening:'var(--green)',samling:'var(--amber)',j13:'var(--purple)'}[a.kind]||'#888';
       return `<th style="padding:3px 2px;font-size:10px;color:${color};font-weight:400;border-bottom:0.5px solid var(--border);text-align:center;white-space:nowrap;width:22px;" title="${a.label||a.dato}">${shortDate(a.dato)}<br><span style="font-size:9px;opacity:0.8">${label}</span></th>`;
     }).join('');
 
@@ -2325,15 +2870,219 @@ function renderAttendanceTables() {
   // Fotnote
   const fn = document.getElementById('trening-fotnote');
   if (fn) fn.innerHTML = `
-    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:#EAF3DE;color:#3B6D11;font-size:9px;display:inline-flex;align-items:center;justify-content:center;">✓</div> Deltok</span>
-    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:#f0efeb;color:#bbb;font-size:9px;display:inline-flex;align-items:center;justify-content:center;">K</div> Kamp denne dagen</span>
-    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:#fceaea;color:#c0392b;font-size:9px;display:inline-flex;align-items:center;justify-content:center;">–</div> Fraværende</span>
-    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:#fff;outline:1.5px solid #f5a623;font-size:9px;display:inline-flex;align-items:center;justify-content:center;"></div> Overstyrt</span>`;
+    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:var(--green-light);color:var(--green-dark);font-size:9px;display:inline-flex;align-items:center;justify-content:center;">✓</div> Deltok</span>
+    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:var(--surface2);color:var(--text3);font-size:9px;display:inline-flex;align-items:center;justify-content:center;">K</div> Kamp denne dagen</span>
+    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:var(--red-light);color:var(--red);font-size:9px;display:inline-flex;align-items:center;justify-content:center;">–</div> Fraværende</span>
+    <span style="display:inline-flex;align-items:center;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:#fff;outline:1.5px solid var(--override);font-size:9px;display:inline-flex;align-items:center;justify-content:center;"></div> Overstyrt</span>`;
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ─── SESONGSTATISTIKK ────────────────────────────────────────────────────────
 
-renderOverview(); renderCoachPicker(); renderPlayerPicker();
+const SEASON_STATS = {
+  "2024 Vår":  { K:35, W:16, D:2,  L:17, GF:181, GA:178, bigwin:"14–5",  bigwin_mf:9,  most_goals:19, most_goals_str:"14–5",  lags:{"Byåsen 1":{K:9,W:4,D:0,L:5,GF:40,GA:47},"Byåsen 2":{K:9,W:2,D:2,L:5,GF:37,GA:53},"Byåsen 3":{K:9,W:6,D:0,L:3,GF:61,GA:39},"Byåsen 4":{K:8,W:4,D:0,L:4,GF:43,GA:39}}},
+  "2024 Høst": { K:37, W:16, D:3,  L:18, GF:176, GA:197, bigwin:"14–1",  bigwin_mf:13, most_goals:16, most_goals_str:"5–11",  lags:{"Byåsen 1":{K:9,W:4,D:1,L:4,GF:44,GA:49},"Byåsen 2":{K:10,W:3,D:0,L:7,GF:41,GA:66},"Byåsen 3":{K:10,W:6,D:0,L:4,GF:47,GA:36},"Byåsen 4":{K:8,W:3,D:2,L:3,GF:44,GA:46}}},
+  "2025 Vår":  { K:50, W:25, D:6,  L:19, GF:229, GA:219, bigwin:"12–4",  bigwin_mf:8,  most_goals:19, most_goals_str:"11–8",  lags:{"Byåsen 1":{K:11,W:6,D:1,L:4,GF:47,GA:51},"Byåsen 2":{K:11,W:2,D:1,L:8,GF:35,GA:60},"Byåsen 3":{K:10,W:7,D:2,L:1,GF:64,GA:43},"Byåsen 4":{K:9,W:6,D:1,L:2,GF:52,GA:32},"Byåsen 5":{K:9,W:4,D:1,L:4,GF:31,GA:33}}},
+  "2025 Høst": { K:54, W:19, D:5,  L:30, GF:191, GA:239, bigwin:"11–0",  bigwin_mf:11, most_goals:17, most_goals_str:"5–12",  lags:{"Byåsen 1":{K:11,W:4,D:1,L:6,GF:35,GA:45},"Byåsen 2":{K:11,W:3,D:1,L:7,GF:40,GA:60},"Byåsen 3":{K:10,W:5,D:0,L:5,GF:43,GA:36},"Byåsen 4":{K:10,W:2,D:2,L:6,GF:32,GA:49},"Byåsen 5":{K:12,W:5,D:1,L:6,GF:41,GA:49}}},
+  "2026 Vår":  { K:13, W:6,  D:4,  L:3,  GF:43,  GA:33,  bigwin:"10–1",  bigwin_mf:9,  most_goals:11, most_goals_str:"10–1", lags:{"Byåsen 1":{K:4,W:2,D:0,L:2,GF:11,GA:16},"Byåsen 2":{K:4,W:1,D:3,L:0,GF:16,GA:7},"Byåsen 3":{K:5,W:3,D:1,L:1,GF:16,GA:10}}},
+};
+const SEASONS_ORDER = ["2024 Vår","2024 Høst","2025 Vår","2025 Høst","2026 Vår"];
+const LAG_ORDER = ["Byåsen 1","Byåsen 2","Byåsen 3","Byåsen 4","Byåsen 5"];
+const LAG_DOT_COLORS = {"Byåsen 1":"var(--lag1)","Byåsen 2":"var(--lag2)","Byåsen 3":"var(--lag3)","Byåsen 4":"var(--lag4)","Byåsen 5":"var(--lag5)"};
+
+function renderStatistikk() {
+  const el = document.getElementById('statistikk-content');
+
+  // ── Kumulativ totalstatistikk ──────────────────────────────────────
+  const total = SEASONS_ORDER.reduce((acc, s) => {
+    const d = SEASON_STATS[s];
+    acc.K+=d.K; acc.W+=d.W; acc.D+=d.D; acc.L+=d.L; acc.GF+=d.GF; acc.GA+=d.GA;
+    return acc;
+  }, {K:0,W:0,D:0,L:0,GF:0,GA:0});
+  const totalPct = Math.round(total.W/total.K*100);
+
+  function statRow(label, val, sub) {
+    return `<div style="display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border);">
+      <span style="font-size:14px;color:var(--text2);">${label}</span>
+      <span style="font-size:16px;font-weight:500;">${val}${sub?` <span style="font-size:12px;font-weight:400;color:var(--text3);">${sub}</span>`:''}</span>
+    </div>`;
+  }
+
+  function pctBar(w,d,l) {
+    const tot=w+d+l; if(!tot) return '';
+    const wp=Math.round(w/tot*100), dp=Math.round(d/tot*100), lp=100-wp-dp;
+    return `<div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:6px;">
+      <div style="width:${wp}%;background:var(--green);"></div>
+      <div style="width:${dp}%;background:var(--amber);"></div>
+      <div style="width:${lp}%;background:var(--red);"></div>
+    </div>`;
+  }
+
+  // ── Lag-oversikt (alle sesonger) ───────────────────────────────────
+  const lagTotals = {};
+  SEASONS_ORDER.forEach(s => {
+    Object.entries(SEASON_STATS[s].lags).forEach(([lag, d]) => {
+      if (!lagTotals[lag]) lagTotals[lag] = {K:0,W:0,D:0,L:0,GF:0,GA:0};
+      lagTotals[lag].K+=d.K; lagTotals[lag].W+=d.W; lagTotals[lag].D+=d.D;
+      lagTotals[lag].L+=d.L; lagTotals[lag].GF+=d.GF; lagTotals[lag].GA+=d.GA;
+    });
+  });
+
+  // ── Season cards ───────────────────────────────────────────────────
+  const seasonCards = SEASONS_ORDER.map(s => {
+    const d = SEASON_STATS[s];
+    const pct = Math.round(d.W/d.K*100);
+    const mf = d.GF-d.GA;
+    const mfStr = mf>0?`+${mf}`:mf;
+    const mfCol = mf>0?'var(--green)':mf<0?'var(--red)':'var(--text2)';
+    const lagRows = LAG_ORDER.filter(l=>d.lags[l]).map(lag => {
+      const ld = d.lags[lag];
+      const lpct = Math.round(ld.W/ld.K*100);
+      const lmf = ld.GF-ld.GA;
+      const c = LAG_DOT_COLORS[lag]||'#888';
+      return `<tr>
+        <td style="padding:5px 8px;"><span style="font-size:11px;font-weight:500;color:${c};">${lag.replace('Byåsen ','B')}</span></td>
+        <td style="padding:5px 8px;text-align:center;font-size:12px;">${ld.K}</td>
+        <td style="padding:5px 8px;text-align:center;font-size:12px;color:var(--green);font-weight:500;">${ld.W}</td>
+        <td style="padding:5px 8px;text-align:center;font-size:12px;color:var(--amber);">${ld.D}</td>
+        <td style="padding:5px 8px;text-align:center;font-size:12px;color:var(--red);">${ld.L}</td>
+        <td style="padding:5px 8px;text-align:center;font-size:12px;font-family:var(--mono);">${ld.GF}–${ld.GA}</td>
+        <td style="padding:5px 8px;text-align:right;font-size:12px;font-weight:500;color:${lmf>0?'var(--green)':lmf<0?'var(--red)':'var(--text2)'};">${lmf>0?'+':''}${lmf}</td>
+        <td style="padding:5px 8px;text-align:right;font-size:12px;font-weight:500;">${lpct}%</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div style="font-size:16px;font-weight:500;">${s}</div>
+        <div style="font-size:13px;color:var(--text2);">7er-fotball${s==='2026 Vår'?' · 9er-fotball':''}</div>
+      </div>
+      ${pctBar(d.W,d.D,d.L)}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin:12px 0 0;">
+        <div>
+          ${statRow('Kamper spilt', d.K)}
+          ${statRow('Seiere / Uavgjort / Tap', `${d.W} / ${d.D} / ${d.L}`, `${pct}% seier`)}
+          ${statRow('Mål scoret', d.GF, `${(d.GF/d.K).toFixed(1)}/kamp`)}
+          ${statRow('Mål imot', d.GA, `${(d.GA/d.K).toFixed(1)}/kamp`)}
+        </div>
+        <div>
+          ${statRow('Målforskjell', `<span style="color:${mfCol};font-weight:500;">${mfStr}</span>`)}
+          ${statRow('Største seier', d.bigwin)}
+          ${statRow('Flest mål i én kamp', d.most_goals, d.most_goals_str)}
+          ${statRow('Lag i serien', Object.keys(d.lags).length)}
+        </div>
+      </div>
+      <div style="margin-top:14px;border-top:0.5px solid var(--border);padding-top:10px;">
+        <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Per lag</div>
+        <table style="font-size:12px;">
+          <thead><tr style="background:var(--surface2);">
+            <th style="padding:4px 8px;font-size:10px;">Lag</th>
+            <th style="padding:4px 8px;text-align:center;font-size:10px;">K</th>
+            <th style="padding:4px 8px;text-align:center;font-size:10px;">S</th>
+            <th style="padding:4px 8px;text-align:center;font-size:10px;">U</th>
+            <th style="padding:4px 8px;text-align:center;font-size:10px;">T</th>
+            <th style="padding:4px 8px;text-align:center;font-size:10px;">Mål</th>
+            <th style="padding:4px 8px;text-align:right;font-size:10px;">MF</th>
+            <th style="padding:4px 8px;text-align:right;font-size:10px;">S%</th>
+          </tr></thead>
+          <tbody>${lagRows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Totalstatistikk-kort ───────────────────────────────────────────
+  const allTimeLagRows = LAG_ORDER.filter(l=>lagTotals[l]).map(lag => {
+    const ld = lagTotals[lag]; const lpct=Math.round(ld.W/ld.K*100); const lmf=ld.GF-ld.GA;
+    const c=LAG_DOT_COLORS[lag]||'#888';
+    return `<tr>
+      <td style="padding:6px 8px;"><span style="font-size:12px;font-weight:500;color:${c};">${lag}</span></td>
+      <td style="padding:6px 8px;text-align:center;">${ld.K}</td>
+      <td style="padding:6px 8px;text-align:center;color:var(--green);font-weight:500;">${ld.W}</td>
+      <td style="padding:6px 8px;text-align:center;color:var(--amber);">${ld.D}</td>
+      <td style="padding:6px 8px;text-align:center;color:var(--red);">${ld.L}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:var(--mono);">${ld.GF}–${ld.GA}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:500;color:${lmf>0?'var(--green)':lmf<0?'var(--red)':'var(--text2)'};">${lmf>0?'+':''}${lmf}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:500;">${lpct}%</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <!-- Toppseksjon: nøkkeltall alle sesonger -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-family:var(--display);font-size:20px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.01em;">Totalt · alle sesonger</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">2024 Vår – 2026 Vår · ${SEASONS_ORDER.length} sesonger</div>
+      ${pctBar(total.W,total.D,total.L)}
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;">
+        <div style="background:var(--surface2);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;">Kamper</div>
+          <div style="font-size:24px;font-weight:500;">${total.K}</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;">Seire</div>
+          <div style="font-size:24px;font-weight:500;color:var(--green);">${total.W} <span style="font-size:13px;font-weight:400;">(${totalPct}%)</span></div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;">Mål scoret</div>
+          <div style="font-size:24px;font-weight:500;">${total.GF} <span style="font-size:13px;font-weight:400;color:var(--text3);">${(total.GF/total.K).toFixed(1)}/k</span></div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;">Målforskjell</div>
+          <div style="font-size:24px;font-weight:500;color:${total.GF-total.GA>0?'var(--green)':'var(--red)'};">${total.GF-total.GA>0?'+':''}${total.GF-total.GA}</div>
+        </div>
+      </div>
+      <!-- Per-lag totalt -->
+      <div style="margin-top:14px;border-top:0.5px solid var(--border);padding-top:10px;">
+        <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Per lag · alle sesonger</div>
+        <table><thead><tr style="background:var(--surface2);">
+          <th>Lag</th><th style="text-align:center">K</th><th style="text-align:center">S</th><th style="text-align:center">U</th><th style="text-align:center">T</th><th style="text-align:center">Mål</th><th style="text-align:right">MF</th><th style="text-align:right">S%</th>
+        </tr></thead><tbody>${allTimeLagRows}</tbody></table>
+      </div>
+    </div>
+
+    <!-- Per-sesong kort -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      ${seasonCards}
+    </div>`;
+}
+
+// ─── DARK / LIGHT MODE ───────────────────────────────────────────────────────
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  setTheme(cur === 'dark' ? 'light' : 'dark');
+}
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  try { localStorage.setItem('j2014_theme', theme); } catch(e) {}
+}
+(function initTheme() {
+  let saved = 'light';
+  try { saved = localStorage.getItem('j2014_theme') || 'light'; } catch(e) {}
+  setTheme(saved);
+})();
+
+// Synk view-toggle-knappene med lagret cardView
+document.querySelectorAll('.viewtoggle').forEach(b => {
+  if (b.dataset.view) b.classList.toggle('active', cardView[b.dataset.view]);
+});
+// Synk admin-toggle-knappene
+document.querySelectorAll('.admintoggle').forEach(b => {
+  if (b.dataset.av) b.classList.toggle('active', adminView[b.dataset.av]);
+});
+
+// Viewer-modus: skjul admin-panel, personlige vis-knapper og redigering
+if (viewerMode) {
+  const ap = document.getElementById('admin-panel'); if (ap) ap.style.display = 'none';
+  const pv = document.getElementById('personal-view-row'); if (pv) pv.style.display = 'none';
+  const vb = document.getElementById('viewer-banner'); if (vb) vb.style.display = 'block';
+  // Skjul eksport-knappen i header
+  document.querySelectorAll('.hdr .btn-sm').forEach(b => { if (b.textContent.includes('Eksporter')) b.style.display='none'; });
+} else {
+  renderShareLink();
+}
+
+renderOverview(); renderPlayersGrid(); renderRangering();
 </script>
 </body>
 </html>

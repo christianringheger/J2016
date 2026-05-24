@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hydrocup 2026 — Byåsen kampkalender</title>
+<style>
+:root{
+  --bg:#0e1320; --panel:#161d2e; --panel-2:#1d2740;
+  --line:#2a3450; --line-soft:#212b44;
+  --ink:#eef2fb; --ink-dim:#9aa6c4; --ink-faint:#6b7795;
+  --c-p1:#7c6cf0; --c-pia:#23c08a;
+  --c-2014-2:#e08b4a; --c-2014-3:#e25c8a;
+  --c-2016-1:#4a9ee0; --c-2016-2:#d9a93a;
+  --ok:#37c97f; --no:#5a647f;
+  --shadow:0 8px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:
+  radial-gradient(900px 500px at 12% -8%, rgba(124,108,240,.10), transparent 60%),
+  radial-gradient(900px 500px at 100% 0%, rgba(35,192,138,.08), transparent 55%),
+  var(--bg);
+  color:var(--ink);
+  font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+  min-height:100vh;}
+.wrap{max-width:1280px;margin:0 auto;padding:28px 22px 70px;}
+
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:20px;}
+.title h1{font-size:30px;font-weight:700;letter-spacing:-.5px;line-height:1.05;}
+.title .accent{background:linear-gradient(90deg,var(--c-p1),var(--c-pia));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.title p{color:var(--ink-dim);font-size:14px;margin-top:6px;}
+.meta{display:flex;gap:10px;flex-wrap:wrap;}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:12.5px;color:var(--ink-dim);display:flex;align-items:center;gap:7px;}
+.chip b{color:var(--ink);font-weight:600;}
+
+/* View tabs */
+.tabs{display:flex;gap:8px;margin-bottom:20px;}
+.tab{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);font-size:14px;font-weight:600;border-radius:12px;padding:11px 20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;}
+.tab:hover{color:var(--ink);}
+.tab.active{background:linear-gradient(135deg,rgba(124,108,240,.22),rgba(35,192,138,.18));border-color:var(--c-p1);color:var(--ink);}
+
+/* Toggles */
+.toggles{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:22px;box-shadow:var(--shadow);}
+.toggles .tt{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-faint);margin-bottom:11px;}
+.toggle-grid{display:flex;flex-wrap:wrap;gap:10px;}
+.tg{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:9px 14px 9px 12px;font-size:13.5px;transition:all .16s ease;position:relative;}
+.tg:hover{transform:translateY(-1px);}
+.tg .dot{width:13px;height:13px;border-radius:4px;flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.04);}
+.tg .lbl{color:var(--ink);font-weight:500;}
+.tg .sub{color:var(--ink-faint);font-size:11.5px;}
+.tg.mine{padding-right:30px;}
+.tg.mine::after{content:"★";position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:11px;color:#e6c14a;}
+.tg.off{opacity:.34;}
+.tg.off .dot{filter:grayscale(1) brightness(.7);}
+.allbtns{display:flex;gap:8px;margin-top:12px;}
+.allbtns button{background:transparent;border:1px solid var(--line);color:var(--ink-dim);font-size:12px;border-radius:9px;padding:6px 12px;cursor:pointer;transition:all .15s;}
+.allbtns button:hover{color:var(--ink);border-color:var(--ink-faint);}
+
+/* Calendar */
+.cal{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.day{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;}
+.day-hd{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);}
+.day-hd h2{font-size:18px;font-weight:700;}
+.day-hd .date{font-size:12.5px;color:var(--ink-dim);}
+.day-hd .cnt{font-size:11px;color:var(--ink-faint);}
+.track{position:relative;padding:14px 14px 18px;flex:1;}
+.hour{position:relative;border-top:1px dashed var(--line-soft);}
+.hour:first-child{border-top:none;}
+.hour .hl{position:absolute;left:0;top:-1px;font-size:10.5px;color:var(--ink-faint);background:var(--panel);padding-right:6px;transform:translateY(-50%);}
+.slot{margin-left:44px;min-height:30px;padding:5px 0;}
+.mrow{display:flex;flex-direction:column;gap:6px;}
+.m{border-radius:11px;padding:9px 11px;border-left:4px solid var(--mc);background:rgba(255,255,255,.04);position:relative;transition:transform .14s ease;}
+.m:hover{transform:translateX(2px);}
+.m.mine{border:1px solid var(--mc);border-left:4px solid var(--mc);box-shadow:0 0 0 1px var(--mc) inset, 0 6px 18px rgba(0,0,0,.30);}
+.m.mine::before{content:"★ DITT LAG";position:absolute;top:-9px;right:9px;font-size:9px;letter-spacing:.6px;font-weight:700;color:#0e1320;background:var(--mc);padding:2px 7px;border-radius:6px;}
+.m .top{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.m .time{font-size:13.5px;font-weight:700;color:var(--ink);}
+.m .pill{font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--mc);color:#0c1019;white-space:nowrap;}
+.m .teams{font-size:13px;color:var(--ink);line-height:1.35;}
+.m .teams .bya{font-weight:700;}
+.m .vs{color:var(--ink-faint);font-size:11.5px;margin:0 3px;}
+.m .place{font-size:11.5px;color:var(--ink-dim);margin-top:5px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.m .place .bn{background:rgba(255,255,255,.06);padding:1px 7px;border-radius:5px;}
+.empty{color:var(--ink-faint);font-size:12.5px;text-align:center;padding:30px 0;font-style:italic;}
+
+/* Plan view */
+.planinfo{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:18px;align-items:center;}
+.planinfo .leg{display:flex;align-items:center;gap:7px;}
+.planinfo .sw{width:14px;height:14px;border-radius:4px;}
+.planinfo b{color:var(--ink);}
+.planwrap{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.pday{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;}
+.pday-hd{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);}
+.pday-hd h2{font-size:18px;}
+.pday-hd .sum{font-size:11px;color:var(--ink-faint);}
+.timeline{padding:8px 14px 16px;position:relative;}
+.ti{position:relative;padding:11px 0 11px 16px;border-left:2px solid var(--line);}
+.ti:last-child{border-left-color:transparent;}
+.ti .marker{position:absolute;left:-7px;top:15px;width:12px;height:12px;border-radius:50%;background:var(--panel);border:2px solid var(--line);}
+
+.pcard{border-radius:11px;padding:10px 12px;position:relative;}
+.pcard.own{background:linear-gradient(135deg,rgba(124,108,240,.13),rgba(35,192,138,.10));border:1px solid var(--mc);box-shadow:0 0 0 1px var(--mc) inset;}
+.pcard.own .marker-fill{}
+.pcard.watch{background:rgba(55,201,127,.10);border:1px solid rgba(55,201,127,.4);}
+.pcard.skip{background:rgba(255,255,255,.025);border:1px dashed var(--line);opacity:.6;}
+.pcard .ph{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;}
+.pcard .ptime{font-size:13.5px;font-weight:700;}
+.pcard .badge{font-size:9.5px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:6px;}
+.badge.own{background:var(--mc);color:#0c1019;}
+.badge.watch{background:rgba(55,201,127,.9);color:#06251a;}
+.badge.skip{background:rgba(120,130,160,.3);color:var(--ink-dim);}
+.pcard .pteams{font-size:13px;line-height:1.35;}
+.pcard .pteams .bya{font-weight:700;}
+.pcard .pmeta{font-size:11.5px;color:var(--ink-dim);margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.pcard .pmeta .bn{background:rgba(255,255,255,.06);padding:1px 7px;border-radius:5px;}
+.pcard .why{font-size:11px;color:var(--ink-faint);margin-top:5px;font-style:italic;}
+.pcard .opp{font-size:10.5px;color:var(--ink-faint);margin-top:4px;}
+.arrive{font-size:10.5px;color:#e6c14a;margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.gap{text-align:center;font-size:10.5px;color:var(--ink-faint);padding:3px 0;}
+
+/* Rooms / overnatting */
+.rcount{font-size:12px;color:var(--ink-faint);background:rgba(255,255,255,.06);padding:2px 9px;border-radius:7px;}
+.rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.room{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;border-top:4px solid var(--rc);}
+.room-hd{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);}
+.room-hd h3{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.room-hd h3::before{content:"";width:11px;height:11px;border-radius:3px;background:var(--rc);box-shadow:0 0 0 3px rgba(255,255,255,.04);}
+.room-body{padding:11px;flex:1;display:flex;flex-direction:column;gap:8px;min-height:120px;transition:background .15s;}
+.room-body.dragover{background:rgba(124,108,240,.10);}
+.unassigned{background:var(--panel);border:1px dashed var(--c-p1);border-radius:14px;margin-bottom:18px;overflow:hidden;}
+.unassigned .room-hd h3::before{background:var(--c-p1);}
+.unassigned .room-body{flex-direction:row;flex-wrap:wrap;min-height:60px;}
+.pl{display:flex;align-items:center;gap:9px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px;cursor:grab;transition:transform .12s,box-shadow .12s,opacity .12s;user-select:none;}
+.pl:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.3);border-color:var(--ink-faint);}
+.pl.dragging{opacity:.4;cursor:grabbing;}
+.pl .pn{font-size:11px;font-weight:700;color:#0c1019;background:var(--rc);width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;}
+.unassigned .pl .pn{background:var(--c-p1);color:#0c1019;}
+.pl .nm{color:var(--ink);}
+.pl.adult{background:linear-gradient(135deg,rgba(124,108,240,.18),rgba(35,192,138,.12));border-color:var(--c-p1);}
+.pl.adult .pn{background:var(--c-p1);font-size:12px;}
+.pl.adult .nm{font-weight:600;}
+.rcount.over{background:rgba(226,92,138,.22);color:#f3aecb;}
+.room-body .empty{padding:18px 0;}
+
+/* Map / baner */
+#map{height:440px;border-radius:14px;overflow:hidden;border:1px solid var(--line);margin-bottom:12px;box-shadow:var(--shadow);background:var(--panel-2);}
+.mapfail{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-faint);font-size:13px;text-align:center;padding:20px;}
+.mapnote{font-size:12px;color:var(--ink-faint);margin-bottom:16px;line-height:1.5;}
+.minetoggle{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink);cursor:pointer;background:rgba(124,108,240,.10);border:1px solid rgba(124,108,240,.35);padding:5px 11px;border-radius:9px;user-select:none;}
+.minetoggle input{accent-color:var(--c-p1);width:15px;height:15px;cursor:pointer;}
+.minehint{color:var(--ink-faint);font-size:12px;}
+.venue.hidden{display:none;}
+.leaflet-popup-content{font-size:12.5px;line-height:1.45;}
+.venues-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.venue{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:var(--shadow);}
+.venue-hd{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:4px;}
+.venue-hd h4{font-size:15px;font-weight:700;margin-right:auto;}
+.vpin{font-size:11px;color:#23c08a;background:rgba(35,192,138,.13);padding:2px 8px;border-radius:6px;white-space:nowrap;}
+.vpin.off{color:var(--ink-faint);background:rgba(255,255,255,.05);}
+.maplink{font-size:12px;color:#4a9ee0;text-decoration:none;border:1px solid rgba(74,158,224,.4);padding:3px 10px;border-radius:7px;white-space:nowrap;transition:background .15s;}
+.maplink:hover{background:rgba(74,158,224,.13);}
+.venue-cnt{font-size:11px;color:var(--ink-faint);margin-bottom:8px;}
+.venue-matches{display:flex;flex-direction:column;gap:4px;}
+.vm{font-size:12.5px;color:var(--ink-dim);}
+.vm .vmt{display:inline-block;min-width:62px;color:var(--ink);font-weight:600;}
+.vm .bya{color:var(--ink);font-weight:600;}
+.vm .vs{color:var(--ink-faint);margin:0 2px;}
+
+footer{margin-top:30px;text-align:center;color:var(--ink-faint);font-size:12px;}
+.hidden{display:none;}
+@media (max-width:900px){.cal,.planwrap{grid-template-columns:1fr;}.rooms{grid-template-columns:repeat(2,1fr);}.venues-grid{grid-template-columns:1fr;}.title h1{font-size:24px;}}
+@media (max-width:560px){.rooms{grid-template-columns:1fr;}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="title">
+      <h1>Hydrocup <span class="accent">2026</span></h1>
+      <p>Byåsen IL — kampkalender J2014 &amp; J2016 · 29.–31. mai</p>
+    </div>
+    <div class="meta">
+      <div class="chip">★ <b>Pernille</b> = J2014 Byåsen 1</div>
+      <div class="chip">★ <b>Pia</b> = J2016 Byåsen 3</div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" id="tab-cal" onclick="showView('cal')">📅 Kalender</div>
+    <div class="tab" id="tab-plan" onclick="showView('plan')">🎯 Min plan — hvilke kamper rekker jeg?</div>
+    <div class="tab" id="tab-rooms" onclick="showView('rooms')">🛏️ Overnatting J2014</div>
+    <div class="tab" id="tab-map" onclick="showView('map')">🗺️ Baner &amp; kart</div>
+  </div>
+
+  <!-- CALENDAR VIEW -->
+  <div id="view-cal">
+    <div class="toggles">
+      <div class="tt">Vis / skjul lag</div>
+      <div class="toggle-grid" id="toggleGrid"></div>
+      <div class="allbtns">
+        <button onclick="setAll(true)">Vis alle</button>
+        <button onclick="setAll(false)">Skjul alle</button>
+        <button onclick="onlyMine()">Bare mine (★)</button>
+      </div>
+    </div>
+    <div class="cal" id="cal"></div>
+  </div>
+
+  <!-- PLAN VIEW -->
+  <div id="view-plan" class="hidden">
+    <div class="planinfo">
+      <span><b>Slik er planen regnet ut:</b></span>
+      <span class="leg"><span class="sw" style="background:linear-gradient(135deg,#7c6cf0,#23c08a)"></span> Dine egne kamper (låst, oppmøte 30 min før)</span>
+      <span class="leg"><span class="sw" style="background:rgba(55,201,127,.7)"></span> Andre kamper du rekker å se</span>
+      <span class="leg"><span class="sw" style="background:rgba(120,130,160,.4)"></span> Rekker ikke</span>
+    </div>
+    <div class="planinfo" style="font-size:12px;color:var(--ink-faint);">
+      Kamp = 2×20 min (regnet som 45 min med pause) · 15 min forflytning mellom baner · 0 min på samme anlegg
+    </div>
+    <div class="planwrap" id="plan"></div>
+  </div>
+
+  <!-- ROOMS VIEW -->
+  <div id="view-rooms" class="hidden">
+    <div class="planinfo">
+      <span><b>Romfordeling J2014 — Hydrocup</b></span>
+      <span class="leg">🛏️ Voksne (👤) ligger øverst · jentene er sortert alfabetisk · dra for å flytte · lagres automatisk</span>
+      <span class="rcount" id="rcount-total"></span>
+    </div>
+    <div id="unassigned-wrap" class="unassigned hidden">
+      <div class="room-hd"><h3>Ikke plassert</h3><span class="rcount" id="rcount-un">0</span></div>
+      <div class="room-body droptarget" id="room-unassigned" data-room="unassigned"></div>
+    </div>
+    <div class="rooms" id="rooms"></div>
+    <div class="allbtns" style="margin-top:18px;">
+      <button onclick="resetRooms()">↺ Tilbakestill til opprinnelig fordeling</button>
+    </div>
+  </div>
+
+  <!-- MAP VIEW -->
+  <div id="view-map" class="hidden">
+    <div class="planinfo">
+      <span><b>Banene i kampprogrammet</b></span>
+      <label class="minetoggle"><input type="checkbox" id="map-mine" onchange="toggleMapMine()"> Vis kun mine kamper <span class="minehint">(Pernille &amp; Pia)</span></label>
+      <span class="leg">📍 = kartfestet · «Åpne i kart» søker live på banen</span>
+    </div>
+    <div id="map"></div>
+    <div class="mapnote">Dra i kartet for å flytte, +/− for zoom. Posisjoner er hentet fra Hydro Cups offisielle kart. Banene ligger spredt — <b>Statkraftbanen ligger vest i sentrum, og Øksendal ca. 30 km vest</b>. Førja er ikke med i cup-kartet; bruk «Åpne i kart» for den.</div>
+    <div class="venues-grid" id="venue-list"></div>
+  </div>
+
+  <footer>Trykk på et lag for å skjule/vise · ★ markerer dine egne lag · «Min plan» viser hvilke kamper du rekker å se</footer>
+</div>
+
+<script>
+const TEAMS = {
+  p1:    {key:"p1",    name:"Byåsen 1", coh:"J2014", coach:"Pernille",       color:"#7c6cf0", mine:true},
+  pia:   {key:"pia",   name:"Byåsen 3", coh:"J2016", coach:"Pia",            color:"#23c08a", mine:true},
+  t2014_2:{key:"t2014_2",name:"Byåsen 2",coh:"J2014",coach:"Hans Kristian",  color:"#e08b4a", mine:false},
+  t2014_3:{key:"t2014_3",name:"Byåsen 3",coh:"J2014",coach:"Rennemo/Alexander",color:"#e25c8a",mine:false},
+  t2016_1:{key:"t2016_1",name:"Byåsen 1",coh:"J2016",coach:"Jonas",          color:"#4a9ee0", mine:false},
+  t2016_2:{key:"t2016_2",name:"Byåsen 2",coh:"J2016",coach:"Ole",            color:"#d9a93a", mine:false},
+  t2012:  {key:"t2012",  name:"Byåsen",  coh:"J2012",coach:"Sanna",          color:"#46c8d8", mine:false},
+};
+
+const MATCHES = [
+  {team:"t2014_3", dag:"Fredag", tid:"18:45", h:"Træff",            a:"Byåsen 3",            bane:"Sande 2 B",        type:"9er"},
+  {team:"t2012",   dag:"Fredag", tid:"19:00", h:"Orkla FK",         a:"Byåsen J14",          bane:"11er bane Håsen",  type:"11er"},
+  {team:"t2014_2", dag:"Fredag", tid:"19:30", h:"Frei FK",          a:"Byåsen 2",            bane:"Sande 2 B",        type:"9er"},
+
+  {team:"t2016_2", dag:"Lørdag", tid:"12:30", h:"Eide og Omegn FK Blå", a:"Byåsen 2",       bane:"Statkraftbanen C", type:"7er"},
+  {team:"t2012",   dag:"Lørdag", tid:"09:00", h:"Byåsen J14",       a:"Dahle IL",            bane:"11er bane Håsen",  type:"11er"},
+  {team:"t2016_1", dag:"Lørdag", tid:"08:00", h:"Trygg/Lade SK 2",  a:"Byåsen 1",            bane:"Rotvoll",          type:"7er"},
+  {team:"t2014_3", dag:"Lørdag", tid:"08:45", h:"Byåsen 3",         a:"Freidig 1",           bane:"Holssanden",       type:"9er"},
+  {team:"t2014_2", dag:"Lørdag", tid:"09:30", h:"Byåsen 2",         a:"Åndalsnes",           bane:"Ottembanen",       type:"9er"},
+  {team:"t2014_3", dag:"Lørdag", tid:"10:15", h:"Utleira IL Orange",a:"Byåsen 3",            bane:"Kgb C",            type:"9er"},
+  {team:"t2016_1", dag:"Lørdag", tid:"10:15", h:"Byåsen 1",         a:"Tingvoll IL",         bane:"Statkraftbanen C", type:"7er"},
+  {team:"t2016_2", dag:"Lørdag", tid:"11:00", h:"Dahle IL",         a:"Byåsen 2",            bane:"Kgb B",            type:"7er"},
+  {team:"t2014_2", dag:"Lørdag", tid:"13:15", h:"Strindheim IL 2",  a:"Byåsen 2",            bane:"Øksendal",         type:"9er"},
+  {team:"p1",      dag:"Lørdag", tid:"11:45", h:"Byåsen 1",         a:"Oppdal IL",           bane:"Kgb C",            type:"9er"},
+  {team:"p1",      dag:"Lørdag", tid:"14:45", h:"Malmefjorden IL",  a:"Byåsen 1",            bane:"Statkraftbanen B", type:"9er"},
+  {team:"pia",     dag:"Lørdag", tid:"14:45", h:"Frei FK",          a:"Byåsen 3",            bane:"Frank Stadion",    type:"7er"},
+  {team:"pia",     dag:"Lørdag", tid:"16:15", h:"Trygg/Lade SK 1",  a:"Byåsen 3",            bane:"Rotvoll",          type:"7er"},
+  {team:"p1",      dag:"Lørdag", tid:"17:00", h:"Sunndal IL Rød",   a:"Byåsen 1",            bane:"Ottembanen",       type:"9er"},
+
+  {team:"t2014_3", dag:"Søndag", tid:"08:15", h:"Byåsen 3",         a:"Orkanger IF 2",       bane:"Kgb C",            type:"9er"},
+  {team:"pia",     dag:"Søndag", tid:"08:15", h:"Byåsen 3",         a:"Charlottenlund SK 2", bane:"Skjøllend",        type:"7er"},
+  {team:"t2016_1", dag:"Søndag", tid:"08:15", h:"Oppdal IL 2",      a:"Byåsen 1",            bane:"Førja",            type:"7er"},
+  {team:"p1",      dag:"Søndag", tid:"09:00", h:"SIF/Hessa IL",     a:"Byåsen 1",            bane:"Holssanden",       type:"9er"},
+  {team:"t2014_2", dag:"Søndag", tid:"09:45", h:"Sverresborg Fotball 1", a:"Byåsen 2",       bane:"Øksendal",         type:"9er"},
+  {team:"t2016_2", dag:"Søndag", tid:"09:45", h:"Sunndal IL J10",   a:"Byåsen 2",            bane:"Skjøllend",        type:"7er"},
+  {team:"t2014_3", dag:"Søndag", tid:"11:15", h:"Strindheim IL 1",  a:"Byåsen 3",            bane:"Sande 2 B",        type:"9er"},
+  {team:"t2016_2", dag:"Søndag", tid:"11:15", h:"Byåsen 2",         a:"Charlottenlund SK 1", bane:"Skjøllend",        type:"7er"},
+  {team:"t2014_2", dag:"Søndag", tid:"13:30", h:"Byåsen 2",         a:"Orkanger IF 1",       bane:"Sande 2 B",        type:"9er"},
+  {team:"p1",      dag:"Søndag", tid:"13:30", h:"Byåsen 1",         a:"Freidig 2",           bane:"Ottembanen",       type:"9er"},
+  {team:"t2016_1", dag:"Søndag", tid:"13:30", h:"Træff Hvit",       a:"Byåsen 1",            bane:"Skjøllend",        type:"7er"},
+  {team:"pia",     dag:"Søndag", tid:"14:15", h:"Træff Grønn",      a:"Byåsen 3",            bane:"Skjøllend",        type:"7er"},
+];
+
+const DAYS = [
+  {name:"Fredag", date:"29. mai"},
+  {name:"Lørdag", date:"30. mai"},
+  {name:"Søndag", date:"31. mai"},
+];
+
+const DUR = 45, TRAVEL = 15, ARRIVE = 30;
+const visible = {};
+Object.keys(TEAMS).forEach(k => visible[k] = true);
+
+const toMin = t => { const [h,m]=t.split(":").map(Number); return h*60+m; };
+const hhmm = x => `${String(Math.floor(x/60)).padStart(2,'0')}:${String(x%60).padStart(2,'0')}`;
+const trav = (a,b) => a===b ? 0 : TRAVEL;
+const isBya = s => s.startsWith("Byåsen");
+
+/* ---------- CALENDAR ---------- */
+function buildToggles(){
+  const grid = document.getElementById("toggleGrid");
+  const order = Object.values(TEAMS).sort((a,b)=> (b.mine-a.mine));
+  grid.innerHTML = order.map(t=>`
+    <div class="tg ${t.mine?'mine':''}" data-team="${t.key}" onclick="toggle('${t.key}')">
+      <span class="dot" style="background:${t.color}"></span>
+      <span><span class="lbl">${t.coach}</span><span class="sub"> · ${t.coh} ${t.name}</span></span>
+    </div>`).join("");
+}
+function toggle(key){
+  visible[key]=!visible[key];
+  document.querySelector(`.tg[data-team="${key}"]`).classList.toggle("off", !visible[key]);
+  renderCal();
+}
+function setAll(v){
+  Object.keys(visible).forEach(k=>visible[k]=v);
+  document.querySelectorAll(".tg").forEach(el=>el.classList.toggle("off", !v));
+  renderCal();
+}
+function onlyMine(){
+  Object.keys(TEAMS).forEach(k=> visible[k]=TEAMS[k].mine);
+  document.querySelectorAll(".tg").forEach(el=>{const k=el.dataset.team; el.classList.toggle("off", !visible[k]);});
+  renderCal();
+}
+function renderCal(){
+  const cal = document.getElementById("cal");
+  cal.innerHTML="";
+  DAYS.forEach(day=>{
+    const dm = MATCHES.filter(m=>m.dag===day.name && visible[m.team]).sort((a,b)=>toMin(a.tid)-toMin(b.tid));
+    const col = document.createElement("div"); col.className="day";
+    col.innerHTML = `<div class="day-hd"><div><h2>${day.name}</h2><div class="date">${day.date}</div></div><div class="cnt">${dm.length} kamp${dm.length===1?'':'er'}</div></div>`;
+    const track = document.createElement("div"); track.className="track";
+    if(!dm.length){ track.innerHTML=`<div class="empty">Ingen kamper å vise</div>`; col.appendChild(track); cal.appendChild(col); return; }
+    let lastHour=null;
+    dm.forEach(m=>{
+      const hour=m.tid.split(":")[0];
+      if(hour!==lastHour){
+        const hr=document.createElement("div"); hr.className="hour";
+        hr.innerHTML=`<span class="hl">${hour}:00</span><div class="slot" id="c-${day.name}-${hour}"><div class="mrow"></div></div>`;
+        track.appendChild(hr); lastHour=hour;
+      }
+      const slot=track.querySelector(`#c-${day.name}-${hour} .mrow`);
+      const t=TEAMS[m.team];
+      const card=document.createElement("div");
+      card.className="m"+(t.mine?" mine":"");
+      card.style.setProperty("--mc",t.color);
+      card.innerHTML=`<div class="top"><span class="time">${m.tid}</span><span class="pill">${t.coach} · ${t.coh}</span></div>
+        <div class="teams"><span class="${isBya(m.h)?'bya':''}">${m.h}</span><span class="vs">vs</span><span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>
+        <div class="place">📍 ${m.bane} <span class="bn">${m.type} bane</span></div>`;
+      slot.appendChild(card);
+    });
+    col.appendChild(track); cal.appendChild(col);
+  });
+}
+
+/* ---------- PLAN ---------- */
+function teamLabel(m){const t=TEAMS[m.team]; return `${t.coach} · ${t.coh} ${t.name}`;}
+function oppText(m){return isBya(m.h)? m.a : m.h;}
+
+function buildPlan(){
+  const plan=document.getElementById("plan");
+  plan.innerHTML="";
+  DAYS.forEach(day=>{
+    const dm = MATCHES.filter(m=>m.dag===day.name);
+    const own = dm.filter(m=>TEAMS[m.team].mine).sort((a,b)=>toMin(a.tid)-toMin(b.tid));
+    const others = dm.filter(m=>!TEAMS[m.team].mine).sort((a,b)=>toMin(a.tid)-toMin(b.tid));
+    const busy = own.map(o=>({s:toMin(o.tid)-ARRIVE, e:toMin(o.tid)+DUR, v:o.bane}));
+
+    function evalWatch(o){
+      const s=toMin(o.tid), e=s+DUR, v=o.bane;
+      for(const b of busy){ if(!(e<=b.s || s>=b.e)) return {ok:false,why:"kolliderer med egen kamp / oppmøte"}; }
+      const prev=busy.filter(b=>b.e<=s);
+      if(prev.length){ const c=prev.reduce((x,y)=>y.e>x.e?y:x); if(c.e+trav(c.v,v)>s) return {ok:false,why:`rekker ikke fra ${c.v} (ferdig ${hhmm(c.e)}) hit innen ${o.tid}`}; }
+      const nxt=busy.filter(b=>b.s>=e);
+      if(nxt.length){ const c=nxt.reduce((x,y)=>y.s<x.s?y:x); if(e+trav(v,c.v)>c.s) return {ok:false,why:`må dra videre til ${c.v} (oppmøte ${hhmm(c.s)}) før kampen er ferdig`}; }
+      return {ok:true,why:""};
+    }
+
+    // Build a unified sorted timeline: own (with arrival note) + watchable others + skipped others
+    const items = [];
+    own.forEach(o=>items.push({kind:"own", t:toMin(o.tid), m:o}));
+    others.forEach(o=>{ const r=evalWatch(o); items.push({kind:r.ok?"watch":"skip", t:toMin(o.tid), m:o, why:r.why}); });
+    items.sort((a,b)=> a.t-b.t || (a.kind==="own"?-1:1));
+
+    const watchCount = items.filter(i=>i.kind==="watch").length;
+    const ownCount = own.length;
+
+    const col=document.createElement("div"); col.className="pday";
+    col.innerHTML = `<div class="pday-hd"><h2>${day.name}</h2><div class="sum">${ownCount} egne · ${watchCount} å se</div></div>`;
+    const tl=document.createElement("div"); tl.className="timeline";
+
+    if(!items.length){ tl.innerHTML=`<div class="empty">Ingen kamper</div>`; col.appendChild(tl); plan.appendChild(col); return; }
+
+    items.forEach(it=>{
+      const m=it.m, t=TEAMS[m.team];
+      const wrap=document.createElement("div"); wrap.className="ti";
+      let inner=`<div class="marker"></div>`;
+      if(it.kind==="own"){
+        inner+=`<div class="pcard own" style="--mc:${t.color}">
+          <div class="arrive">⏱ Oppmøte ${hhmm(toMin(m.tid)-ARRIVE)}</div>
+          <div class="ph"><span class="ptime">${m.tid}</span><span class="badge own" style="background:${t.color}">★ ${t.coach}</span></div>
+          <div class="pteams"><span class="${isBya(m.h)?'bya':''}">${m.h}</span> <span style="color:var(--ink-faint)">vs</span> <span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>
+          <div class="pmeta">📍 ${m.bane} <span class="bn">${m.type}</span> · ${t.coh}</div>
+        </div>`;
+      } else if(it.kind==="watch"){
+        inner+=`<div class="pcard watch">
+          <div class="ph"><span class="ptime">${m.tid}</span><span class="badge watch">✓ REKKER</span></div>
+          <div class="pteams"><span class="${isBya(m.h)?'bya':''}">${m.h}</span> <span style="color:var(--ink-faint)">vs</span> <span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>
+          <div class="pmeta"><span style="color:${t.color};font-weight:600">${teamLabel(m)}</span></div>
+          <div class="pmeta">📍 ${m.bane} <span class="bn">${m.type}</span></div>
+        </div>`;
+      } else {
+        inner+=`<div class="pcard skip">
+          <div class="ph"><span class="ptime">${m.tid}</span><span class="badge skip">rekker ikke</span></div>
+          <div class="pteams">${m.h} <span style="color:var(--ink-faint)">vs</span> ${m.a}</div>
+          <div class="opp">${teamLabel(m)} · 📍 ${m.bane}</div>
+          <div class="why">${it.why}</div>
+        </div>`;
+      }
+      wrap.innerHTML=inner;
+      tl.appendChild(wrap);
+    });
+    col.appendChild(tl); plan.appendChild(col);
+  });
+}
+
+/* ---------- ROOMS / OVERNATTING ---------- */
+// Romnummer fra Hydro Cup-romfordelingen (Byåsen J12, Voksenopplæring). A-kort = sengeplasser.
+const ROOMS = [
+  {key:"rom1", navn:"Rom 5",  farge:"#f6c6a0", akort:11},
+  {key:"rom2", navn:"Rom 6",  farge:"#9fd8a8", akort:11},
+  {key:"rom3", navn:"Rom 13", farge:"#f3aecb", akort:11},
+  {key:"rom4", navn:"Rom 7",  farge:"#a7d3ef", akort:12},
+];
+const ROOM_KEYS = ["rom1","rom2","rom3","rom4","unassigned"];
+
+// Jenter per rom (Bertine ut, Marie Skogan + Solvor Waterloo Farstad inn på rom4)
+const GIRLS_DEFAULT = {
+  rom1:["Pernille Fevaag Heger","Jenny Holsen","Ingeborg Johannessen","Elsa Rennemo","Synnøve Halvorsrød Bjerve","Erle Granviken","Maiken Hektoen Vullum","Ines Eithun Gabrielsen","Ellen Skei Rasmussen","Eline Sandøy"],
+  rom2:["Julie Hirsch","Elise Fredriksen","Runa Buvarp Julsrud","Sara Hagen","Hanna Elvebakk","Aliah Fjeldavli Nordvik","Arja Utengen Larsen","Nora Fredriksli","Oda Gartland","Ingeborg Kjærsgaard Persen"],
+  rom3:["Astrid Øverås Karlsen","Emma Øverås Karlsen","Linde Lund-Tyvoll","Leah Håkegård Heineman","Sofie Minde Elveseter","Betelhem Daniel","Elin Afom Kifle","Mali Olsø-Aune","Sigrid Nordengen Lohn","Pernille Eikemo-Nilsen"],
+  rom4:["Milla Aurora Jakobsen","Nora Elise Rosvold","Pernille Viggen Hansen","Siri Ormberg","Frida Aamodt","Aurora Bye-Bakke","Agnes Sofie Hoen","Hafsah Mohamed","Hild Midbøe Rognstad","Marie Skogan","Solvor Waterloo Farstad"],
+  unassigned:[],
+};
+// Voksne (mødre) per rom — sover hos sin egen datter, vises øverst
+const ADULTS_DEFAULT = {
+  rom1:["Turid (mamma til Ines)"],                 // Ines Eithun Gabrielsen
+  rom2:["Andrea (mamma til Ingeborg KP)"],         // Ingeborg Kjærsgaard Persen
+  rom3:["Ingvild (mamma til Linde)"],              // Linde Lund-Tyvoll
+  rom4:["Kirsti (mamma til Frida)"],               // Frida Aamodt
+  unassigned:[],
+};
+const ROOMS_STORE_KEY = "hydrocup_rooms_2026_v2";
+let girlData, adultData;
+loadRooms();
+
+function loadRooms(){
+  try{
+    const raw = localStorage.getItem(ROOMS_STORE_KEY);
+    if(raw){
+      const p = JSON.parse(raw);
+      girlData = p.girls || JSON.parse(JSON.stringify(GIRLS_DEFAULT));
+      adultData = p.adults || JSON.parse(JSON.stringify(ADULTS_DEFAULT));
+      ROOM_KEYS.forEach(k=>{ if(!Array.isArray(girlData[k])) girlData[k]=[]; if(!Array.isArray(adultData[k])) adultData[k]=[]; });
+      return;
+    }
+  }catch(e){}
+  girlData = JSON.parse(JSON.stringify(GIRLS_DEFAULT));
+  adultData = JSON.parse(JSON.stringify(ADULTS_DEFAULT));
+}
+function saveRooms(){
+  try{ localStorage.setItem(ROOMS_STORE_KEY, JSON.stringify({girls:girlData, adults:adultData})); }catch(e){}
+}
+function resetRooms(){
+  girlData = JSON.parse(JSON.stringify(GIRLS_DEFAULT));
+  adultData = JSON.parse(JSON.stringify(ADULTS_DEFAULT));
+  saveRooms(); renderRooms();
+}
+
+const sortNo = arr => [...arr].sort((a,b)=>a.localeCompare(b,'nb'));
+let dragName=null, dragFrom=null, dragKind=null;
+
+function renderRooms(){
+  const wrap = document.getElementById("rooms");
+  const totGirls = ROOM_KEYS.reduce((s,k)=>s+girlData[k].length,0);
+  const totAdults = ROOM_KEYS.reduce((s,k)=>s+adultData[k].length,0);
+  document.getElementById("rcount-total").textContent = `${totGirls} jenter + ${totAdults} voksne = ${totGirls+totAdults}`;
+
+  // Ikke-plassert (både jenter og voksne)
+  const unG = girlData.unassigned, unA = adultData.unassigned;
+  const unWrap = document.getElementById("unassigned-wrap");
+  unWrap.classList.toggle("hidden", unG.length===0 && unA.length===0);
+  document.getElementById("rcount-un").textContent = unG.length+unA.length;
+  const unBody = document.getElementById("room-unassigned");
+  const unChips = unA.map(n=>chip(n,"unassigned","adult")).join("") + sortNo(unG).map(n=>chip(n,"unassigned","girl")).join("");
+  unBody.innerHTML = unChips || `<div class="empty">Tom</div>`;
+
+  wrap.innerHTML="";
+  ROOMS.forEach(r=>{
+    const adults = adultData[r.key];
+    const girls = sortNo(girlData[r.key]);
+    const total = adults.length + girls.length;
+    const cap = total>r.akort ? `<span class="rcount over">${total} / ${r.akort} senger</span>`
+                              : `<span class="rcount">${total} / ${r.akort} senger</span>`;
+    const col = document.createElement("div");
+    col.className="room"; col.style.setProperty("--rc", r.farge);
+    let body = adults.map(n=>chip(n,r.key,"adult")).join("");
+    body += girls.map((n,i)=>chip(n,r.key,"girl",i+1)).join("");
+    if(!total) body = `<div class="empty">Dra hit</div>`;
+    col.innerHTML = `<div class="room-hd"><h3>${r.navn}</h3>${cap}</div>
+      <div class="room-body droptarget" data-room="${r.key}">${body}</div>`;
+    wrap.appendChild(col);
+  });
+  attachDnd();
+}
+function chip(name, room, kind, num){
+  if(kind==="adult"){
+    return `<div class="pl adult" draggable="true" data-name="${name}" data-room="${room}" data-kind="adult"><span class="pn">👤</span><span class="nm">${name}</span></div>`;
+  }
+  return `<div class="pl" draggable="true" data-name="${name}" data-room="${room}" data-kind="girl"><span class="pn">${num!=null?num:'•'}</span><span class="nm">${name}</span></div>`;
+}
+function attachDnd(){
+  document.querySelectorAll("#view-rooms .pl").forEach(el=>{
+    el.addEventListener("dragstart", e=>{
+      dragName = el.dataset.name; dragFrom = el.dataset.room; dragKind = el.dataset.kind;
+      el.classList.add("dragging");
+      e.dataTransfer.effectAllowed="move";
+      try{ e.dataTransfer.setData("text/plain", dragName); }catch(_){}
+    });
+    el.addEventListener("dragend", ()=> el.classList.remove("dragging"));
+  });
+  document.querySelectorAll("#view-rooms .droptarget").forEach(zone=>{
+    zone.addEventListener("dragover", e=>{ e.preventDefault(); zone.classList.add("dragover"); });
+    zone.addEventListener("dragleave", ()=> zone.classList.remove("dragover"));
+    zone.addEventListener("drop", e=>{
+      e.preventDefault(); zone.classList.remove("dragover");
+      const to = zone.dataset.room;
+      if(!dragName || dragFrom===null || to===dragFrom) return;
+      const store = dragKind==="adult" ? adultData : girlData;
+      store[dragFrom] = store[dragFrom].filter(n=>n!==dragName);
+      if(!store[to].includes(dragName)) store[to].push(dragName);
+      dragName=null; dragFrom=null; dragKind=null;
+      saveRooms(); renderRooms();
+    });
+  });
+}
+
+/* ---------- MAP / BANER ---------- */
+// Koordinater hentet fra Hydro Cup 2026-kartet (My Maps / KMZ). q = søketekst for "Åpne i kart".
+const VENUES = {
+  "Sande 2 A":       {lat:62.6703705,lng:8.5869527, approx:false, q:"Sande 2 Sunndalsøra"},
+  "Sande 2 B":       {lat:62.6703705,lng:8.5869527, approx:false, q:"Sande 2 Sunndalsøra"},
+  "Statkraftbanen A":{lat:62.6655971,lng:8.5276651, approx:false, q:"Statkraftbanen Sunndalsøra"},
+  "Statkraftbanen B":{lat:62.6655971,lng:8.5276651, approx:false, q:"Statkraftbanen Sunndalsøra"},
+  "Statkraftbanen C":{lat:62.6655971,lng:8.5276651, approx:false, q:"Statkraftbanen Sunndalsøra"},
+  "Ottembanen":      {lat:62.6691402,lng:8.596949,  approx:false, q:"Ottembanen Sunndalsøra"},
+  "Holssanden":      {lat:62.6586844,lng:8.6388588, approx:false, q:"Holssanden Sunndalsøra"},
+  "Kgb B":           {lat:62.6706143,lng:8.5941035, approx:false, q:"KGB kunstgress Sunndalsøra"},
+  "Kgb C":           {lat:62.6706143,lng:8.5941035, approx:false, q:"KGB kunstgress Sunndalsøra"},
+  "Rotvoll":         {lat:62.6722472,lng:8.5802365, approx:false, q:"Rotvoll Sunndalsøra"},
+  "Frank Stadion":   {lat:62.6641647,lng:8.5885834, approx:false, q:"Frank Stadion Sunndalsøra"},
+  "Skjøllend":       {lat:62.6689666,lng:8.5691965, approx:false, q:"Skjøllend Sunndalsøra"},
+  "Øksendal":        {lat:62.7157999,lng:8.4216213, approx:false, q:"Øksendal idrettsplass"},
+  "11er bane Håsen": {lat:62.6692943,lng:8.5428786, approx:false, q:"Håsen Sunndalsøra"},
+  "Førja":           {lat:null, lng:null, approx:false, q:"Førja Sunndalsøra"},
+};
+const dayIdx = d => ["Fredag","Lørdag","Søndag"].indexOf(d);
+const sortM = arr => arr.slice().sort((a,b)=> (dayIdx(a.dag)-dayIdx(b.dag)) || toMin(a.tid)-toMin(b.tid));
+const mapsLink = q => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+const isMineMatch = m => { const t=TEAMS[m.team]; return t && t.mine; };
+let leafletMap=null, mapInited=false, mapLayer=null, mapMineOnly=false;
+
+function toggleMapMine(){
+  mapMineOnly = document.getElementById("map-mine").checked;
+  buildMapView();
+}
+
+function buildMapView(){
+  // filtrer kamper hvis "kun mine" er på
+  const matches = mapMineOnly ? MATCHES.filter(isMineMatch) : MATCHES;
+  const byBane={};
+  matches.forEach(m=>{ (byBane[m.bane]=byBane[m.bane]||[]).push(m); });
+
+  const list=document.getElementById("venue-list");
+  const banes = Object.keys(byBane).sort((a,b)=>a.localeCompare(b,'nb'));
+  list.innerHTML = banes.length ? banes.map(b=>{
+    const v=VENUES[b]||{}; const ms=sortM(byBane[b]);
+    const pin = v.lat!=null ? `<span class="vpin">📍${v.approx?' ca.':''}</span>` : `<span class="vpin off">ikke kartfestet</span>`;
+    const rows = ms.map(m=>`<div class="vm"><span class="vmt">${m.dag.slice(0,3)} ${m.tid}</span><span class="${isBya(m.h)?'bya':''}">${m.h}</span><span class="vs">–</span><span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>`).join("");
+    return `<div class="venue"><div class="venue-hd"><h4>${b}</h4>${pin}<a class="maplink" href="${mapsLink(v.q||(b+' Sunndalsøra'))}" target="_blank" rel="noopener">Åpne i kart ↗</a></div>
+      <div class="venue-cnt">${ms.length} kamp${ms.length===1?'':'er'}</div><div class="venue-matches">${rows}</div></div>`;
+  }).join("") : `<div class="mapnote" style="grid-column:1/-1;">Ingen av dine kamper på disse banene.</div>`;
+
+  if(!mapInited) initMap();
+  drawMarkers(byBane);
+  if(leafletMap) setTimeout(()=>leafletMap.invalidateSize(),50);
+}
+
+function initMap(){
+  const el=document.getElementById("map");
+  if(typeof L==="undefined"){ el.innerHTML=`<div class="mapfail">Kartet krever internett og kunne ikke lastes nå.<br>Bruk «Åpne i kart»-lenkene under.</div>`; return; }
+  leafletMap = L.map(el,{scrollWheelZoom:false}).setView([62.668,8.585],12);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(leafletMap);
+  mapLayer = L.layerGroup().addTo(leafletMap);
+  mapInited=true;
+}
+
+function drawMarkers(byBane){
+  if(!leafletMap||!mapLayer) return;
+  mapLayer.clearLayers();
+  // grupper baner som deler samme posisjon
+  const buckets={};
+  Object.keys(byBane).forEach(b=>{
+    const v=VENUES[b]; if(!v||v.lat==null) return;
+    const key=v.lat.toFixed(4)+","+v.lng.toFixed(4);
+    (buckets[key]=buckets[key]||{lat:v.lat,lng:v.lng,approx:v.approx,banes:{}}).banes[b]=byBane[b];
+  });
+  const pts=[];
+  Object.values(buckets).forEach(bk=>{
+    pts.push([bk.lat,bk.lng]);
+    const names=Object.keys(bk.banes).join(", ");
+    let html=`<b>${names}${bk.approx?" (ca.)":""}</b>`;
+    Object.values(bk.banes).forEach(ms=> sortM(ms).forEach(m=>{ html+=`<br>${m.dag.slice(0,3)} ${m.tid} – ${m.h} v ${m.a}`; }));
+    const col = mapMineOnly ? "#23c08a" : "#7c6cf0";
+    L.circleMarker([bk.lat,bk.lng],{radius:9,weight:2,color:"#fff",fillColor:col,fillOpacity:.9}).addTo(mapLayer).bindPopup(html);
+  });
+  if(pts.length) leafletMap.fitBounds(pts,{padding:[45,45],maxZoom:13});
+}
+
+function showView(v){
+  ["cal","plan","rooms","map"].forEach(x=>{
+    document.getElementById("view-"+x).classList.toggle("hidden", v!==x);
+    document.getElementById("tab-"+x).classList.toggle("active", v===x);
+  });
+  if(v==="map") buildMapView();
+}
+
+buildToggles();
+renderCal();
+buildPlan();
+renderRooms();
+</script>
+</body>
+</html>

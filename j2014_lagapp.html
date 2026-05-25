@@ -145,6 +145,12 @@ body {
   transition: all 0.15s;
 }
 .theme-toggle:hover { border-color: var(--accent); transform: scale(1.05); }
+.sync-status {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  padding: 3px 9px; border-radius: 20px; background: var(--surface2);
+  white-space: nowrap;
+}
+.sync-status.live { color: var(--green); background: var(--green-light); }
 
 /* ── TABS ──────────────────────────────────────────────────────────── */
 .tabs {
@@ -430,6 +436,7 @@ button { cursor: pointer; font-family: inherit; }
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
+      <span id="sync-status" class="sync-status">Lokal modus</span>
       <span class="hdr-badge">9er fra Vår 2026</span>
       <button class="theme-toggle" onclick="toggleTheme()" title="Bytt visning" id="theme-btn">🌙</button>
       <button class="btn-sm" onclick="exportData()">Eksporter</button>
@@ -1010,6 +1017,7 @@ const ALL_EXTRA   = ["R1-2","R2-3","BDO","J13K","J13T","G12T"];
 })();
 function savePlayerTags() {
   try { localStorage.setItem('j2014_player_tags', JSON.stringify(PLAYER_TAGS)); } catch(e) {}
+  syncCloud();
 }
 
 let tagFilter = '';
@@ -1793,7 +1801,7 @@ const PROG_ABSENT = {
 // Manuelt lagrede data (notat, overstyring) fra localStorage
 let progOverride = {};
 try { progOverride = JSON.parse(localStorage.getItem('j2014_prog2')||'{}'); } catch(e) {}
-function saveProgOverride() { try { localStorage.setItem('j2014_prog2', JSON.stringify(progOverride)); } catch(e) {} }
+function saveProgOverride() { try { localStorage.setItem('j2014_prog2', JSON.stringify(progOverride)); } catch(e) {} syncCloud(); }
 
 // Hjelpefunksjoner
 function kampKey(k) { return `${k.lag}|${k.dato}|${k.motstander}`; }
@@ -2257,7 +2265,7 @@ let activeHistSesong = '2025 Høst';
 // Loans stored per season
 let loans;
 try { loans = JSON.parse(localStorage.getItem('j2014_loans')||'{}'); } catch(e) { loans = {}; }
-function saveLoans() { try { localStorage.setItem('j2014_loans', JSON.stringify(loans)); } catch(e) {} }
+function saveLoans() { try { localStorage.setItem('j2014_loans', JSON.stringify(loans)); } catch(e) {} syncCloud(); }
 
 function addLoan() {
   const pid = parseInt(document.getElementById('loan-player').value);
@@ -2562,12 +2570,12 @@ function renderHeatmap(elId, monthPrefix) {
 // Key: "dato|name" → true (present) | false (absent) | null (reset to spond default)
 let oppOverrides = {};
 try { oppOverrides = JSON.parse(localStorage.getItem('j2014_opp_ov')||'{}'); } catch(e) {}
-function saveOppOverrides() { try { localStorage.setItem('j2014_opp_ov', JSON.stringify(oppOverrides)); } catch(e) {} }
+function saveOppOverrides() { try { localStorage.setItem('j2014_opp_ov', JSON.stringify(oppOverrides)); } catch(e) {} syncCloud(); }
 
 // Merged SPOND_ACTIVITIES: starts from hardcoded, supplemented by uploads
 let extraActivities = [];
 try { extraActivities = JSON.parse(localStorage.getItem('j2014_extra_acts')||'[]'); } catch(e) {}
-function saveExtraActivities() { try { localStorage.setItem('j2014_extra_acts', JSON.stringify(extraActivities)); } catch(e) {} }
+function saveExtraActivities() { try { localStorage.setItem('j2014_extra_acts', JSON.stringify(extraActivities)); } catch(e) {} syncCloud(); }
 
 function getAllActivities() {
   // Merge hardcoded + uploaded, deduplicate by dato+label
@@ -3082,7 +3090,144 @@ if (viewerMode) {
   renderShareLink();
 }
 
+// ─── SKY-BRO (Firebase) ──────────────────────────────────────────────────────
+// Eksponer data og hjelpere slik at Firebase-modulen kan lese/skrive delt state.
+window.PLAYER_TAGS = PLAYER_TAGS;
+window.__viewerMode = viewerMode;
+window.getOppOverrides   = () => oppOverrides;
+window.getExtraActivities= () => extraActivities;
+window.getProgOverride   = () => progOverride;
+window.getLoans          = () => loans;
+
+// Ta imot data fra skyen og oppdater de lokale objektene (in-place så referansene består)
+window.applyCloudPlayerTags = (cloud) => {
+  Object.keys(cloud).forEach(name => {
+    if (PLAYER_TAGS[name]) PLAYER_TAGS[name] = {...PLAYER_TAGS[name], ...cloud[name]};
+  });
+};
+window.applyCloudData = (d) => {
+  if (d.oppOverrides)     { oppOverrides = d.oppOverrides; }
+  if (d.extraActivities)  { extraActivities = d.extraActivities; }
+  if (d.progOverride)     { progOverride = d.progOverride; }
+  if (d.loans)            { loans = d.loans; }
+  try { recomputeAllStats(); } catch(e) {}
+};
+
+// Re-render alt synlig etter at sky-data er mottatt
+window.rerenderAll = () => {
+  try {
+    const active = document.querySelector('.section.active');
+    recomputeAllStats();
+    renderOverview();
+    if (typeof renderLag==='function') renderLag();
+    renderPlayersGrid();
+    if (typeof renderRangering==='function') renderRangering();
+    if (typeof renderAnalysis==='function') renderAnalysis();
+    if (typeof renderProgram==='function') renderProgram();
+    if (typeof renderHistorikk==='function') renderHistorikk();
+    if (typeof renderOppmote==='function') renderOppmote();
+    if (typeof renderStatistikk==='function') renderStatistikk();
+  } catch(e) { console.error('rerenderAll:', e); }
+};
+
+// Hjelper: kall sky-lagring hvis tilgjengelig (Firebase lastet)
+function syncCloud() { if (window.cloudSave) window.cloudSave(); }
+
 renderOverview(); renderPlayersGrid(); renderRangering();
+</script>
+
+<!-- Firebase sanntidssync (samme prosjekt som J2016, egen collection 'j2014') -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAKA7IKCc5BeFggNF54a9Di-_hq0duznME",
+  authDomain: "j2016---sesongtracker.firebaseapp.com",
+  projectId: "j2016---sesongtracker",
+  storageBucket: "j2016---sesongtracker.firebasestorage.app",
+  messagingSenderId: "1082177884395",
+  appId: "1:1082177884395:web:d044fcea9d99d86afe6eae",
+  measurementId: "G-S0NTQEBRPD"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const DOC = doc(db, 'j2014', 'data');   // egen collection – blandes ikke med J2016
+
+let suppressSnapshot = false;  // hindrer at egne skrivinger trigger unødig re-render-loop
+
+function setSync(text, live) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'sync-status' + (live ? ' live' : '');
+}
+
+// Samle all delt state fra appen
+function gatherState() {
+  return {
+    playerTags: window.PLAYER_TAGS || {},
+    oppOverrides: window.getOppOverrides ? window.getOppOverrides() : {},
+    extraActivities: window.getExtraActivities ? window.getExtraActivities() : [],
+    progOverride: window.getProgOverride ? window.getProgOverride() : {},
+    loans: window.getLoans ? window.getLoans() : {},
+    oppdatert: new Date().toISOString()
+  };
+}
+
+// Skriv til skyen
+async function cloudSave() {
+  if (window.__viewerMode) return;  // delte visninger skal ikke skrive
+  try {
+    suppressSnapshot = true;
+    await setDoc(DOC, gatherState());
+    setTimeout(() => { suppressSnapshot = false; }, 400);
+    setSync('● Live', true);
+  } catch(e) {
+    suppressSnapshot = false;
+    console.error('Firebase lagring feilet:', e);
+    setSync('Frakoblet (lagret lokalt)', false);
+  }
+}
+window.cloudSave = cloudSave;
+
+// Ta imot sky-data og oppdater appen
+function applyState(d) {
+  if (!d) return;
+  if (d.playerTags && window.applyCloudPlayerTags) window.applyCloudPlayerTags(d.playerTags);
+  if (window.applyCloudData) window.applyCloudData(d);
+}
+
+async function initFirebase() {
+  setSync('Kobler til...', false);
+  try {
+    const snap = await getDoc(DOC);
+    if (snap.exists()) {
+      applyState(snap.data());
+    } else {
+      // Første gang: skriv inn nåværende (seedede) data
+      await cloudSave();
+    }
+    // Sanntidslytter
+    onSnapshot(DOC, (snap) => {
+      if (suppressSnapshot) return;
+      if (snap.exists()) {
+        applyState(snap.data());
+        if (window.rerenderAll) window.rerenderAll();
+        setSync('● Live', true);
+      }
+    });
+    setSync('● Live', true);
+    if (window.rerenderAll) window.rerenderAll();
+  } catch(e) {
+    console.error('Firebase init feilet:', e);
+    setSync('Frakoblet (lokal modus)', false);
+  }
+}
+
+// Start kun hvis ikke i delt visningsmodus uten skrivebehov (viewers skal også få live data)
+initFirebase();
 </script>
 </body>
 </html>

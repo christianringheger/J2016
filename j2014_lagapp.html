@@ -194,6 +194,16 @@ body {
 }
 .sortbtn.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
 
+/* ── RATER BUTTONS ─────────────────────────────────────────────────── */
+.rater-btn {
+  padding: 5px 14px; border-radius: var(--r-xs);
+  border: none; background: transparent;
+  cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text2);
+  font-family: var(--display); text-transform: uppercase; letter-spacing: 0.03em;
+  transition: all 0.13s;
+}
+.rater-btn.active { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
+
 /* ── VIEW TOGGLES ──────────────────────────────────────────────────── */
 .viewtoggle {
   padding: 4px 11px; border-radius: 20px;
@@ -551,6 +561,14 @@ button { cursor: pointer; font-family: inherit; }
 
   <!-- RANGERING -->
   <div id="tab-rangering" class="section">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">Jeg rangerer som:</span>
+      <div style="display:flex;gap:3px;background:var(--surface2);border-radius:var(--r-sm);padding:3px;" id="rater-picker">
+        <button class="rater-btn active" data-rater="Christian" onclick="setActiveRater('Christian')">Christian</button>
+        <button class="rater-btn" data-rater="Terje" onclick="setActiveRater('Terje')">Terje</button>
+      </div>
+      <span style="font-size:12px;color:var(--text3);">Snittet beregnes automatisk på tvers av trenerne</span>
+    </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
       <input id="rang-search" placeholder="🔍 Søk spiller..." oninput="renderRangering()" style="flex:1;min-width:180px;margin:0;">
       <div style="display:flex;gap:3px;background:var(--surface2);border-radius:var(--r-sm);padding:3px;">
@@ -844,7 +862,7 @@ function renderLag() {
       // Snitt-beregninger basert på rangering
       const onPitch = fmt==='9er' ? 9 : 7;
       const ranked = d.players
-        .map(p => PLAYER_TAGS[p]?.rank)
+        .map(p => getRank(p))
         .filter(r => r != null)
         .sort((a,b) => b-a);
       const avg = ranked.length ? (ranked.reduce((s,r)=>s+r,0)/ranked.length) : null;
@@ -867,9 +885,10 @@ function renderLag() {
         <div class="lag-coaches">${d.coaches.map(c=>`<div class="coach-name">${c}</div>`).join('')||'<span style="font-weight:400;color:var(--text3)">Ingen trenere</span>'}</div>
         ${snittBox}
         <div class="lag-players">${d.players.map(p=>{
-          const pr = PLAYER_TAGS[p]?.rank;
+          const pr = getRank(p);
+          const prStr = pr != null ? (Number.isInteger(pr) ? pr : pr.toFixed(1)) : null;
           return `<div class="lag-player" style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
-            <span>${p}</span>${pr!=null?`<span class="mono" style="font-size:11px;color:var(--text3);flex-shrink:0;">${pr}</span>`:''}
+            <span>${p}</span>${prStr!=null?`<span class="mono" style="font-size:11px;color:var(--text3);flex-shrink:0;">${prStr}</span>`:''}
           </div>`;
         }).join('')||'–'}</div>
       </div>`;
@@ -954,48 +973,48 @@ function setPosFilter(p) {
 // roles: K=keeper, M=midtbane, F=forsvar, A=angrep | tg: treningsgruppe | extra: ekstra grupper | lag: serielagsnr | rank: rangering
 const PLAYER_TAGS = {
   "Aliah Fjeldavli Nordvik":{roles:["A"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:2,rank:null},
-  "Astrid Øverås Karlsen":{roles:[],tg:"TG1",extra:["G12T","J13T","BDO"],lag:3,rank:65},
+  "Astrid Øverås Karlsen":{roles:[],tg:"TG1",extra:["G12T","J13T","BDO"],lag:3,rank:null},
   "Elise Fredriksen":{roles:["M"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:2,rank:null},
-  "Emma Øverås Karlsen":{roles:["M"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:3,rank:51},
+  "Emma Øverås Karlsen":{roles:["M"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:3,rank:null},
   "Erle Granviken":{roles:["A","F"],tg:"TG1",extra:["R1-2","J13T","J13K"],lag:2,rank:null},
   "Hanna Elvebakk":{roles:["F","A"],tg:"TG1",extra:["J13T","BDO","J13K"],lag:2,rank:null},
   "Jenny Holsen":{roles:["K","M","F"],tg:"TG1",extra:["J13T","G12T","BDO","J13K"],lag:1,rank:null},
-  "Julie Hirsch":{roles:["A"],tg:"TG1",extra:["R1-2","J13T","BDO","J13K"],lag:3,rank:97},
+  "Julie Hirsch":{roles:["A"],tg:"TG1",extra:["R1-2","J13T","BDO","J13K"],lag:3,rank:null},
   "Leah Håkegård Heineman":{roles:["A"],tg:"TG1",extra:["J13T","G12T","BDO"],lag:1,rank:null},
   "Nora Elise Rosvold":{roles:["A","K"],tg:"TG1",extra:["J13T","J13K","BDO"],lag:2,rank:null},
   "Pernille Fevaag Heger":{roles:["F"],tg:"TG1",extra:["J13T","BDO"],lag:1,rank:null},
   "Aurora Bye-Bakke":{roles:["A"],tg:"TG2",extra:["J13T","J13K"],lag:3,rank:null},
   "Eline Sandøy":{roles:["F","A"],tg:"TG2",extra:["J13T","J13K"],lag:1,rank:null},
-  "Hafsah Mohamed":{roles:["M","F"],tg:"TG2",extra:["R1-2","J13T","J13K"],lag:3,rank:75},
-  "Hild Midbøe Rognstad":{roles:["F","M"],tg:"TG2",extra:["J13T","BDO","J13K"],lag:3,rank:85},
+  "Hafsah Mohamed":{roles:["M","F"],tg:"TG2",extra:["R1-2","J13T","J13K"],lag:3,rank:null},
+  "Hild Midbøe Rognstad":{roles:["F","M"],tg:"TG2",extra:["J13T","BDO","J13K"],lag:3,rank:null},
   "Ingeborg Johannessen":{roles:["M"],tg:"TG2",extra:["R1-2","J13K","BDO"],lag:4,rank:null},
   "Jenny Engelsen":{roles:["M","A"],tg:"TG2",extra:["R1-2","BDO","J13K"],lag:1,rank:null},
   "Mali Olsø-Aune":{roles:["M","A","F"],tg:"TG2",extra:["J13T","J13K"],lag:1,rank:null},
   "Pernille Eikemo-Nilsen":{roles:["F","M"],tg:"TG2",extra:["J13T","J13K"],lag:2,rank:null},
   "Runa Buvarp Julsrud":{roles:["M","F"],tg:"TG2",extra:["J13T"],lag:2,rank:null},
-  "Sofie Minde Elveseter":{roles:["A","K"],tg:"TG2",extra:["J13K"],lag:3,rank:29},
-  "Synnøve Halvorsrød Bjerve":{roles:["F"],tg:"TG2",extra:["J13T","J13K"],lag:3,rank:60},
+  "Sofie Minde Elveseter":{roles:["A","K"],tg:"TG2",extra:["J13K"],lag:3,rank:null},
+  "Synnøve Halvorsrød Bjerve":{roles:["F"],tg:"TG2",extra:["J13T","J13K"],lag:3,rank:null},
   "Agnes Sofie Hoen":{roles:["A","K"],tg:"TG3",extra:[],lag:1,rank:null},
   "Arja Utengen Larsen":{roles:["A"],tg:"TG3",extra:[],lag:2,rank:null},
   "Bertine Mostervik Røhmen":{roles:["K","F"],tg:"TG3",extra:[],lag:2,rank:null},
   "Betelhem Daniel":{roles:["A"],tg:"TG3",extra:[],lag:3,rank:null},
-  "Elin Afom Kifle":{roles:["K","A"],tg:"TG3",extra:[],lag:3,rank:66},
-  "Ellen Skei Rasmussen":{roles:["F","K"],tg:"TG3",extra:[],lag:3,rank:73},
+  "Elin Afom Kifle":{roles:["K","A"],tg:"TG3",extra:[],lag:3,rank:null},
+  "Ellen Skei Rasmussen":{roles:["F","K"],tg:"TG3",extra:[],lag:3,rank:null},
   "Elsa Rennemo":{roles:["F"],tg:"TG3",extra:["J13K"],lag:3,rank:null},
-  "Erika Asklund Hagen":{roles:["F"],tg:"TG3",extra:["J13K"],lag:3,rank:50},
+  "Erika Asklund Hagen":{roles:["F"],tg:"TG3",extra:["J13K"],lag:3,rank:null},
   "Frida Aamodt":{roles:["M","A"],tg:"TG3",extra:[],lag:2,rank:null},
   "Ines Eithun Gabrielsen":{roles:["A"],tg:"TG3",extra:[],lag:1,rank:null},
   "Ingeborg Kjærsgaard Persen":{roles:["K","F"],tg:"TG3",extra:[],lag:2,rank:null},
   "Linde Lund-Tyvoll":{roles:["M","F"],tg:"TG3",extra:["J13K"],lag:1,rank:null},
   "Marie Skogan":{roles:["K"],tg:"TG3",extra:["J13K"],lag:1,rank:null},
-  "Maiken Hektoen Vullum":{roles:["A","F"],tg:"TG3",extra:[],lag:1,rank:16},
-  "Milla Aurora Jakobsen":{roles:["A"],tg:"TG3",extra:["J13K"],lag:3,rank:42},
+  "Maiken Hektoen Vullum":{roles:["A","F"],tg:"TG3",extra:[],lag:1,rank:null},
+  "Milla Aurora Jakobsen":{roles:["A"],tg:"TG3",extra:["J13K"],lag:3,rank:null},
   "Nora Fredriksli":{roles:["A"],tg:"TG3",extra:["J13K"],lag:2,rank:null},
   "Oda Gartland":{roles:["K","A"],tg:"TG3",extra:[],lag:null,rank:null},
   "Pernille Viggen Hansen":{roles:["F"],tg:"TG3",extra:[],lag:2,rank:null},
   "Sara Hagen":{roles:["F"],tg:"TG3",extra:["J13K"],lag:2,rank:null},
-  "Sigrid Nordengen Lohn":{roles:["K","A","M"],tg:"TG3",extra:[],lag:3,rank:61},
-  "Siri Ormberg":{roles:["M","A","F"],tg:"TG3",extra:["J13K"],lag:2,rank:82},
+  "Sigrid Nordengen Lohn":{roles:["K","A","M"],tg:"TG3",extra:[],lag:3,rank:null},
+  "Siri Ormberg":{roles:["M","A","F"],tg:"TG3",extra:["J13K"],lag:2,rank:null},
   "Solvor Waterloo Farstad":{roles:["M","F"],tg:"TG3",extra:[],lag:2,rank:null},
 };
 
@@ -1127,10 +1146,64 @@ function toggleEditPlayer(name) {
   renderPlayersGrid();
 }
 
-// Sett rangering 1-10 (eller null)
+// ─── RANGERING PER TRENER ────────────────────────────────────────────────────
+// Hver spiller kan ha rangering fra flere trenere: t.ranks = {Christian: 7, Terje: 9}
+// Snittet vises på kort/lister. Gammel enkelt-`rank` migreres til Christian.
+const RATERS = ['Christian', 'Terje'];
+let activeRater = 'Christian';
+try { activeRater = localStorage.getItem('j2014_active_rater') || 'Christian'; } catch(e) {}
+if (!RATERS.includes(activeRater)) activeRater = 'Christian';
+
+function migrateRanks() {
+  Object.keys(PLAYER_TAGS).forEach(name => {
+    const t = PLAYER_TAGS[name];
+    if (!t.ranks) t.ranks = {};
+    // Migrer gammel enkelt-rank til Christian dersom ikke allerede flyttet
+    if (t.rank != null && t.ranks.Christian == null) {
+      t.ranks.Christian = t.rank;
+    }
+  });
+}
+migrateRanks();
+
+// En enkelt traeners rangering (eller null)
+function getRaterRank(name, rater) {
+  const t = PLAYER_TAGS[name];
+  return t && t.ranks && t.ranks[rater] != null ? t.ranks[rater] : null;
+}
+// Snitt på tvers av alle traenere som har rangert (eller null)
+function getRank(name) {
+  const t = PLAYER_TAGS[name];
+  if (!t || !t.ranks) return null;
+  const vals = RATERS.map(r => t.ranks[r]).filter(v => v != null);
+  if (!vals.length) return null;
+  return vals.reduce((s,v)=>s+v,0) / vals.length;
+}
+// Hvor mange traenere har rangert spilleren
+function rankCount(name) {
+  const t = PLAYER_TAGS[name];
+  if (!t || !t.ranks) return 0;
+  return RATERS.filter(r => t.ranks[r] != null).length;
+}
+
+function setActiveRater(rater) {
+  activeRater = rater;
+  try { localStorage.setItem('j2014_active_rater', rater); } catch(e) {}
+  document.querySelectorAll('.rater-btn').forEach(b => b.classList.toggle('active', b.dataset.rater===rater));
+  renderRangering();
+  renderPlayersGrid();
+}
+
+// Sett rangering 1-10 (eller null) for den AKTIVE traeneren
 function setRank(name, val) {
   const t = PLAYER_TAGS[name]; if (!t) return;
-  t.rank = (val === null || val === '' || isNaN(val)) ? null : Math.max(1, Math.min(10, parseInt(val)));
+  if (!t.ranks) t.ranks = {};
+  const v = (val === null || val === '' || isNaN(val)) ? null : Math.max(1, Math.min(10, parseInt(val)));
+  if (v === null) delete t.ranks[activeRater];
+  else t.ranks[activeRater] = v;
+  // Hold gammel `rank` synket til snittet for bakoverkompatibilitet
+  const avg = getRank(name);
+  t.rank = avg != null ? Math.round(avg*10)/10 : null;
   savePlayerTags();
   renderPlayersGrid();
   renderRangering();
@@ -1176,7 +1249,7 @@ function renderPlayersGrid() {
   // Sortering
   if (spillerSort === 'nivå') {
     names.sort((a,b) => {
-      const ra = PLAYER_TAGS[a].rank, rb = PLAYER_TAGS[b].rank;
+      const ra = getRank(a), rb = getRank(b);
       if (ra==null && rb==null) return a.localeCompare(b,'no');
       if (ra==null) return 1;   // urangerte nederst
       if (rb==null) return -1;
@@ -1211,9 +1284,12 @@ function renderPlayersGrid() {
         return `<span style="font-size:10px;font-weight:600;color:var(--amber);background:var(--amber-light);padding:2px 7px;border-radius:20px;">${TAG_LABELS[e]||e}</span>`;
       }).join('');
 
-      // Rangering-badge (erstatter lag-badge)
-      const rankBadge = (vis('rank') && t.rank) ?
-        `<span title="Rangering" style="display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-size:13px;font-weight:700;min-width:26px;height:26px;padding:0 6px;border-radius:7px;font-family:var(--display);">${t.rank}</span>` :
+      // Rangering-badge (snitt på tvers av trenere)
+      const avgRank = getRank(name);
+      const nRaters = rankCount(name);
+      const avgStr = avgRank != null ? (Number.isInteger(avgRank) ? avgRank : avgRank.toFixed(1)) : null;
+      const rankBadge = (vis('rank') && avgStr != null) ?
+        `<span title="Snitt av ${nRaters} trener${nRaters>1?'e':''}" style="display:inline-flex;align-items:center;justify-content:center;gap:2px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;min-width:26px;height:26px;padding:0 6px;border-radius:7px;font-family:var(--display);">${avgStr}${nRaters>1?`<span style="font-size:9px;opacity:0.8;">×${nRaters}</span>`:''}</span>` :
         (vis('rank') ? `<span style="display:inline-flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--text3);font-size:11px;font-weight:600;min-width:26px;height:26px;border-radius:7px;">–</span>` : '');
 
       const tagsRow = `${roleSquares}${tgBadge}${rBadge}${extraTags}`;
@@ -1237,9 +1313,15 @@ function renderPlayersGrid() {
           const col = ex.startsWith('R') ? 'var(--purple)' : 'var(--amber)';
           return `<button onclick="toggleExtra('${name.replace(/'/g,"\\'")}','${ex}')" style="padding:5px 11px;border-radius:20px;border:1.5px solid ${on?col:'var(--border2)'};background:${on?col:'transparent'};color:${on?'#fff':'var(--text2)'};font-size:12px;font-weight:600;cursor:pointer;transition:all 0.12s;">${TAG_LABELS[ex]||ex}</button>`;
         }).join('');
+        const myRank = getRaterRank(name, activeRater);
         const rankOpts = ['<option value="">–</option>'].concat(
-          Array.from({length:10},(_, i)=>`<option value="${i+1}"${t.rank===i+1?' selected':''}>${i+1}</option>`)
+          Array.from({length:10},(_, i)=>`<option value="${i+1}"${myRank===i+1?' selected':''}>${i+1}</option>`)
         ).join('');
+        // Vis hva hver trener har gitt
+        const raterSummary = RATERS.map(r => {
+          const v = getRaterRank(name, r);
+          return `<span style="font-size:11px;color:${r===activeRater?'var(--accent)':'var(--text3)'};font-weight:${r===activeRater?'700':'400'};">${r}: ${v!=null?v:'–'}</span>`;
+        }).join('<span style="color:var(--border2);margin:0 6px;">·</span>');
 
         editPanel = `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
           <div style="margin-bottom:12px;">
@@ -1255,8 +1337,11 @@ function renderPlayersGrid() {
             <div style="display:flex;flex-wrap:wrap;gap:6px;">${exBtns}</div>
           </div>
           <div>
-            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">Rangering (1–10)</div>
-            <select onchange="setRank('${name.replace(/'/g,"\\'")}',this.value)" style="width:80px;margin:0;">${rankOpts}</select>
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">Rangering som ${activeRater} (1–10)</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <select onchange="setRank('${name.replace(/'/g,"\\'")}',this.value)" style="width:80px;margin:0;">${rankOpts}</select>
+              <div>${raterSummary}</div>
+            </div>
           </div>
         </div>`;
       }
@@ -1294,7 +1379,7 @@ function renderRangering() {
     names.sort((a,b)=>a.localeCompare(b,'no'));
   } else {
     names.sort((a,b) => {
-      const ra = PLAYER_TAGS[a].rank, rb = PLAYER_TAGS[b].rank;
+      const ra = getRank(a), rb = getRank(b);
       if (ra==null && rb==null) return a.localeCompare(b,'no');
       if (ra==null) return 1;
       if (rb==null) return -1;
@@ -1303,28 +1388,53 @@ function renderRangering() {
   }
 
   const rankColor = v => v>=8 ? 'var(--green)' : v>=5 ? 'var(--amber)' : 'var(--red)';
+  const shortName = n => { const p = n.split(' '); return p.length >= 2 ? `${p[0]} ${p[p.length-1]}` : n; };
 
-  el.innerHTML = names.map((name, i) => {
-    const t = PLAYER_TAGS[name];
-    const roleSquares = (t.roles||[]).map(r =>
-      `<span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:4px;background:${ROLE_COLORS[r]};color:#fff;font-size:9px;font-weight:700;">${r}</span>`
-    ).join('');
-    const opts = ['<option value="">–</option>'].concat(
-      Array.from({length:10},(_, n)=>`<option value="${n+1}"${t.rank===n+1?' selected':''}>${n+1}</option>`)
-    ).join('');
-    const barW = t.rank ? t.rank*10 : 0;
-    const col = t.rank ? rankColor(t.rank) : 'var(--border2)';
+  // Header med kolonner per trener + snitt
+  const headerRow = `<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface2);font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;">
+    <span style="width:22px;"></span>
+    <span style="flex:1;">Spiller</span>
+    ${RATERS.map(r => `<span style="width:64px;text-align:center;color:${r===activeRater?'var(--accent)':'var(--text2)'};">${r}</span>`).join('')}
+    <span style="width:90px;text-align:center;">Snitt</span>
+  </div>`;
 
-    return `<div style="display:flex;align-items:center;gap:12px;padding:9px 16px;border-bottom:0.5px solid var(--border);${i%2?'background:var(--surface)':'background:transparent'}">
-      <span class="mono" style="font-size:11px;color:var(--text3);width:22px;text-align:right;">${rangSort==='nivå'&&t.rank?(i+1):''}</span>
-      <span style="flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
-      <span style="display:flex;gap:3px;flex-shrink:0;">${roleSquares}</span>
-      <div style="width:90px;height:6px;background:var(--surface2);border-radius:3px;flex-shrink:0;overflow:hidden;">
-        <div style="width:${barW}%;height:100%;background:${col};border-radius:3px;transition:width 0.2s;"></div>
+  el.innerHTML = headerRow + names.map((name, i) => {
+    const avg = getRank(name);
+    const n = rankCount(name);
+    const avgStr = avg != null ? (Number.isInteger(avg) ? avg : avg.toFixed(1)) : null;
+    const barW = avg ? avg*10 : 0;
+    const col = avg ? rankColor(avg) : 'var(--border2)';
+
+    // Velgere per trener
+    const raterSelects = RATERS.map(r => {
+      const v = getRaterRank(name, r);
+      const opts = ['<option value="">–</option>'].concat(
+        Array.from({length:10},(_, k)=>`<option value="${k+1}"${v===k+1?' selected':''}>${k+1}</option>`)
+      ).join('');
+      const isActive = r === activeRater;
+      return `<select onchange="setRankFor('${name.replace(/'/g,"\\'")}','${r}',this.value)" style="width:64px;margin:0;flex-shrink:0;font-weight:700;text-align:center;${isActive?'':'opacity:0.65;'}border-color:${isActive?'var(--accent)':'var(--border2)'};">${opts}</select>`;
+    }).join('');
+
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:0.5px solid var(--border);${i%2?'background:var(--surface)':'background:transparent'}">
+      <span class="mono" style="font-size:11px;color:var(--text3);width:22px;text-align:right;">${rangSort==='nivå'&&avg?(i+1):''}</span>
+      <span style="flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${shortName(name)}</span>
+      ${raterSelects}
+      <div style="width:90px;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <span class="mono" style="font-size:13px;font-weight:700;color:${col};width:26px;text-align:right;">${avgStr!=null?avgStr:'–'}</span>
+        <div style="flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+          <div style="width:${barW}%;height:100%;background:${col};border-radius:3px;transition:width 0.2s;"></div>
+        </div>
       </div>
-      <select onchange="setRank('${name.replace(/'/g,"\\'")}',this.value)" style="width:64px;margin:0;flex-shrink:0;font-weight:700;text-align:center;">${opts}</select>
     </div>`;
   }).join('');
+}
+
+// Sett rangering for en spesifikk trener (brukt i Rangering-fanens kolonner)
+function setRankFor(name, rater, val) {
+  const prev = activeRater;
+  activeRater = rater;
+  setRank(name, val);
+  activeRater = prev;
 }
 
 
@@ -3104,6 +3214,7 @@ window.applyCloudPlayerTags = (cloud) => {
   Object.keys(cloud).forEach(name => {
     if (PLAYER_TAGS[name]) PLAYER_TAGS[name] = {...PLAYER_TAGS[name], ...cloud[name]};
   });
+  migrateRanks();
 };
 window.applyCloudData = (d) => {
   if (d.oppOverrides)     { oppOverrides = d.oppOverrides; }

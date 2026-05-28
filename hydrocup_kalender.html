@@ -75,6 +75,17 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
 .m.mine::before{content:"★ DITT LAG";position:absolute;top:-9px;right:9px;font-size:9px;letter-spacing:.6px;font-weight:700;color:#0e1320;background:var(--mc);padding:2px 7px;border-radius:6px;}
 .m .top{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
 .m .time{font-size:13.5px;font-weight:700;color:var(--ink);}
+.endt{font-weight:500;color:var(--ink-faint);font-size:11.5px;margin-left:3px;}
+.note-wrap{}
+.note-display{font-size:11.5px;cursor:pointer;border-radius:7px;line-height:1.4;transition:color .12s,border-color .12s,opacity .12s;}
+.note-display.empty{display:inline-block;margin-top:3px;padding:1px 5px;font-size:10.5px;color:var(--ink-faint);opacity:.6;}
+.note-display.empty:hover{opacity:1;color:var(--ink);}
+.note-display.has{display:block;margin-top:7px;padding:4px 8px;color:var(--ink);background:rgba(245,200,80,.12);border:1px solid rgba(245,200,80,.32);}
+.note-display.has span{white-space:pre-wrap;}
+.note-ta{width:100%;box-sizing:border-box;margin-top:6px;background:var(--panel-2);border:1px solid var(--c-p1);border-radius:7px;color:var(--ink);font:inherit;font-size:12px;padding:6px 8px;resize:vertical;}
+.note-btns{display:flex;gap:6px;margin-top:5px;}
+.note-btns button{font-size:11.5px;padding:3px 11px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);cursor:pointer;}
+.note-btns .note-save{background:var(--c-p1);border-color:var(--c-p1);color:#0c1019;font-weight:600;}
 .m .pill{font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--mc);color:#0c1019;white-space:nowrap;}
 .m .teams{font-size:13px;color:var(--ink);line-height:1.35;}
 .m .teams .bya{font-weight:700;}
@@ -166,10 +177,34 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
 .vm .bya{color:var(--ink);font-weight:600;}
 .vm .vs{color:var(--ink-faint);margin:0 2px;}
 
+/* Dagsplan */
+.dagfilter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.dagfbtn{font-size:12.5px;padding:6px 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);cursor:pointer;transition:all .12s;}
+.dagfbtn.active{background:var(--tc,var(--c-p1));border-color:var(--tc,var(--c-p1));color:#fff;font-weight:600;}
+.dagfbtn.team:not(.active){border-color:var(--tc);color:var(--ink);}
+.dag-day{margin-bottom:24px;}
+.dag-dayttl{font-size:17px;font-weight:800;margin-bottom:13px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+.dag-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;}
+.dag-cols.one{grid-template-columns:1fr;max-width:560px;}
+.dag-col{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;border-top:3px solid var(--tc);box-shadow:var(--shadow);}
+.dag-colhd{display:flex;align-items:center;gap:8px;padding:10px 13px;font-weight:700;font-size:14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);}
+.dag-colhd .dot{width:11px;height:11px;border-radius:3px;background:var(--tc);flex:none;}
+.dag-colhd .coach{margin-left:auto;font-size:11px;font-weight:500;color:var(--ink-faint);}
+.dag-items{padding:8px 9px;display:flex;flex-direction:column;gap:1px;}
+.dag-item{display:flex;gap:8px;font-size:12.5px;padding:4px 5px;border-radius:6px;line-height:1.36;}
+.dag-item .dt{flex:none;min-width:48px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+.dag-item .dx{color:var(--ink-dim);}
+.dag-item.kamp{background:rgba(255,255,255,.045);border-left:3px solid var(--tc);padding-left:7px;margin:3px 0;}
+.dag-item.kamp .dt{color:var(--tc);}
+.dag-item.kamp .dx{color:var(--tc);font-weight:700;}
+.dag-item.heie{background:rgba(226,92,138,.09);border-radius:6px;}
+.dag-item.heie .dx{color:var(--ink);}
+
 footer{margin-top:30px;text-align:center;color:var(--ink-faint);font-size:12px;}
 .hidden{display:none;}
 @media (max-width:900px){.cal,.planwrap{grid-template-columns:1fr;}.rooms{grid-template-columns:repeat(2,1fr);}.venues-grid{grid-template-columns:1fr;}.title h1{font-size:24px;}}
 @media (max-width:560px){.rooms{grid-template-columns:1fr;}}
+@media (max-width:760px){.dag-cols{grid-template-columns:1fr;}}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -193,6 +228,8 @@ footer{margin-top:30px;text-align:center;color:var(--ink-faint);font-size:12px;}
     <div class="tab" id="tab-plan" onclick="showView('plan')">🎯 Min plan — hvilke kamper rekker jeg?</div>
     <div class="tab" id="tab-rooms" onclick="showView('rooms')">🛏️ Overnatting J2014</div>
     <div class="tab" id="tab-map" onclick="showView('map')">🗺️ Baner &amp; kart</div>
+    <div class="tab" id="tab-dag" onclick="showView('dag')">📋 Dagsplan J2014</div>
+    <div class="tab" id="tab-dag2016" onclick="showView('dag2016')">📋 Dagsplan J2016</div>
   </div>
 
   <!-- CALENDAR VIEW -->
@@ -252,6 +289,28 @@ footer{margin-top:30px;text-align:center;color:var(--ink-faint);font-size:12px;}
     <div class="venues-grid" id="venue-list"></div>
   </div>
 
+  <!-- DAGSPLAN VIEW -->
+  <div id="view-dag" class="hidden">
+    <div class="planinfo">
+      <span><b>Dagsplan J2014 — Hydrocup</b></span>
+      <span class="leg">Felles helgeplan for Byåsen 1, 2 og 3. Kamper er farget per lag. Velg lag for å se kun ett.</span>
+    </div>
+    <div class="dagfilter" id="dagfilter"></div>
+    <div id="dag-content"></div>
+    <div class="mapnote">Tider og rekkefølge er hentet fra Ingvilds utkast. «Heie»-punktene viser hvor lagene samles for å støtte hverandre ❤️</div>
+  </div>
+
+  <!-- DAGSPLAN J2016 VIEW -->
+  <div id="view-dag2016" class="hidden">
+    <div class="planinfo">
+      <span><b>Dagsplan J2016 — Hydrocup</b></span>
+      <span class="leg">Felles helgeplan for Byåsen 1, 2 og 3. Oppmøte er satt til 45 minutter før kampstart.</span>
+    </div>
+    <div class="dagfilter" id="dag2016filter"></div>
+    <div id="dag2016-content"></div>
+    <div class="mapnote">Planen er laget fra J2016-kamptidene i kalenderen. «Heie»-punktene er lagt inn der lagene realistisk kan støtte hverandre mellom egne kamper.</div>
+  </div>
+
   <footer>Trykk på et lag for å skjule/vise · ★ markerer dine egne lag · «Min plan» viser hvilke kamper du rekker å se</footer>
 </div>
 
@@ -294,7 +353,7 @@ const MATCHES = [
   {team:"t2016_2", dag:"Søndag", tid:"09:45", h:"Sunndal IL J10",   a:"Byåsen 2",            bane:"Skjøllend",        type:"7er"},
   {team:"t2014_3", dag:"Søndag", tid:"11:15", h:"Strindheim IL 1",  a:"Byåsen 3",            bane:"Sande 2 B",        type:"9er"},
   {team:"t2016_2", dag:"Søndag", tid:"11:15", h:"Byåsen 2",         a:"Charlottenlund SK 1", bane:"Skjøllend",        type:"7er"},
-  {team:"t2014_2", dag:"Søndag", tid:"13:30", h:"Byåsen 2",         a:"Orkanger IF 1",       bane:"Sande 2 B",        type:"9er"},
+  {team:"t2014_2", dag:"Søndag", tid:"12:45", h:"Byåsen 2",         a:"Oppdal IL",           bane:"Sande 2 B",        type:"9er"},
   {team:"p1",      dag:"Søndag", tid:"13:30", h:"Byåsen 1",         a:"Freidig 2",           bane:"Ottembanen",       type:"9er"},
   {team:"t2016_1", dag:"Søndag", tid:"13:30", h:"Træff Hvit",       a:"Byåsen 1",            bane:"Skjøllend",        type:"7er"},
   {team:"pia",     dag:"Søndag", tid:"14:15", h:"Træff Grønn",      a:"Byåsen 3",            bane:"Skjøllend",        type:"7er"},
@@ -312,6 +371,7 @@ Object.keys(TEAMS).forEach(k => visible[k] = true);
 
 const toMin = t => { const [h,m]=t.split(":").map(Number); return h*60+m; };
 const hhmm = x => `${String(Math.floor(x/60)).padStart(2,'0')}:${String(x%60).padStart(2,'0')}`;
+const endT = t => hhmm(toMin(t)+DUR);  // estimert sluttid: 2x20 min + 5 min pause = 45 min
 const trav = (a,b) => a===b ? 0 : TRAVEL;
 const isBya = s => s.startsWith("Byåsen");
 
@@ -362,9 +422,10 @@ function renderCal(){
       const card=document.createElement("div");
       card.className="m"+(t.mine?" mine":"");
       card.style.setProperty("--mc",t.color);
-      card.innerHTML=`<div class="top"><span class="time">${m.tid}</span><span class="pill">${t.coach} · ${t.coh}</span></div>
+      card.innerHTML=`<div class="top"><span class="time">${m.tid}<span class="endt">– ${endT(m.tid)}</span></span><span class="pill">${t.coach} · ${t.coh}</span></div>
         <div class="teams"><span class="${isBya(m.h)?'bya':''}">${m.h}</span><span class="vs">vs</span><span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>
-        <div class="place">📍 ${m.bane} <span class="bn">${m.type} bane</span></div>`;
+        <div class="place">📍 ${m.bane} <span class="bn">${m.type} bane</span></div>
+        ${noteWrap(m)}`;
       slot.appendChild(card);
     });
     col.appendChild(track); cal.appendChild(col);
@@ -416,23 +477,26 @@ function buildPlan(){
       if(it.kind==="own"){
         inner+=`<div class="pcard own" style="--mc:${t.color}">
           <div class="arrive">⏱ Oppmøte ${hhmm(toMin(m.tid)-ARRIVE)}</div>
-          <div class="ph"><span class="ptime">${m.tid}</span><span class="badge own" style="background:${t.color}">★ ${t.coach}</span></div>
+          <div class="ph"><span class="ptime">${m.tid}<span class="endt">– ${endT(m.tid)}</span></span><span class="badge own" style="background:${t.color}">★ ${t.coach}</span></div>
           <div class="pteams"><span class="${isBya(m.h)?'bya':''}">${m.h}</span> <span style="color:var(--ink-faint)">vs</span> <span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>
           <div class="pmeta">📍 ${m.bane} <span class="bn">${m.type}</span> · ${t.coh}</div>
+          ${noteWrap(m)}
         </div>`;
       } else if(it.kind==="watch"){
         inner+=`<div class="pcard watch">
-          <div class="ph"><span class="ptime">${m.tid}</span><span class="badge watch">✓ REKKER</span></div>
+          <div class="ph"><span class="ptime">${m.tid}<span class="endt">– ${endT(m.tid)}</span></span><span class="badge watch">✓ REKKER</span></div>
           <div class="pteams"><span class="${isBya(m.h)?'bya':''}">${m.h}</span> <span style="color:var(--ink-faint)">vs</span> <span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>
           <div class="pmeta"><span style="color:${t.color};font-weight:600">${teamLabel(m)}</span></div>
           <div class="pmeta">📍 ${m.bane} <span class="bn">${m.type}</span></div>
+          ${noteWrap(m)}
         </div>`;
       } else {
         inner+=`<div class="pcard skip">
-          <div class="ph"><span class="ptime">${m.tid}</span><span class="badge skip">rekker ikke</span></div>
+          <div class="ph"><span class="ptime">${m.tid}<span class="endt">– ${endT(m.tid)}</span></span><span class="badge skip">rekker ikke</span></div>
           <div class="pteams">${m.h} <span style="color:var(--ink-faint)">vs</span> ${m.a}</div>
           <div class="opp">${teamLabel(m)} · 📍 ${m.bane}</div>
           <div class="why">${it.why}</div>
+          ${noteWrap(m)}
         </div>`;
       }
       wrap.innerHTML=inner;
@@ -604,7 +668,7 @@ function buildMapView(){
   list.innerHTML = banes.length ? banes.map(b=>{
     const v=VENUES[b]||{}; const ms=sortM(byBane[b]);
     const pin = v.lat!=null ? `<span class="vpin">📍${v.approx?' ca.':''}</span>` : `<span class="vpin off">ikke kartfestet</span>`;
-    const rows = ms.map(m=>`<div class="vm"><span class="vmt">${m.dag.slice(0,3)} ${m.tid}</span><span class="${isBya(m.h)?'bya':''}">${m.h}</span><span class="vs">–</span><span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>`).join("");
+    const rows = ms.map(m=>`<div class="vm"><span class="vmt">${m.dag.slice(0,3)} ${m.tid}–${endT(m.tid)}</span><span class="${isBya(m.h)?'bya':''}">${m.h}</span><span class="vs">–</span><span class="${isBya(m.a)?'bya':''}">${m.a}</span></div>`).join("");
     return `<div class="venue"><div class="venue-hd"><h4>${b}</h4>${pin}<a class="maplink" href="${mapsLink(v.q||(b+' Sunndalsøra'))}" target="_blank" rel="noopener">Åpne i kart ↗</a></div>
       <div class="venue-cnt">${ms.length} kamp${ms.length===1?'':'er'}</div><div class="venue-matches">${rows}</div></div>`;
   }).join("") : `<div class="mapnote" style="grid-column:1/-1;">Ingen av dine kamper på disse banene.</div>`;
@@ -638,7 +702,7 @@ function drawMarkers(byBane){
     pts.push([bk.lat,bk.lng]);
     const names=Object.keys(bk.banes).join(", ");
     let html=`<b>${names}${bk.approx?" (ca.)":""}</b>`;
-    Object.values(bk.banes).forEach(ms=> sortM(ms).forEach(m=>{ html+=`<br>${m.dag.slice(0,3)} ${m.tid} – ${m.h} v ${m.a}`; }));
+    Object.values(bk.banes).forEach(ms=> sortM(ms).forEach(m=>{ html+=`<br>${m.dag.slice(0,3)} ${m.tid}–${endT(m.tid)} – ${m.h} v ${m.a}`; }));
     const col = mapMineOnly ? "#23c08a" : "#7c6cf0";
     L.circleMarker([bk.lat,bk.lng],{radius:9,weight:2,color:"#fff",fillColor:col,fillOpacity:.9}).addTo(mapLayer).bindPopup(html);
   });
@@ -646,11 +710,339 @@ function drawMarkers(byBane){
 }
 
 function showView(v){
-  ["cal","plan","rooms","map"].forEach(x=>{
+  ["cal","plan","rooms","map","dag","dag2016"].forEach(x=>{
     document.getElementById("view-"+x).classList.toggle("hidden", v!==x);
     document.getElementById("tab-"+x).classList.toggle("active", v===x);
   });
   if(v==="map") buildMapView();
+  if(v==="dag"){ buildDagFilter(); buildDagsplan(); }
+  if(v==="dag2016"){ buildDag2016Filter(); buildDagsplan2016(); }
+}
+
+/* ---------- KOMMENTARER PÅ KAMPER ---------- */
+const NOTES_STORE_KEY = "hydrocup_notes_2026";
+let matchNotes = {};
+try{ matchNotes = JSON.parse(localStorage.getItem(NOTES_STORE_KEY)) || {}; }catch(e){ matchNotes = {}; }
+function saveNotes(){ try{ localStorage.setItem(NOTES_STORE_KEY, JSON.stringify(matchNotes)); }catch(e){} }
+const esc = s => String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const matchKey = m => `${m.team}|${m.h}|${m.a}`;
+function noteWrap(m){
+  const k = matchKey(m);
+  return `<div class="note-wrap" data-key="${esc(k)}">${noteDisplay(k)}</div>`;
+}
+function noteDisplay(key){
+  const v = matchNotes[key];
+  if(v) return `<div class="note-display has">📝 <span>${esc(v)}</span></div>`;
+  return `<div class="note-display empty">＋ kommentar</div>`;
+}
+function refreshNote(key){
+  document.querySelectorAll(`.note-wrap[data-key="${CSS.escape(key)}"]`).forEach(w=>{ w.innerHTML = noteDisplay(key); });
+}
+function openNoteEditor(wrap){
+  const key = wrap.dataset.key;
+  const cur = matchNotes[key] || "";
+  wrap.innerHTML = `<textarea class="note-ta" rows="2" placeholder="Hvem ser? Må noen dra tidlig? Dele oss?">${esc(cur)}</textarea>`
+    + `<div class="note-btns"><button class="note-save">Lagre</button><button class="note-cancel">Avbryt</button></div>`;
+  const ta = wrap.querySelector("textarea");
+  ta.focus(); ta.setSelectionRange(cur.length, cur.length);
+}
+document.addEventListener("click", e=>{
+  const disp = e.target.closest(".note-display");
+  if(disp){ e.stopPropagation(); openNoteEditor(disp.closest(".note-wrap")); return; }
+  const save = e.target.closest(".note-save");
+  if(save){
+    e.stopPropagation();
+    const wrap = save.closest(".note-wrap"), key = wrap.dataset.key;
+    const val = wrap.querySelector("textarea").value.trim();
+    if(val) matchNotes[key] = val; else delete matchNotes[key];
+    saveNotes(); refreshNote(key);
+    return;
+  }
+  const cancel = e.target.closest(".note-cancel");
+  if(cancel){ e.stopPropagation(); const wrap = cancel.closest(".note-wrap"); wrap.innerHTML = noteDisplay(wrap.dataset.key); return; }
+});
+
+/* ---------- DAGSPLAN J2014 ---------- */
+// Aktiviteter forankret til riktig lag via kampdata (baner/tider). type: kamp/heie/mat/pakke/reise/fest/natt/fritid/''
+const DAGSPLAN = {
+  "Byåsen 1": { coach:"Pernille", color:"#7c6cf0", days:{
+    Fredag:[
+      {t:"17–17.30", x:"Innsjekk Voksenopplæringen"},
+      {t:"18.45", x:"Oppmøte Sande 2b"},
+      {t:"18.45", x:"Heie på Byåsen 2 og 3 på Sande 2b", type:"heie"},
+      {t:"19.30", x:"Heie på Byåsen 2 på samme bane", type:"heie"},
+      {t:"20.45", x:"Felles kveldsmat", type:"mat"},
+      {t:"21.30", x:"Kveldstell", type:"natt"},
+    ],
+    Lørdag:[
+      {t:"09.00", x:"Frokost", type:"mat"},
+      {t:"10.00", x:"Avreise Voksenopplæring"},
+      {t:"10.15", x:"Heie på Byåsen 3 på samme bane", type:"heie"},
+      {t:"11.00", x:"Oppmøte Kgb C for kamp"},
+      {t:"11.45", x:"Byåsen 1 – Oppdal", type:"kamp"},
+      {t:"13.00", x:"Lunsj Hydro Sunndal kantine", type:"mat"},
+      {t:"13.45", x:"Avreise voksenopplæring"},
+      {t:"14.00", x:"Oppmøte Statkraftbanen B"},
+      {t:"14.45", x:"Malmefjorden IL – Byåsen 1", type:"kamp"},
+      {t:"16.15", x:"Oppmøte Ottembanen"},
+      {t:"17.00", x:"Sunndal IL – Byåsen 1", type:"kamp"},
+      {t:"18.30", x:"Felles middag: Hamburger", type:"mat"},
+      {t:"19.30", x:"Disco i Tindehallen?", type:"fest"},
+      {t:"21.30", x:"Kveldstell", type:"natt"},
+    ],
+    Søndag:[
+      {t:"07.00", x:"Morgenstell og frokost", type:"mat"},
+      {t:"08.00", x:"Avreise voksenopplæring"},
+      {t:"08.15", x:"Oppmøte Holssanden"},
+      {t:"09.00", x:"SIF/Hessa IL – Byåsen 1", type:"kamp"},
+      {t:"10.00", x:"Pakke sammen og rydde på voksenopplæringen", type:"pakke"},
+      {t:"11.30", x:"Lunsj: Pastasalat med kylling", type:"mat"},
+      {t:"12.45", x:"Oppmøte Ottembanen"},
+      {t:"13.30", x:"Byåsen 1 – Freidig 2", type:"kamp"},
+    ],
+  }},
+  "Byåsen 2": { coach:"Hans Kristian", color:"#e08b4a", days:{
+    Fredag:[
+      {t:"17–17.30", x:"Innsjekk Voksenopplæringen"},
+      {t:"19.30", x:"Frei FK – Byåsen 2", type:"kamp"},
+      {t:"20.45", x:"Felles kveldsmat", type:"mat"},
+      {t:"", x:"Dusj og kveldstell", type:"natt"},
+    ],
+    Lørdag:[
+      {t:"07.30", x:"Morgenstell og frokost", type:"mat"},
+      {t:"08.30", x:"Avreise voksenopplæring"},
+      {t:"08.45", x:"Oppmøte Ottembanen"},
+      {t:"09.30", x:"Byåsen 2 – Åndalsnes IL", type:"kamp"},
+      {t:"10.15", x:"Heie på Byåsen 3", type:"heie"},
+      {t:"11.30", x:"Lunsj Hydro Sunndal kantine", type:"mat"},
+      {t:"12.15", x:"Avreise voksenopplæringen"},
+      {t:"12.30", x:"Oppmøte Øksendal"},
+      {t:"13.15", x:"Strindheim – Byåsen 2", type:"kamp"},
+      {t:"", x:"Dusj og fritid", type:"fritid"},
+      {t:"17.00", x:"Heie på Byåsen 1 på Ottembanen?", type:"heie"},
+      {t:"18.30", x:"Felles middag: Hamburger", type:"mat"},
+      {t:"19.30", x:"Disco i Tindehallen?", type:"fest"},
+      {t:"21.30", x:"Kveldstell", type:"natt"},
+    ],
+    Søndag:[
+      {t:"07.45", x:"Morgenstell og frokost", type:"mat"},
+      {t:"08.45", x:"Avreise voksenopplæring"},
+      {t:"09.00", x:"Oppmøte Øksendal"},
+      {t:"09.45", x:"Sverresborg Fotball 1 – Byåsen 2", type:"kamp"},
+      {t:"10.45", x:"Pakke sammen og rydde på voksenopplæringen", type:"pakke"},
+      {t:"11.30", x:"Lunsj: Pastasalat med kylling", type:"mat"},
+      {t:"11.50", x:"Avreise voksenopplæringen"},
+      {t:"12.00", x:"Oppmøte Sande 2B"},
+      {t:"12.45", x:"Byåsen 2 – Oppdal IL", type:"kamp"},
+      {t:"13.30", x:"Heie på Byåsen 1 på Ottembanen!", type:"heie"},
+    ],
+  }},
+  "Byåsen 3": { coach:"Rennemo/Alexander", color:"#e25c8a", days:{
+    Fredag:[
+      {t:"17–17.30", x:"Innsjekk Voksenopplæringen"},
+      {t:"18.00", x:"Oppmøte Sande 2b"},
+      {t:"18.45", x:"Træff – Byåsen 3", type:"kamp"},
+      {t:"20.45", x:"Felles kveldsmat", type:"mat"},
+      {t:"", x:"Dusj og kveldstell", type:"natt"},
+    ],
+    Lørdag:[
+      {t:"06.45", x:"Morgenstell og frokost", type:"mat"},
+      {t:"07.45", x:"Avreise voksenopplæring"},
+      {t:"08.00", x:"Oppmøte Holssanden"},
+      {t:"08.45", x:"Byåsen 3 – Freidig 1", type:"kamp"},
+      {t:"09.30", x:"Kjøre rett til ny kamp på Kgb C (få i litt næring på veien)", type:"reise"},
+      {t:"10.15", x:"Utleira IL – Byåsen 3", type:"kamp"},
+      {t:"11.30", x:"Lunsj på Hydro Sunndal kantine", type:"mat"},
+      {t:"", x:"Dusj og fritid", type:"fritid"},
+      {t:"17.00", x:"Heie på Byåsen 1 på Ottembanen?", type:"heie"},
+      {t:"18.30", x:"Felles middag: Hamburger", type:"mat"},
+      {t:"19.30", x:"Disco i Tindehallen?", type:"fest"},
+      {t:"21.30", x:"Kveldstell", type:"natt"},
+    ],
+    Søndag:[
+      {t:"06.30", x:"Morgenstell og frokost", type:"mat"},
+      {t:"07.20", x:"Avreise voksenopplæring"},
+      {t:"07.30", x:"Oppmøte Kgb C"},
+      {t:"08.15", x:"Byåsen 3 – Orkanger IF 2", type:"kamp"},
+      {t:"09.15", x:"Pakke sammen og rydde + få i seg et mellommåltid!", type:"pakke"},
+      {t:"10.15", x:"Avreise voksenopplæring"},
+      {t:"10.30", x:"Oppmøte Sande 2B"},
+      {t:"11.15", x:"Strindheim 1 – Byåsen 3", type:"kamp"},
+      {t:"12.15", x:"Lunsj: Pastasalat med kylling", type:"mat"},
+      {t:"13.30", x:"Heie på Byåsen 1 på Ottembanen!", type:"heie"},
+    ],
+  }},
+};
+
+/* ---------- DAGSPLAN J2016 ---------- */
+// Laget fra J2016-kampene i MATCHES. Oppmøte er 45 minutter før kampstart.
+const DAGSPLAN2016 = {
+  "Byåsen 1": { coach:"Jonas", color:"#4a9ee0", days:{
+    Fredag:[
+      {t:"17–17.30", x:"Innsjekk Voksenopplæringen"},
+      {t:"20.45", x:"Felles kveldsmat", type:"mat"},
+      {t:"21.30", x:"Nattstell", type:"natt"},
+      {t:"22.00", x:"Legging", type:"natt"},
+    ],
+    Lørdag:[
+      {t:"06.15", x:"Opp og morgenstell", type:"natt"},
+      {t:"06.30", x:"Frokost", type:"mat"},
+      {t:"07.15", x:"Oppmøte Rotvoll"},
+      {t:"08.00", x:"Trygg/Lade SK 2 – Byåsen 1", type:"kamp"},
+      {t:"09.15", x:"Mellommåltid og rolig pause", type:"mat"},
+      {t:"09.30", x:"Oppmøte Statkraftbanen C"},
+      {t:"10.15", x:"Byåsen 1 – Tingvoll IL", type:"kamp"},
+      {t:"11.10", x:"Heie på Byåsen 2 på Kgb B hvis laget rekker forflytning", type:"heie"},
+      {t:"12.30", x:"Heie på Byåsen 2 på Statkraftbanen C", type:"heie"},
+      {t:"13.15", x:"Lunsj og hvile", type:"mat"},
+      {t:"14.45", x:"Heie på Byåsen 3 på Frank Stadion hvis energien er god", type:"heie"},
+      {t:"16.15", x:"Heie på Byåsen 3 på Rotvoll", type:"heie"},
+      {t:"18.30", x:"Felles middag: Hamburger", type:"mat"},
+      {t:"19.30", x:"Disco i Tindehallen", type:"fest"},
+      {t:"21.30", x:"Nattstell", type:"natt"},
+      {t:"22.00", x:"Legging", type:"natt"},
+    ],
+    Søndag:[
+      {t:"06.30", x:"Opp og morgenstell", type:"natt"},
+      {t:"06.45", x:"Frokost", type:"mat"},
+      {t:"07.30", x:"Oppmøte Førja"},
+      {t:"08.15", x:"Oppdal IL 2 – Byåsen 1", type:"kamp"},
+      {t:"09.45", x:"Heie på Byåsen 2 på Skjøllend hvis transporten passer", type:"heie"},
+      {t:"11.15", x:"Heie på Byåsen 2 på Skjøllend", type:"heie"},
+      {t:"11.45", x:"Lunsj og pakking/rydding", type:"mat"},
+      {t:"12.45", x:"Oppmøte Skjøllend"},
+      {t:"13.30", x:"Træff Hvit – Byåsen 1", type:"kamp"},
+      {t:"14.15", x:"Heie på Byåsen 3 på Skjøllend", type:"heie"},
+      {t:"15.15", x:"Avslutning og hjemreise", type:"reise"},
+    ],
+  }},
+  "Byåsen 2": { coach:"Ole", color:"#d9a93a", days:{
+    Fredag:[
+      {t:"17–17.30", x:"Innsjekk Voksenopplæringen"},
+      {t:"20.45", x:"Felles kveldsmat", type:"mat"},
+      {t:"21.30", x:"Nattstell", type:"natt"},
+      {t:"22.00", x:"Legging", type:"natt"},
+    ],
+    Lørdag:[
+      {t:"08.30", x:"Opp og morgenstell", type:"natt"},
+      {t:"09.00", x:"Frokost", type:"mat"},
+      {t:"10.15", x:"Oppmøte Kgb B"},
+      {t:"11.00", x:"Dahle IL – Byåsen 2", type:"kamp"},
+      {t:"11.45", x:"Oppmøte Statkraftbanen C og få i litt næring", type:"mat"},
+      {t:"12.30", x:"Eide og Omegn FK Blå – Byåsen 2", type:"kamp"},
+      {t:"13.30", x:"Lunsj og hvile", type:"mat"},
+      {t:"14.45", x:"Heie på Byåsen 3 på Frank Stadion hvis laget rekker det", type:"heie"},
+      {t:"16.15", x:"Heie på Byåsen 3 på Rotvoll", type:"heie"},
+      {t:"18.30", x:"Felles middag: Hamburger", type:"mat"},
+      {t:"19.30", x:"Disco i Tindehallen", type:"fest"},
+      {t:"21.30", x:"Nattstell", type:"natt"},
+      {t:"22.00", x:"Legging", type:"natt"},
+    ],
+    Søndag:[
+      {t:"07.45", x:"Opp og morgenstell", type:"natt"},
+      {t:"08.00", x:"Frokost", type:"mat"},
+      {t:"09.00", x:"Oppmøte Skjøllend"},
+      {t:"09.45", x:"Sunndal IL J10 – Byåsen 2", type:"kamp"},
+      {t:"10.30", x:"Oppmøte videre på Skjøllend"},
+      {t:"11.15", x:"Byåsen 2 – Charlottenlund SK 1", type:"kamp"},
+      {t:"12.15", x:"Lunsj og pakking/rydding", type:"mat"},
+      {t:"13.30", x:"Heie på Byåsen 1 på Skjøllend", type:"heie"},
+      {t:"14.15", x:"Heie på Byåsen 3 på Skjøllend", type:"heie"},
+      {t:"15.15", x:"Avslutning og hjemreise", type:"reise"},
+    ],
+  }},
+  "Byåsen 3": { coach:"Pia", color:"#23c08a", days:{
+    Fredag:[
+      {t:"17–17.30", x:"Innsjekk Voksenopplæringen"},
+      {t:"20.45", x:"Felles kveldsmat", type:"mat"},
+      {t:"21.30", x:"Nattstell", type:"natt"},
+      {t:"22.00", x:"Legging", type:"natt"},
+    ],
+    Lørdag:[
+      {t:"08.30", x:"Opp og morgenstell", type:"natt"},
+      {t:"09.00", x:"Frokost", type:"mat"},
+      {t:"10.15", x:"Heie på Byåsen 1 på Statkraftbanen C", type:"heie"},
+      {t:"11.00", x:"Heie på Byåsen 2 på Kgb B hvis transporten passer", type:"heie"},
+      {t:"12.30", x:"Heie på Byåsen 2 på Statkraftbanen C", type:"heie"},
+      {t:"13.15", x:"Lunsj og gjøre seg klar", type:"mat"},
+      {t:"14.00", x:"Oppmøte Frank Stadion"},
+      {t:"14.45", x:"Frei FK – Byåsen 3", type:"kamp"},
+      {t:"15.30", x:"Oppmøte Rotvoll"},
+      {t:"16.15", x:"Trygg/Lade SK 1 – Byåsen 3", type:"kamp"},
+      {t:"18.30", x:"Felles middag: Hamburger", type:"mat"},
+      {t:"19.30", x:"Disco i Tindehallen", type:"fest"},
+      {t:"21.30", x:"Nattstell", type:"natt"},
+      {t:"22.00", x:"Legging", type:"natt"},
+    ],
+    Søndag:[
+      {t:"06.30", x:"Opp og morgenstell", type:"natt"},
+      {t:"06.45", x:"Frokost", type:"mat"},
+      {t:"07.30", x:"Oppmøte Skjøllend"},
+      {t:"08.15", x:"Byåsen 3 – Charlottenlund SK 2", type:"kamp"},
+      {t:"09.45", x:"Heie på Byåsen 2 på Skjøllend", type:"heie"},
+      {t:"11.15", x:"Heie på Byåsen 2 på Skjøllend", type:"heie"},
+      {t:"12.15", x:"Lunsj og pakking/rydding", type:"mat"},
+      {t:"13.30", x:"Oppmøte Skjøllend"},
+      {t:"14.15", x:"Træff Grønn – Byåsen 3", type:"kamp"},
+      {t:"15.15", x:"Avslutning og hjemreise", type:"reise"},
+    ],
+  }},
+};
+const DAG_ICON = {mat:"🍽️ ",heie:"❤️ ",pakke:"🧳 ",reise:"🚗 ",fest:"🎉 ",natt:"🌙 ",fritid:"😌 "};
+let dagFilter = "all";
+function setDagFilter(v){ dagFilter=v; buildDagFilter(); buildDagsplan(); }
+function buildDagFilter(){
+  const opts=[["all","Alle lag",""]].concat(Object.keys(DAGSPLAN).map(n=>[n,n,DAGSPLAN[n].color]));
+  document.getElementById("dagfilter").innerHTML = opts.map(([v,l,c])=>
+    `<button class="dagfbtn ${c?'team':''} ${dagFilter===v?'active':''}" ${c?`style="--tc:${c}"`:''} onclick="setDagFilter('${v}')">${l}</button>`
+  ).join("");
+}
+function buildDagsplan(){
+  const teams = Object.keys(DAGSPLAN).filter(n=> dagFilter==="all" || n===dagFilter);
+  const one = teams.length===1;
+  let html="";
+  ["Fredag","Lørdag","Søndag"].forEach(day=>{
+    html += `<div class="dag-day"><div class="dag-dayttl">${day}</div><div class="dag-cols${one?' one':''}">`;
+    teams.forEach(n=>{
+      const tm=DAGSPLAN[n], items=tm.days[day]||[];
+      html += `<div class="dag-col" style="--tc:${tm.color}"><div class="dag-colhd"><span class="dot"></span>${n}<span class="coach">${tm.coach}</span></div><div class="dag-items">`;
+      html += items.map(it=>{
+        const ic = DAG_ICON[it.type]||"";
+        return `<div class="dag-item ${it.type||""}"><span class="dt">${it.t||""}</span><span class="dx">${it.type==="kamp"?"⚽ ":ic}${esc(it.x)}</span></div>`;
+      }).join("");
+      html += `</div></div>`;
+    });
+    html += `</div></div>`;
+  });
+  document.getElementById("dag-content").innerHTML = html;
+}
+
+let dag2016Filter = "all";
+function setDag2016Filter(v){ dag2016Filter=v; buildDag2016Filter(); buildDagsplan2016(); }
+function buildDag2016Filter(){
+  const opts=[["all","Alle lag",""]].concat(Object.keys(DAGSPLAN2016).map(n=>[n,n,DAGSPLAN2016[n].color]));
+  document.getElementById("dag2016filter").innerHTML = opts.map(([v,l,c])=>
+    `<button class="dagfbtn ${c?'team':''} ${dag2016Filter===v?'active':''}" ${c?`style="--tc:${c}"`:''} onclick="setDag2016Filter('${v}')">${l}</button>`
+  ).join("");
+}
+function buildDagsplan2016(){
+  const teams = Object.keys(DAGSPLAN2016).filter(n=> dag2016Filter==="all" || n===dag2016Filter);
+  const one = teams.length===1;
+  let html="";
+  ["Fredag","Lørdag","Søndag"].forEach(day=>{
+    html += `<div class="dag-day"><div class="dag-dayttl">${day}</div><div class="dag-cols${one?' one':''}">`;
+    teams.forEach(n=>{
+      const tm=DAGSPLAN2016[n], items=tm.days[day]||[];
+      html += `<div class="dag-col" style="--tc:${tm.color}"><div class="dag-colhd"><span class="dot"></span>${n}<span class="coach">${tm.coach}</span></div><div class="dag-items">`;
+      html += items.map(it=>{
+        const ic = DAG_ICON[it.type]||"";
+        return `<div class="dag-item ${it.type||""}"><span class="dt">${it.t||""}</span><span class="dx">${it.type==="kamp"?"⚽ ":ic}${esc(it.x)}</span></div>`;
+      }).join("");
+      html += `</div></div>`;
+    });
+    html += `</div></div>`;
+  });
+  document.getElementById("dag2016-content").innerHTML = html;
 }
 
 buildToggles();

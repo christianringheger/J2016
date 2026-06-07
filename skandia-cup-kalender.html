@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skandia Cup 2026 – Kampkalender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Narrow:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1419;
+  --bg-2: #1a2128;
+  --surface: #232b34;
+  --surface-2: #2d3742;
+  --border: #3a4552;
+  --text: #e8ecf1;
+  --text-dim: #9aa5b1;
+  --text-faint: #6b7681;
+  --accent: #ffd23f;
+  --accent-warm: #ff8c42;
+  --g10: #4ade80;
+  --j10: #f472b6;
+  --j12: #60a5fa;
+  --conflict: #ef4444;
+  --conflict-bg: rgba(239, 68, 68, 0.15);
+  --recommended: #ffd23f;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--text); font-family: 'Archivo', system-ui, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body { padding: 0; min-height: 100vh; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+/* HEADER */
+.header { padding: 32px 0 24px; border-bottom: 2px solid var(--border); margin-bottom: 32px; }
+.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+.title { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(32px, 5vw, 56px); letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 8px; }
+.subtitle { color: var(--text-dim); font-size: 16px; max-width: 600px; }
+.subtitle strong { color: var(--text); }
+
+/* RECOMMENDATION */
+.recommendation { background: linear-gradient(135deg, #1f2933 0%, #2a3441 100%); border: 1px solid var(--accent); border-radius: 14px; padding: 24px; margin-bottom: 32px; position: relative; overflow: hidden; }
+.recommendation::before { content: ''; position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,210,63,0.12) 0%, transparent 70%); pointer-events: none; }
+.rec-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.rec-label::before { content: '★'; font-size: 14px; }
+.rec-title { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 22px; margin-bottom: 16px; }
+.rec-teams { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.rec-chip { background: var(--surface); padding: 10px 18px; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); }
+.rec-chip-dot { width: 10px; height: 10px; border-radius: 50%; }
+.rec-chip.g10 .rec-chip-dot { background: var(--g10); }
+.rec-chip.j10 .rec-chip-dot { background: var(--j10); }
+.rec-chip.j12 .rec-chip-dot { background: var(--j12); }
+.rec-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
+.rec-stat { background: rgba(0,0,0,0.25); padding: 12px 14px; border-radius: 8px; }
+.rec-stat-num { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 26px; line-height: 1; }
+.rec-stat-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+.rec-action { margin-top: 16px; }
+.btn-apply { background: var(--accent); color: var(--bg); border: 0; padding: 12px 24px; border-radius: 8px; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; letter-spacing: 0.02em; transition: transform .15s ease, box-shadow .15s ease; }
+.btn-apply:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255, 210, 63, 0.3); }
+.rec-note { color: var(--text-dim); font-size: 13px; margin-top: 14px; line-height: 1.6; }
+.rec-note strong { color: var(--accent); }
+
+/* FILTERS */
+.filters { background: var(--surface); border-radius: 14px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border); }
+.filters-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.filters-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; }
+.btn-clear { background: transparent; color: var(--text-dim); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; transition: all .15s ease; }
+.btn-clear:hover { color: var(--text); border-color: var(--text-dim); }
+
+.filter-group { margin-bottom: 16px; }
+.filter-group:last-child { margin-bottom: 0; }
+.filter-group-label { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.filter-group-label::before { content: ''; width: 10px; height: 10px; border-radius: 50%; }
+.filter-group.g10 .filter-group-label::before { background: var(--g10); }
+.filter-group.j10 .filter-group-label::before { background: var(--j10); }
+.filter-group.j12 .filter-group-label::before { background: var(--j12); }
+
+.team-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.team-chip { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all .15s ease; font-family: 'Archivo Narrow', sans-serif; user-select: none; }
+.team-chip:hover { border-color: var(--text-dim); color: var(--text); }
+.team-chip.active.g10 { background: var(--g10); color: #0a1f15; border-color: var(--g10); font-weight: 700; }
+.team-chip.active.j10 { background: var(--j10); color: #2a0f1f; border-color: var(--j10); font-weight: 700; }
+.team-chip.active.j12 { background: var(--j12); color: #0a1a2e; border-color: var(--j12); font-weight: 700; }
+
+/* SUMMARY BAR */
+.summary { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.summary-card { flex: 1; min-width: 130px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.summary-card.conflict { border-color: var(--conflict); background: rgba(239, 68, 68, 0.08); }
+.summary-num { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 28px; line-height: 1; }
+.summary-card.conflict .summary-num { color: var(--conflict); }
+.summary-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* DAYS */
+.days { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 900px) { .days { grid-template-columns: 1fr; } }
+
+.day { background: var(--surface); border-radius: 14px; padding: 20px; border: 1px solid var(--border); }
+.day-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.day-name { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; }
+.day-date { color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.day-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); }
+
+.timeline { position: relative; }
+.timeline-empty { color: var(--text-faint); text-align: center; padding: 40px 0; font-style: italic; font-size: 14px; }
+
+.match { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: start; }
+.match:last-child { border-bottom: 0; }
+.match-time { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 14px; color: var(--text); padding-top: 4px; }
+.match-card { background: var(--surface-2); border-left: 4px solid; border-radius: 6px; padding: 10px 14px; position: relative; }
+.match-card.g10 { border-left-color: var(--g10); }
+.match-card.j10 { border-left-color: var(--j10); }
+.match-card.j12 { border-left-color: var(--j12); }
+.match-card.conflict { background: var(--conflict-bg); border-left-color: var(--conflict); }
+.match-card.conflict::after { content: '⚠ KONFLIKT'; position: absolute; top: 10px; right: 12px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--conflict); font-weight: 700; }
+
+.match-team-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; font-weight: 600; }
+.match-team-tag.g10 { background: rgba(74, 222, 128, 0.15); color: var(--g10); }
+.match-team-tag.j10 { background: rgba(244, 114, 182, 0.15); color: var(--j10); }
+.match-team-tag.j12 { background: rgba(96, 165, 250, 0.15); color: var(--j12); }
+
+.match-fixture { font-weight: 600; font-size: 14px; line-height: 1.3; margin-bottom: 4px; }
+.match-fixture .vs { color: var(--text-faint); font-weight: 400; margin: 0 4px; }
+.match-fixture .byasen { color: var(--accent); }
+.match-meta { color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+.match-meta .dot { margin: 0 6px; color: var(--text-faint); }
+
+footer { color: var(--text-faint); font-size: 12px; text-align: center; padding: 40px 0 20px; }
+
+@media (max-width: 600px) {
+  .container { padding: 16px; }
+  .header { padding: 16px 0 16px; margin-bottom: 20px; }
+  .recommendation { padding: 18px; }
+  .match { grid-template-columns: 50px 1fr; gap: 10px; }
+  .match-time { font-size: 12px; }
+  .match-fixture { font-size: 13px; }
+  .match-meta { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="eyebrow">Skandia Cup 2026 · 20–21. juni · Trondheim</div>
+    <h1 class="title">Kampkalender for tre barn.</h1>
+    <p class="subtitle">Alle 13 Byåsen-lag i G10, J10 og J12. Velg ett lag per kategori for å se kampoppsettet. <strong>Kollisjoner markeres automatisk.</strong></p>
+  </header>
+
+  <section class="recommendation" id="recommendation">
+    <div class="rec-label">Anbefalt kombinasjon</div>
+    <div class="rec-title">Sett barna på disse lagene for å rekke 14 av 15 kamper</div>
+    <div class="rec-teams">
+      <div class="rec-chip g10"><span class="rec-chip-dot"></span>G10 – Byåsen 3</div>
+      <div class="rec-chip j10"><span class="rec-chip-dot"></span>J10 – Byåsen 1</div>
+      <div class="rec-chip j12"><span class="rec-chip-dot"></span>J12 – Byåsen 1, 2 eller 3</div>
+    </div>
+    <div class="rec-stats">
+      <div class="rec-stat"><div class="rec-stat-num">15</div><div class="rec-stat-label">Kamper totalt</div></div>
+      <div class="rec-stat"><div class="rec-stat-num">14</div><div class="rec-stat-label">Kan rekkes</div></div>
+      <div class="rec-stat"><div class="rec-stat-num">1</div><div class="rec-stat-label">Mild kollisjon</div></div>
+      <div class="rec-stat"><div class="rec-stat-num">15 min</div><div class="rec-stat-label">Maks overlapp</div></div>
+    </div>
+    <div class="rec-action">
+      <button class="btn-apply" onclick="applyRecommendation()">Vis anbefalt oppsett</button>
+    </div>
+    <p class="rec-note">Den ene kollisjonen er <strong>søndag 11:00–11:45</strong> (J10 på Diplom Is banen 4) som overlapper med <strong>søndag 11:30–12:15</strong> (G10 på Diplom Is banen 1). Begge er på samme anleggsområde – du kan se store deler av begge ved å gå mellom banene. Ingen andre kombinasjoner gir like få og milde kollisjoner.</p>
+  </section>
+
+  <section class="filters">
+    <div class="filters-header">
+      <div class="filters-title">Velg lag å vise</div>
+      <button class="btn-clear" onclick="clearAll()">Nullstill</button>
+    </div>
+    <div id="filter-groups"></div>
+  </section>
+
+  <section class="summary" id="summary"></section>
+
+  <section class="days">
+    <div class="day">
+      <div class="day-header">
+        <div>
+          <div class="day-name">Lørdag</div>
+          <div class="day-date">20. juni 2026</div>
+        </div>
+        <div class="day-count" id="lor-count"></div>
+      </div>
+      <div class="timeline" id="lor-timeline"></div>
+    </div>
+    <div class="day">
+      <div class="day-header">
+        <div>
+          <div class="day-name">Søndag</div>
+          <div class="day-date">21. juni 2026</div>
+        </div>
+        <div class="day-count" id="son-count"></div>
+      </div>
+      <div class="timeline" id="son-timeline"></div>
+    </div>
+  </section>
+
+  <footer>Bygget for Christian · Skandia Cup 2026 · Byåsen IL</footer>
+</div>
+
+<script>
+const TEAMS = {"MG10-1":{"id":"MG10-1","category":"G10","categoryFull":"MG10","teamNum":1,"label":"G10 – Byåsen 1","matches":[{"start":"2026-06-20T12:00:00","day":"lor","time":"12:00","minutes":720,"home":"Langevåg IL - Fotball 2","away":"Byåsen IL 1","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MG 10 Plj F","matchnr":"20006906"},{"start":"2026-06-20T13:00:00","day":"lor","time":"13:00","minutes":780,"home":"Byåsen IL 1","away":"Heimdal Fotballklubb 1","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MG 10 Plj F","matchnr":"20006809"},{"start":"2026-06-20T15:00:00","day":"lor","time":"15:00","minutes":900,"home":"Vestbyen IL 2","away":"Byåsen IL 1","venue":"SalMar 4","venueBase":"SalMar","group":"MG 10 Plj F","matchnr":"20007513"},{"start":"2026-06-21T09:30:00","day":"son","time":"09:30","minutes":570,"home":"Byåsen IL 1","away":"Malvik IL 1","venue":"SalMar 3","venueBase":"SalMar","group":"MG 10 Plj F","matchnr":"21008601"},{"start":"2026-06-21T10:30:00","day":"son","time":"10:30","minutes":630,"home":"Byåsen IL 1","away":"Tiller IL 1","venue":"SalMar 3","venueBase":"SalMar","group":"MG 10 Plj F","matchnr":"21008603"}]},"MJ10-1":{"id":"MJ10-1","category":"J10","categoryFull":"MJ10","teamNum":1,"label":"J10 – Byåsen 1","matches":[{"start":"2026-06-20T10:00:00","day":"lor","time":"10:00","minutes":600,"home":"Byåsen IL 1","away":"Orkanger IF","venue":"Lille Lade 4","venueBase":"Lille Lade","group":"MJ 10 Plj D","matchnr":"20007103"},{"start":"2026-06-20T11:00:00","day":"lor","time":"11:00","minutes":660,"home":"Tiller IL 1","away":"Byåsen IL 1","venue":"Specsavers 2","venueBase":"Specsavers","group":"MJ 10 Plj D","matchnr":"20008704"},{"start":"2026-06-21T11:00:00","day":"son","time":"11:00","minutes":660,"home":"Byåsen IL 1","away":"Charlottenlund Sportsklubb Csk2","venue":"Diplom Is banen 4","venueBase":"Diplom Is banen","group":"MJ 10 Plj D","matchnr":"21008304"},{"start":"2026-06-21T12:30:00","day":"son","time":"12:30","minutes":750,"home":"Hommelvik IL HIL1","away":"Byåsen IL 1","venue":"SalMar 3","venueBase":"SalMar","group":"MJ 10 Plj D","matchnr":"21008607"},{"start":"2026-06-21T13:30:00","day":"son","time":"13:30","minutes":810,"home":"Byåsen IL 1","away":"Leinstrand IL","venue":"Lille Lade 3","venueBase":"Lille Lade","group":"MJ 10 Plj D","matchnr":"21007009"}]},"MJ12-1":{"id":"MJ12-1","category":"J12","categoryFull":"MJ12","teamNum":1,"label":"J12 – Byåsen 1","matches":[{"start":"2026-06-20T16:00:00","day":"lor","time":"16:00","minutes":960,"home":"Byåsen IL 1","away":"Freidig, SPK 1","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 12 Plj D","matchnr":"20008515"},{"start":"2026-06-20T17:00:00","day":"lor","time":"17:00","minutes":1020,"home":"Nidelv IL","away":"Byåsen IL 1","venue":"Specsavers 4","venueBase":"Specsavers","group":"MJ 12 Plj D","matchnr":"20007216"},{"start":"2026-06-20T18:00:00","day":"lor","time":"18:00","minutes":1080,"home":"Byåsen IL 1","away":"Utleira IL 2","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MJ 12 Plj D","matchnr":"20006918"},{"start":"2026-06-21T16:00:00","day":"son","time":"16:00","minutes":960,"home":"Ranheim IL 3","away":"Byåsen IL 1","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MJ 12 Plj D","matchnr":"21007614"},{"start":"2026-06-21T18:00:00","day":"son","time":"18:00","minutes":1080,"home":"Byåsen IL 1","away":"Melhus IL 2","venue":"SpareBank1 banen 3","venueBase":"SpareBank1 banen","group":"MJ 12 Plj D","matchnr":"21007818"}]},"MG10-2":{"id":"MG10-2","category":"G10","categoryFull":"MG10","teamNum":2,"label":"G10 – Byåsen 2","matches":[{"start":"2026-06-20T09:30:00","day":"lor","time":"09:30","minutes":570,"home":"Byåsen IL 2","away":"Heimdal Fotballklubb 2","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MG 10 Plj G","matchnr":"20008102"},{"start":"2026-06-20T11:30:00","day":"lor","time":"11:30","minutes":690,"home":"Byåsen IL 2","away":"Charlottenlund Sportsklubb 5","venue":"SalMar 2","venueBase":"SalMar","group":"MG 10 Plj G","matchnr":"20008506"},{"start":"2026-06-21T12:00:00","day":"son","time":"12:00","minutes":720,"home":"Malvik IL 3","away":"Byåsen IL 2","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MG 10 Plj G","matchnr":"21008106"},{"start":"2026-06-21T13:00:00","day":"son","time":"13:00","minutes":780,"home":"Byåsen IL 2","away":"Trond, IL 1","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj G","matchnr":"21008008"},{"start":"2026-06-21T14:30:00","day":"son","time":"14:30","minutes":870,"home":"Tiller IL 2","away":"Byåsen IL 2","venue":"Lille Lade 4","venueBase":"Lille Lade","group":"MG 10 Plj G","matchnr":"21007111"}]},"MJ10-2":{"id":"MJ10-2","category":"J10","categoryFull":"MJ10","teamNum":2,"label":"J10 – Byåsen 2","matches":[{"start":"2026-06-20T15:30:00","day":"lor","time":"15:30","minutes":930,"home":"Byåsen IL 2","away":"Buvik IL - Fotball GUL","venue":"Specsavers 3","venueBase":"Specsavers","group":"MJ 10 Plj B","matchnr":"20007313"},{"start":"2026-06-20T17:30:00","day":"lor","time":"17:30","minutes":1050,"home":"Fosen, Fotballklubben 2","away":"Byåsen IL 2","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MJ 10 Plj B","matchnr":"20006818"},{"start":"2026-06-21T16:00:00","day":"son","time":"16:00","minutes":960,"home":"Sverresborg Fotball","away":"Byåsen IL 2","venue":"Lille Lade 3","venueBase":"Lille Lade","group":"MJ 10 Plj B","matchnr":"21007014"},{"start":"2026-06-21T17:00:00","day":"son","time":"17:00","minutes":1020,"home":"Byåsen IL 2","away":"Freidig, SPK 3","venue":"Specsavers 3","venueBase":"Specsavers","group":"MJ 10 Plj B","matchnr":"21007314"},{"start":"2026-06-21T18:00:00","day":"son","time":"18:00","minutes":1080,"home":"Ranheim IL 2","away":"Byåsen IL 2","venue":"Specsavers 2","venueBase":"Specsavers","group":"MJ 10 Plj B","matchnr":"21008717"}]},"MJ12-2":{"id":"MJ12-2","category":"J12","categoryFull":"MJ12","teamNum":2,"label":"J12 – Byåsen 2","matches":[{"start":"2026-06-20T16:00:00","day":"lor","time":"16:00","minutes":960,"home":"Byåsen IL 2","away":"Hommelvik IL","venue":"Specsavers 1","venueBase":"Specsavers","group":"MJ 12 Plj A","matchnr":"20007414"},{"start":"2026-06-20T18:00:00","day":"lor","time":"18:00","minutes":1080,"home":"Sjetne IL Sjetne/Flatås 3","away":"Byåsen IL 2","venue":"Lille Lade 4","venueBase":"Lille Lade","group":"MJ 12 Plj A","matchnr":"20007119"},{"start":"2026-06-21T15:30:00","day":"son","time":"15:30","minutes":930,"home":"Charlottenlund Sportsklubb CSK 1","away":"Byåsen IL 2","venue":"SalMar 3","venueBase":"SalMar","group":"MJ 12 Plj A","matchnr":"21008613"},{"start":"2026-06-21T17:00:00","day":"son","time":"17:00","minutes":1020,"home":"Strindheim IL 2","away":"Byåsen IL 2","venue":"Specsavers 1","venueBase":"Specsavers","group":"MJ 12 Plj A","matchnr":"21007415"},{"start":"2026-06-21T18:00:00","day":"son","time":"18:00","minutes":1080,"home":"Byåsen IL 2","away":"Trond, IL 1","venue":"SpareBank1 banen 2","venueBase":"SpareBank1 banen","group":"MJ 12 Plj A","matchnr":"21007717"}]},"MG10-3":{"id":"MG10-3","category":"G10","categoryFull":"MG10","teamNum":3,"label":"G10 – Byåsen 3","matches":[{"start":"2026-06-20T12:00:00","day":"lor","time":"12:00","minutes":720,"home":"Langevåg IL - Fotball 1","away":"Byåsen IL 3","venue":"Diplom Is banen 3","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"20008207"},{"start":"2026-06-20T13:00:00","day":"lor","time":"13:00","minutes":780,"home":"Charlottenlund Sportsklubb 2","away":"Byåsen IL 3","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"20008009"},{"start":"2026-06-21T09:00:00","day":"son","time":"09:00","minutes":540,"home":"Byåsen IL 3","away":"Strindheim IL 1","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"21008000"},{"start":"2026-06-21T10:00:00","day":"son","time":"10:00","minutes":600,"home":"Freidig, SPK 1","away":"Byåsen IL 3","venue":"SalMar 1","venueBase":"SalMar","group":"MG 10 Plj J","matchnr":"21008402"},{"start":"2026-06-21T11:30:00","day":"son","time":"11:30","minutes":690,"home":"Ørland BK 2","away":"Byåsen IL 3","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"21008005"}]},"MJ10-3":{"id":"MJ10-3","category":"J10","categoryFull":"MJ10","teamNum":3,"label":"J10 – Byåsen 3","matches":[{"start":"2026-06-20T15:30:00","day":"lor","time":"15:30","minutes":930,"home":"Charlottenlund Sportsklubb Csk1","away":"Byåsen IL 3","venue":"Specsavers 1","venueBase":"Specsavers","group":"MJ 10 Plj C","matchnr":"20007413"},{"start":"2026-06-20T17:30:00","day":"lor","time":"17:30","minutes":1050,"home":"Kattem IL Fotballklubb 2","away":"Byåsen IL 3","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MJ 10 Plj C","matchnr":"20008118"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Malvik 2","away":"Byåsen IL 3","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MJ 10 Plj C","matchnr":"21008015"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Trond, IL 1","away":"Byåsen IL 3","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 10 Plj C","matchnr":"21008517"},{"start":"2026-06-21T18:30:00","day":"son","time":"18:30","minutes":1110,"home":"Byåsen IL 3","away":"Sjetne IL 1","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MJ 10 Plj C","matchnr":"21007619"}]},"MJ12-3":{"id":"MJ12-3","category":"J12","categoryFull":"MJ12","teamNum":3,"label":"J12 – Byåsen 3","matches":[{"start":"2026-06-20T16:00:00","day":"lor","time":"16:00","minutes":960,"home":"Kattem IL Fotballklubb","away":"Byåsen IL 3","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MJ 12 Plj E","matchnr":"20006914"},{"start":"2026-06-20T18:00:00","day":"lor","time":"18:00","minutes":1080,"home":"Ranheim IL 1","away":"Byåsen IL 3","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 12 Plj E","matchnr":"20008519"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Byåsen IL 3","away":"Utleira IL 1","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MJ 12 Plj E","matchnr":"21008115"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Byåsen IL 3","away":"Melhus IL 1","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MJ 12 Plj E","matchnr":"21008117"},{"start":"2026-06-21T18:30:00","day":"son","time":"18:30","minutes":1110,"home":"Byåsen IL 3","away":"Sverresborg Fotball 1","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MJ 12 Plj E","matchnr":"21006919"}]},"MG10-4":{"id":"MG10-4","category":"G10","categoryFull":"MG10","teamNum":4,"label":"G10 – Byåsen 4","matches":[{"start":"2026-06-20T08:30:00","day":"lor","time":"08:30","minutes":510,"home":"Trond, IL 2","away":"Byåsen IL 4","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MG 10 Plj E","matchnr":"20006800"},{"start":"2026-06-20T09:30:00","day":"lor","time":"09:30","minutes":570,"home":"Byåsen IL 4","away":"Hommelvik IL 3","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MG 10 Plj E","matchnr":"20007601"},{"start":"2026-06-20T11:30:00","day":"lor","time":"11:30","minutes":690,"home":"Astor Fotballklubb 2","away":"Byåsen IL 4","venue":"SpareBank1 banen 4","venueBase":"SpareBank1 banen","group":"MG 10 Plj E","matchnr":"20007905"},{"start":"2026-06-21T12:00:00","day":"son","time":"12:00","minutes":720,"home":"Byåsen IL 4","away":"Ranheim IL 1","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MG 10 Plj E","matchnr":"21006906"},{"start":"2026-06-21T14:00:00","day":"son","time":"14:00","minutes":840,"home":"Byåsen IL 4","away":"Strindheim IL Åsvang 2","venue":"Lille Lade 3","venueBase":"Lille Lade","group":"MG 10 Plj E","matchnr":"21007010"}]},"MJ10-4":{"id":"MJ10-4","category":"J10","categoryFull":"MJ10","teamNum":4,"label":"J10 – Byåsen 4","matches":[{"start":"2026-06-20T14:00:00","day":"lor","time":"14:00","minutes":840,"home":"Flatås Idrettslag","away":"Byåsen IL 4","venue":"Specsavers 2","venueBase":"Specsavers","group":"MJ 10 Plj F","matchnr":"20008710"},{"start":"2026-06-20T15:00:00","day":"lor","time":"15:00","minutes":900,"home":"Strindheim IL 1","away":"Byåsen IL 4","venue":"Specsavers 4","venueBase":"Specsavers","group":"MJ 10 Plj F","matchnr":"20007213"},{"start":"2026-06-21T15:00:00","day":"son","time":"15:00","minutes":900,"home":"Byåsen IL 4","away":"Utleira IL","venue":"SalMar 4","venueBase":"SalMar","group":"MJ 10 Plj F","matchnr":"21007512"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Byåsen IL 4","away":"Buvik IL - Fotball BLÅ","venue":"SpareBank1 banen 4","venueBase":"SpareBank1 banen","group":"MJ 10 Plj F","matchnr":"21007915"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Tiller IL 2","away":"Byåsen IL 4","venue":"SpareBank1 banen 4","venueBase":"SpareBank1 banen","group":"MJ 10 Plj F","matchnr":"21007917"}]},"MJ12-4":{"id":"MJ12-4","category":"J12","categoryFull":"MJ12","teamNum":4,"label":"J12 – Byåsen 4","matches":[{"start":"2026-06-20T10:30:00","day":"lor","time":"10:30","minutes":630,"home":"Byåsen IL 4","away":"Sverresborg Fotball 2","venue":"SpareBank1 banen 2","venueBase":"SpareBank1 banen","group":"MJ 12 Plj F","matchnr":"20007704"},{"start":"2026-06-20T11:30:00","day":"lor","time":"11:30","minutes":690,"home":"Byåsen IL 4","away":"Strindheim IL 3","venue":"SpareBank1 banen 3","venueBase":"SpareBank1 banen","group":"MJ 12 Plj F","matchnr":"20007806"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Byåsen IL 4","away":"Langevåg IL - Fotball","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MJ 12 Plj F","matchnr":"21007615"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Malvik IL","away":"Byåsen IL 4","venue":"Specsavers 4","venueBase":"Specsavers","group":"MJ 12 Plj F","matchnr":"21007215"},{"start":"2026-06-21T18:30:00","day":"son","time":"18:30","minutes":1110,"home":"Sjetne IL Sjetne/Flatås 1","away":"Byåsen IL 4","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 12 Plj F","matchnr":"21008519"}]},"MG10-5":{"id":"MG10-5","category":"G10","categoryFull":"MG10","teamNum":5,"label":"G10 – Byåsen 5","matches":[{"start":"2026-06-20T12:00:00","day":"lor","time":"12:00","minutes":720,"home":"Langevåg IL - Fotball 3","away":"Byåsen IL 5","venue":"SalMar 4","venueBase":"SalMar","group":"MG 10 Plj K","matchnr":"20007507"},{"start":"2026-06-20T14:00:00","day":"lor","time":"14:00","minutes":840,"home":"Sverresborg Fotball 1","away":"Byåsen IL 5","venue":"Specsavers 4","venueBase":"Specsavers","group":"MG 10 Plj K","matchnr":"20007211"},{"start":"2026-06-21T09:00:00","day":"son","time":"09:00","minutes":540,"home":"Trygg/Lade, SK Rød","away":"Byåsen IL 5","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MG 10 Plj K","matchnr":"21006800"},{"start":"2026-06-21T10:00:00","day":"son","time":"10:00","minutes":600,"home":"Byåsen IL 5","away":"Strindheim IL Åsvang 1","venue":"Diplom Is banen 4","venueBase":"Diplom Is banen","group":"MG 10 Plj K","matchnr":"21008302"},{"start":"2026-06-21T11:30:00","day":"son","time":"11:30","minutes":690,"home":"Byåsen IL 5","away":"Stjørdals-Blink Fotball 1","venue":"SalMar 3","venueBase":"SalMar","group":"MG 10 Plj K","matchnr":"21008605"}]}}
+;
+const MATCH_DURATION = 45; // estimert kamplengde i minutter
+const RECOMMENDED = ['MG10-3', 'MJ10-1', 'MJ12-1'];
+
+const selected = new Set();
+
+function renderFilters() {
+  const groups = {
+    'G10': { label: 'G10 (gutter 10 år)', cls: 'g10', teams: [] },
+    'J10': { label: 'J10 (jenter 10 år)', cls: 'j10', teams: [] },
+    'J12': { label: 'J12 (jenter 12 år)', cls: 'j12', teams: [] },
+  };
+  Object.values(TEAMS).forEach(t => groups[t.category].teams.push(t));
+  Object.values(groups).forEach(g => g.teams.sort((a,b) => a.teamNum - b.teamNum));
+
+  const container = document.getElementById('filter-groups');
+  container.innerHTML = '';
+  Object.entries(groups).forEach(([cat, g]) => {
+    const div = document.createElement('div');
+    div.className = 'filter-group ' + g.cls;
+    div.innerHTML = `<div class="filter-group-label">${g.label}</div>`;
+    const chips = document.createElement('div');
+    chips.className = 'team-chips';
+    g.teams.forEach(t => {
+      const chip = document.createElement('button');
+      chip.className = 'team-chip ' + g.cls;
+      chip.textContent = 'Byåsen ' + t.teamNum;
+      chip.dataset.id = t.id;
+      chip.onclick = () => toggleTeam(t.id);
+      chips.appendChild(chip);
+    });
+    div.appendChild(chips);
+    container.appendChild(div);
+  });
+}
+
+function toggleTeam(id) {
+  if (selected.has(id)) selected.delete(id);
+  else selected.add(id);
+  render();
+}
+
+function clearAll() {
+  selected.clear();
+  render();
+}
+
+function applyRecommendation() {
+  selected.clear();
+  RECOMMENDED.forEach(id => selected.add(id));
+  render();
+  document.querySelector('.days').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function getSelectedMatches() {
+  const matches = [];
+  selected.forEach(id => {
+    TEAMS[id].matches.forEach(m => matches.push({...m, teamId: id, teamLabel: TEAMS[id].label, category: TEAMS[id].category}));
+  });
+  return matches.sort((a,b) => a.minutes - b.minutes);
+}
+
+function findConflicts(matches) {
+  // For hver kamp, sjekk om den overlapper med noen andre
+  const conflicts = new Set();
+  for (let i=0; i<matches.length; i++) {
+    for (let j=i+1; j<matches.length; j++) {
+      if (matches[i].day !== matches[j].day) continue;
+      const aStart = matches[i].minutes, aEnd = aStart + MATCH_DURATION;
+      const bStart = matches[j].minutes, bEnd = bStart + MATCH_DURATION;
+      if (aStart < bEnd && bStart < aEnd) {
+        conflicts.add(i);
+        conflicts.add(j);
+      }
+    }
+  }
+  return conflicts;
+}
+
+function maxAttendable(matches) {
+  // Greedy interval scheduling med antagelse om at samme venue = ingen reise, ellers 15 min reise
+  if (matches.length === 0) return 0;
+  // Separat per dag
+  const byDay = {lor: [], son: []};
+  matches.forEach(m => byDay[m.day].push(m));
+  let total = 0;
+  Object.values(byDay).forEach(daymatches => {
+    // DP: maxset of non-overlapping
+    const sorted = [...daymatches].sort((a,b) => (a.minutes + MATCH_DURATION) - (b.minutes + MATCH_DURATION));
+    const dp = new Array(sorted.length).fill(1);
+    for (let i=0; i<sorted.length; i++) {
+      for (let j=0; j<i; j++) {
+        const travel = (sorted[i].venueBase === sorted[j].venueBase) ? 0 : 15;
+        if (sorted[i].minutes >= sorted[j].minutes + MATCH_DURATION + travel) {
+          if (dp[j]+1 > dp[i]) dp[i] = dp[j]+1;
+        }
+      }
+    }
+    total += Math.max(0, ...dp);
+  });
+  return total;
+}
+
+function fmtFixture(m) {
+  const home = m.home.startsWith('Byåsen') ? `<span class="byasen">${m.home}</span>` : m.home;
+  const away = m.away.startsWith('Byåsen') ? `<span class="byasen">${m.away}</span>` : m.away;
+  return `${home} <span class="vs">vs</span> ${away}`;
+}
+
+function render() {
+  // Update chip states
+  document.querySelectorAll('.team-chip').forEach(chip => {
+    chip.classList.toggle('active', selected.has(chip.dataset.id));
+  });
+
+  const matches = getSelectedMatches();
+  const conflicts = findConflicts(matches);
+
+  // Summary
+  const total = matches.length;
+  const conflictCount = conflicts.size;
+  const attendable = maxAttendable(matches);
+  const missed = total - attendable;
+  const sumEl = document.getElementById('summary');
+  if (total === 0) {
+    sumEl.innerHTML = '<div class="summary-card"><div class="summary-num">0</div><div class="summary-label">Ingen lag valgt</div></div>';
+  } else {
+    sumEl.innerHTML = `
+      <div class="summary-card"><div class="summary-num">${total}</div><div class="summary-label">Kamper</div></div>
+      <div class="summary-card"><div class="summary-num">${attendable}</div><div class="summary-label">Kan rekkes</div></div>
+      <div class="summary-card ${missed > 0 ? 'conflict' : ''}"><div class="summary-num">${missed}</div><div class="summary-label">Må prioriteres bort</div></div>
+      <div class="summary-card ${conflictCount > 0 ? 'conflict' : ''}"><div class="summary-num">${conflictCount}</div><div class="summary-label">Kamper med overlapp</div></div>
+    `;
+  }
+
+  // Days
+  ['lor', 'son'].forEach(day => {
+    const dayMatches = matches.filter(m => m.day === day);
+    const tl = document.getElementById(day + '-timeline');
+    const count = document.getElementById(day + '-count');
+    count.textContent = dayMatches.length + ' kamp' + (dayMatches.length === 1 ? '' : 'er');
+    if (dayMatches.length === 0) {
+      tl.innerHTML = '<div class="timeline-empty">Ingen kamper valgt for denne dagen</div>';
+      return;
+    }
+    tl.innerHTML = dayMatches.map((m) => {
+      const idx = matches.indexOf(m);
+      const conflict = conflicts.has(idx);
+      const catLower = m.category.toLowerCase();
+      return `
+        <div class="match">
+          <div class="match-time">${m.time}</div>
+          <div class="match-card ${catLower} ${conflict ? 'conflict' : ''}">
+            <div class="match-team-tag ${catLower}">${m.teamLabel}</div>
+            <div class="match-fixture">${fmtFixture(m)}</div>
+            <div class="match-meta">${m.venue}<span class="dot">·</span>${m.group}</div>
+          </div>
+        </div>`;
+    }).join('');
+  });
+}
+
+renderFilters();
+render();
+</script>
+</body>
+</html>

@@ -403,15 +403,15 @@ tr:hover td { background: var(--panel-2); }
 .loading { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 14px; color: var(--ink-faint); gap: 10px; }
 
 /* ── CUP CARDS ── */
-.cup-card { padding: 16px 20px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel); cursor: pointer; transition: all 0.2s; min-width: 180px; max-width: 240px; text-align: left; box-shadow: var(--shadow); }
+.cup-card { padding: 20px 24px; border-radius: 16px; border: 1px solid var(--border); background: var(--panel); cursor: pointer; transition: all 0.2s; min-width: 210px; max-width: 280px; text-align: left; box-shadow: var(--shadow); }
 .cup-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .cup-card.aktiv { border-color: var(--primary); background: var(--primary-bg); box-shadow: 0 0 0 2px rgba(124,108,240,0.2); }
-.cup-card-navn { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.5px; color: var(--ink); margin: 4px 0 8px; line-height: 1; }
+.cup-card-navn { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.5px; color: var(--ink); margin: 0 0 6px; line-height: 1; }
 .cup-card.aktiv .cup-card-navn { color: var(--primary); }
-.cup-card-meta { font-size: 11px; color: var(--ink-faint); margin-top: 3px; }
-.cup-card-stats { display: flex; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.cup-card-meta { font-size: 12px; color: var(--ink-faint); margin-top: 3px; }
+.cup-card-stats { display: flex; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 .cup-card-stat { text-align: center; flex: 1; }
-.cup-card-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--ink); line-height: 1; }
+.cup-card-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--ink); line-height: 1; }
 .cup-card.aktiv .cup-card-stat-val { color: var(--primary); }
 .cup-card-stat-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink-faint); margin-top: 2px; }
 .cup-lag-kort { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; min-height: 120px; box-shadow: var(--shadow); }
@@ -428,6 +428,122 @@ tr:hover td { background: var(--panel-2); }
 .to-celle { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
 .to-ja { background: var(--seier-bg); color: var(--seier-text); }
 .to-nei { background: var(--absent-bg); color: var(--absent-text); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+
+  /* Topbar: skjul nav, komprimer */
+  .topbar { padding: 0 1rem; gap: 8px; height: 52px; }
+  .nav { display: none; }
+  .logo { font-size: 18px; }
+  .dark-toggle { padding: 4px 8px; font-size: 11px; }
+  .sync-status { display: none; }
+
+  /* Mobil-nav nederst */
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--topbar-bg);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    z-index: 150;
+    padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+  }
+  .mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,0.4);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 4px 2px;
+    transition: color 0.15s;
+  }
+  .mobile-nav-btn.active { color: var(--lag2); }
+  .mobile-nav-btn .mnav-icon { font-size: 18px; line-height: 1; }
+
+  /* Skjul sidebar, fjern horisontalt layout */
+  .main { flex-direction: column; min-height: calc(100vh - 52px); }
+  .sidebar { display: none; }
+  .content {
+    padding: 1rem;
+    padding-bottom: 80px; /* plass til mobil-nav */
+    overflow: auto;
+  }
+
+  /* Typography */
+  .section-title { font-size: 22px; margin-bottom: 1rem; }
+
+  /* Metric cards */
+  .cards-row { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; margin-bottom: 1rem; }
+  .metric-val { font-size: 24px; }
+
+  /* Tables: scroll horisontalt */
+  .card { overflow-x: auto; padding: 0.75rem 1rem; }
+  table { min-width: 480px; }
+
+  /* Modals: full-skjerm nedenfra */
+  .modal-overlay { align-items: flex-end; }
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0;
+    max-height: 88vh;
+    padding: 1.25rem 1rem;
+  }
+
+  /* Forms: én kolonne */
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+
+  /* Cup-kort: scrollbar horisontalt */
+  #cup-oversikt { flex-wrap: nowrap !important; overflow-x: auto !important; padding-bottom: 8px; }
+  #cup-oversikt::-webkit-scrollbar { height: 4px; }
+  #cup-oversikt::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .cup-card { min-width: 160px; flex-shrink: 0; }
+
+  /* Cup-innhold grid */
+  #cup-innhold { overflow-x: auto; }
+
+  /* Cup-actions wrap */
+  #cup-actions { flex-wrap: wrap; }
+
+  /* Treneroppmøte-tabell scroll */
+  .to-tabell-wrapper { overflow-x: auto; }
+
+  /* Kamp-rader: kompakt */
+  td, th { padding: 6px 8px; }
+  .badge { font-size: 9px; padding: 2px 6px; }
+
+  /* Tabs full bredde */
+  .tabs { width: 100%; }
+  .tab { flex: 1; text-align: center; }
+
+  /* Skjul mindre viktige kolonner på veldig smal skjerm */
+  .col-hide-mobile { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  .content { padding: 0.75rem; padding-bottom: 80px; }
+  .cards-row { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .metric-val { font-size: 20px; }
+  .metric-label { font-size: 9px; }
+  .section-title { font-size: 20px; }
+  table { min-width: 420px; }
+}
+
+/* Desktop: skjul mobil-nav */
+@media (min-width: 769px) {
+  .mobile-nav { display: none; }
+}
 .to-kamp { background: var(--kommende-bg); color: var(--kommende-text); }
 .to-ikke-invitert { background: var(--panel-2); color: var(--ink-faint); }
 .bane-wrapper { display: flex; gap: 1.5rem; align-items: flex-start; }
@@ -467,6 +583,28 @@ tr:hover td { background: var(--panel-2); }
     <button class="nav-btn" onclick="showPage('statistikk')">Statistikk</button>
   </div>
 </div>
+
+<!-- Mobil-navigasjon (vises kun på mobil) -->
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-btn active" onclick="showPage('dashboard')" data-page="dashboard"><span class="mnav-icon">📊</span>Oversikt</button>
+  <button class="mobile-nav-btn" onclick="showPage('kamper')" data-page="kamper"><span class="mnav-icon">⚽</span>Kamper</button>
+  <button class="mobile-nav-btn" onclick="showPage('spillere')" data-page="spillere"><span class="mnav-icon">👥</span>Spillere</button>
+  <button class="mobile-nav-btn" onclick="showPage('cup')" data-page="cup"><span class="mnav-icon">🏆</span>Cup</button>
+  <button class="mobile-nav-btn" onclick="showPage('oppmoete')" data-page="oppmoete"><span class="mnav-icon">✅</span>Oppmøte</button>
+  <button class="mobile-nav-btn" onclick="toggleMobileMore()" data-page="statistikk"><span class="mnav-icon">☰</span>Mer</button>
+</nav>
+
+<!-- Mobil «Mer»-meny -->
+<div id="mobile-more-menu" style="display:none;position:fixed;bottom:calc(60px + env(safe-area-inset-bottom));left:0;right:0;background:var(--panel);border-top:1px solid var(--border);z-index:149;padding:0.75rem 1rem;box-shadow:0 -4px 20px rgba(0,0,0,0.15);">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <button onclick="showPage('trenere');toggleMobileMore()" style="padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel-2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--ink);text-align:left;">👨‍🏫 Trenere</button>
+    <button onclick="showPage('lan');toggleMobileMore()" style="padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel-2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--ink);text-align:left;">🔄 Lånespillere</button>
+    <button onclick="showPage('rangering');toggleMobileMore()" style="padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel-2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--ink);text-align:left;">🥇 Rangering</button>
+    <button onclick="showPage('treneroppmote');toggleMobileMore()" style="padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel-2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--ink);text-align:left;">📋 Treneroppmøte</button>
+    <button onclick="showPage('statistikk');toggleMobileMore()" style="padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel-2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--ink);text-align:left;">📈 Statistikk</button>
+  </div>
+</div>
+
 <div class="main">
 <div class="sidebar">
   <div class="sidebar-label">Lag</div>
@@ -753,7 +891,8 @@ tr:hover td { background: var(--panel-2); }
     <div class="modal-header"><div class="modal-title" id="cup-modal-tittel">Nytt cup-oppsett</div><button class="modal-close" onclick="closeModal('cup-modal')">×</button></div>
     <div class="form-grid">
       <div class="form-group full"><label>Navn på cup / turnering</label><input type="text" id="cup-navn" placeholder="f.eks. NM-cup april"></div>
-      <div class="form-group full"><label>Dato (valgfritt)</label><input type="date" id="cup-dato"></div>
+      <div class="form-group"><label>Dato (valgfritt)</label><input type="date" id="cup-dato"></div>
+      <div class="form-group"><label>Sted (valgfritt)</label><input type="text" id="cup-sted" placeholder="f.eks. Lade"></div>
       <div class="form-group full">
         <label>Antall lag</label>
         <div style="display:flex;gap:8px;margin-top:4px;">
@@ -1065,9 +1204,8 @@ async function initFirebase(){
       state.rangeringer=d.rangeringer||[]; state.cupOppsett=d.cupOppsett||[]; state.omData=d.omData||{perioder:[]}; state.toTrenerData=d.toTrenerData||{treninger:[]};
       
     }
-    // Seed hvis tomt
+    // Seed og fiks - lagre alltid tilbake til Firebase
     seedData();
-    // Lagre tilbake med seed
     await lagreFirebase();
 
     // Lytt på live-oppdateringer
@@ -1114,8 +1252,12 @@ function seedData(){
   });
   // Seed Hydrocup 29-31. mai
   if(!state.cupOppsett) state.cupOppsett=[];
+
+  // Oppdater sted på eksisterende cuper som mangler det
+  const stedOppdateringer={'Hydrocup':'Sunndalsøra','Obos Minicup':'Lade','Skandiacup':'Lade'};
+  state.cupOppsett.forEach(c=>{if(!c.sted&&stedOppdateringer[c.navn]) c.sted=stedOppdateringer[c.navn];});
+
   if(!state.cupOppsett.find(c=>c.navn==='Hydrocup')) {
-    const finn=(navn)=>state.spillere.find(s=>s.navn.toLowerCase().includes(navn.toLowerCase()));
     const lag1Navn=['Vilde Rosmo','Vilde Utengen Larsen','Astrid Hov Odsæter','Maija Lilledal','Pernille Danielsen Kittang','Seva Engan','Live Sorken Nilsen','Sofie Solem Gråwe','Christina Becker'];
     const lag2Navn=['Madeleine Sørgård Nåvik','Ane Lian Sagbakken','Kaja Gartland','Martine Stokke','Alexandra Smyrnaiou','Hanne Skogstad','Maja Ryan','Rakel Stadsøy','Lily Antonsen','Hedda Gjestvang Nygård'];
     const lag3Navn=['Leah Kråkenes','Saga Lunde Steen','Pia Fevaag Heger','Elise Huus Nordbø','Jenny Reinsberg Santi','Mina Hektoen Vullum','Liv Skrede Fosse','Ella Håkegård Heineman','Nora Heide Slettedal','Ingri Hagen'];
@@ -1127,32 +1269,51 @@ function seedData(){
     const ids3=lag3Navn.map(n=>state.spillere.find(s=>s.navn===n)?.id).filter(Boolean);
     const alleDeltakere=[...ids1,...ids2,...ids3];
     state.cupOppsett.push({
-      id:genId(), navn:'Hydrocup', dato:'2026-05-29', antallLag:3,
+      id:genId(), navn:'Hydrocup', dato:'2026-05-29', sted:'Sunndalsøra', antallLag:3,
       deltakere:alleDeltakere,
-      lag:[
-        {spillere:ids1, trenere:trenere1},
-        {spillere:ids2, trenere:trenere2},
-        {spillere:ids3, trenere:trenere3},
-      ],
-      kamper:[
-        // Byåsen 1 (Lag 1)
-        {id:genId(),lag:'Lag 1',dato:'2026-05-30',motstander:'Trygg/Lade 2',malFor:null,malMot:null,notat:'Lørdag 08:00, 7er bane Rotvoll'},
-        {id:genId(),lag:'Lag 1',dato:'2026-05-30',motstander:'Tingvoll IL',malFor:null,malMot:null,notat:'Lørdag 10:15, Statkraftbanen C'},
-        {id:genId(),lag:'Lag 1',dato:'2026-05-31',motstander:'Oppdal IL 2',malFor:null,malMot:null,notat:'Søndag 08:15, 7er bane Førja'},
-        {id:genId(),lag:'Lag 1',dato:'2026-05-31',motstander:'Træff Hvit',malFor:null,malMot:null,notat:'Søndag 13:30, 7er bane Skjøllend'},
-        // Byåsen 2 (Lag 2)
-        {id:genId(),lag:'Lag 2',dato:'2026-05-30',motstander:'Dahle IL',malFor:null,malMot:null,notat:'Lørdag 11:00, 7er bane Kgb B'},
-        {id:genId(),lag:'Lag 2',dato:'2026-05-30',motstander:'Eide og Omegn FK Blå',malFor:null,malMot:null,notat:'Lørdag 12:30, Statkraftbanen C'},
-        {id:genId(),lag:'Lag 2',dato:'2026-05-31',motstander:'Sunndal IL J10',malFor:null,malMot:null,notat:'Søndag 09:45, 7er bane Skjøllend'},
-        {id:genId(),lag:'Lag 2',dato:'2026-05-31',motstander:'Charlottenlund SK 1',malFor:null,malMot:null,notat:'Søndag 11:15, 7er bane Skjøllend'},
-        // Byåsen 3 (Lag 3)
-        {id:genId(),lag:'Lag 3',dato:'2026-05-30',motstander:'Frei FK',malFor:null,malMot:null,notat:'Lørdag 14:45, Frank Stadion'},
-        {id:genId(),lag:'Lag 3',dato:'2026-05-30',motstander:'Trygg/Lade 1',malFor:null,malMot:null,notat:'Lørdag 16:15, 7er bane Rotvoll'},
-        {id:genId(),lag:'Lag 3',dato:'2026-05-31',motstander:'Charlottenlund SK 2',malFor:null,malMot:null,notat:'Søndag 08:15, 7er bane Skjøllend'},
-        {id:genId(),lag:'Lag 3',dato:'2026-05-31',motstander:'Træff Grønn',malFor:null,malMot:null,notat:'Søndag 14:15, 7er bane Skjøllend'},
-      ]
+      lag:[{spillere:ids1,trenere:trenere1},{spillere:ids2,trenere:trenere2},{spillere:ids3,trenere:trenere3}],
+      kamper:[]
     });
   }
+  // Engangsfiks: oppdater deltakerlister på de 3 cupene fra Spond-eksport
+  const spondLister={
+    'OKEA Cup':['Liv Skrede Fosse','Leah Kråkenes','Lily Antonsen','Ane Lian Sagbakken','Vilde Rosmo','Pia Fevaag Heger','Mina Hektoen Vullum','Jenny Reinsberg Santi','Vilde Utengen Larsen','Sofie Solem Gråwe','Live Sorken Nilsen','Hanne Skogstad','Alba Agersborg','Ingri Hagen','Hedda Gjestvang Nygård','Sofia Kolberg Skei','Martine Stokke','Pernille Danielsen Kittang','Elise Huus Nordbø','Astrid Hov Odsæter','Nora Heide Slettedal','Saga Lunde Steen','Maija Lilledal'],
+    'Trond Jentecup':['Ane Lian Sagbakken','Madeleine Sørgård Nåvik','Leah Kråkenes','Jenny Reinsberg Santi','Hanne Skogstad','Pia Fevaag Heger','Vilde Utengen Larsen','Live Sorken Nilsen','Kaja Gartland','Ingri Hagen','Vilde Rosmo','Hedda Gjestvang Nygård','Saga Lunde Steen','Sofia Kolberg Skei','Alba Agersborg','Lily Antonsen','Christina Becker','Astrid Hov Odsæter','Elise Huus Nordbø','Pernille Danielsen Kittang','Liv Skrede Fosse'],
+    'Lerøy Cup':['Ane Lian Sagbakken','Leah Kråkenes','Mina Hektoen Vullum','Vilde Utengen Larsen','Hedda Gjestvang Nygård','Lily Antonsen','Astrid Hov Odsæter','Rakel Stadsøy'],
+  };
+  Object.entries(spondLister).forEach(([cupNavn, navnListe])=>{
+    const cup=state.cupOppsett.find(c=>c.navn===cupNavn);
+    if(!cup) return;
+    const ids=navnListe.map(n=>state.spillere.find(s=>s.navn===n)?.id).filter(Boolean);
+    cup.deltakere=ids;
+    // Fjern fra lag de som ikke lenger er påmeldt
+    if(cup.lag) cup.lag.forEach(l=>{ l.spillere=l.spillere.filter(s=>ids.includes(s)); });
+  });
+  const nyeCuper=[
+    {
+      navn:'OKEA Cup', dato:'2026-08-29', sted:'Ranheim',
+      spillerNavn:['Liv Skrede Fosse','Leah Kråkenes','Lily Antonsen','Ane Lian Sagbakken','Vilde Rosmo','Pia Fevaag Heger','Mina Hektoen Vullum','Jenny Reinsberg Santi','Vilde Utengen Larsen','Sofie Solem Gråwe','Live Sorken Nilsen','Hanne Skogstad','Alba Agersborg','Ingri Hagen','Hedda Gjestvang Nygård','Sofia Kolberg Skei','Martine Stokke','Pernille Danielsen Kittang','Elise Huus Nordbø','Astrid Hov Odsæter','Nora Heide Slettedal','Saga Lunde Steen','Maija Lilledal']
+    },
+    {
+      navn:'Trond Jentecup', dato:'2026-09-20', sted:'Rosenborg',
+      spillerNavn:['Ane Lian Sagbakken','Madeleine Sørgård Nåvik','Leah Kråkenes','Jenny Reinsberg Santi','Hanne Skogstad','Pia Fevaag Heger','Vilde Utengen Larsen','Live Sorken Nilsen','Kaja Gartland','Ingri Hagen','Vilde Rosmo','Hedda Gjestvang Nygård','Saga Lunde Steen','Sofia Kolberg Skei','Alba Agersborg','Lily Antonsen','Christina Becker','Astrid Hov Odsæter','Elise Huus Nordbø','Pernille Danielsen Kittang','Liv Skrede Fosse']
+    },
+    {
+      navn:'Lerøy Cup', dato:'2026-10-18', sted:'Sodvinhallen',
+      spillerNavn:['Ane Lian Sagbakken','Leah Kråkenes','Mina Hektoen Vullum','Vilde Utengen Larsen','Hedda Gjestvang Nygård','Lily Antonsen','Astrid Hov Odsæter','Rakel Stadsøy']
+    },
+  ];
+  nyeCuper.forEach(c=>{
+    if(!state.cupOppsett.find(x=>x.navn===c.navn)){
+      const deltakere=c.spillerNavn.map(n=>state.spillere.find(s=>s.navn===n)?.id).filter(Boolean);
+      state.cupOppsett.push({
+        id:genId(), navn:c.navn, dato:c.dato, sted:c.sted, antallLag:2,
+        deltakere,
+        lag:[{spillere:[],trenere:[]},{spillere:[],trenere:[]}],
+        kamper:[]
+      });
+    }
+  });
   const SEED_RESULTATER=[
     {lag:'Lag 1',dato:'2026-04-13',hjem:'Kolstad 2',malFor:13,malMot:3,scorere:[['Ane Lian Sagbakken',7],['Annie Hoff',3],['Mina Hektoen Vullum',1],['Maja Ryan',1],['Leah Kråkenes',1]],fravar:['Rakel Stadsøy'],lanspillere:['Leah Kråkenes'],notat:''},
     {lag:'Lag 1',dato:'2026-04-19',hjem:'Byåsen',malFor:5,malMot:3,scorere:[['Annie Hoff',2],['Madeleine Sørgård Nåvik',1],['Ane Lian Sagbakken',1],['Rakel Stadsøy',1]],fravar:['Saga Lunde Steen'],lanspillere:['Madeleine Sørgård Nåvik'],notat:''},
@@ -1191,6 +1352,8 @@ function showPage(p){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const idx={dashboard:0,kamper:1,spillere:2,trenere:3,lan:4,rangering:5,cup:6,oppmoete:7,treneroppmote:8,statistikk:9};
   document.querySelectorAll('.nav-btn')[idx[p]].classList.add('active');
+  // Oppdater mobil-nav
+  document.querySelectorAll('.mobile-nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.page===p));
   if(p==='oppmoete') renderOppmoete();
   if(p==='treneroppmote') renderTreneroppmote();
   if(p==='statistikk') renderStatistikk();
@@ -1198,6 +1361,12 @@ function showPage(p){
   render();
 }
 window.showPage=showPage; window.setLag=setLag;
+
+function toggleMobileMore(){
+  const m=document.getElementById('mobile-more-menu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+window.toggleMobileMore=toggleMobileMore;
 
 function filtrerKamper(){return state.aktivLag==='alle'?[...state.kamper]:state.kamper.filter(k=>k.lag===state.aktivLag);}
 function filtrerSpillere(){return state.aktivLag==='alle'?[...state.spillere]:state.spillere.filter(s=>s.lag===state.aktivLag);}
@@ -2031,9 +2200,8 @@ function renderCup(){
       const cupKamper=(c.kamper||[]);
       const antKamper=cupKamper.length;
       return`<button class="cup-card ${aktiv?'aktiv':''}" onclick="velgCup('${c.id}')">
-        <div style="font-size:20px;margin-bottom:2px;">🏆</div>
         <div class="cup-card-navn">${c.navn}</div>
-        <div class="cup-card-meta">${datoTekst}</div>
+        <div class="cup-card-meta">${datoTekst}${c.sted?` · 📍${c.sted}`:''}</div>
         <div class="cup-card-stats">
           <div class="cup-card-stat">
             <div class="cup-card-stat-val">${antSpillere}</div>
@@ -2157,30 +2325,53 @@ function renderCupInnhold(){
 
   html+='</div>';
 
-  // Venteliste
+  // Pool – delt i påmeldt og ikke påmeldt
   const alleILag=oppsett.lag.flatMap(l=>l.spillere);
-  const venteliste=oppsett.deltakere.filter(sid=>!alleILag.includes(sid));
-  if(venteliste.length){
-    html+=`<div class="cup-venteliste"
+  const paameldt=oppsett.deltakere.filter(sid=>!alleILag.includes(sid));
+  const ikkeIPaameldt=state.spillere.map(s=>s.id).filter(sid=>!oppsett.deltakere.includes(sid));
+
+  const lagBrikke=(sid,graa=false)=>{
+    const sp=state.spillere.find(s=>s.id===sid);if(!sp)return'';
+    const rang=getSisteRangering(sid);
+    const ikoner=rolleIkoner(sp.roller);
+    return`<div class="cup-spiller-brikke" draggable="true"
+      ondragstart="startDrag(event,'${sid}')"
+      style="border-left:3px solid ${graa?'#bbb':'#ccc'};flex-shrink:0;opacity:${graa?0.55:1};">
+      <div><div style="font-size:13px;">${sp.navn}${ikoner?` <span>${ikoner}</span>`:''}</div></div>
+      ${rang!==null?`<div style="font-size:11px;font-weight:600;color:#666;margin-left:4px;">${rang}</div>`:''}
+    </div>`;
+  };
+
+  html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+
+    <div class="cup-venteliste" id="cup-pool-paameldt"
       ondragover="event.preventDefault();this.classList.add('drag-over')"
       ondragleave="this.classList.remove('drag-over')"
       ondrop="dropPaaVenteliste(event)">
-      <div style="font-size:12px;font-weight:500;color:#999;margin-bottom:8px;">Ikke fordelt (dra hit for å fjerne fra lag)</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;">`;
-    venteliste.forEach(sid=>{
-      const sp=state.spillere.find(s=>s.id===sid);if(!sp)return;
-      const rang=getSisteRangering(sid);
-      const ikoner=rolleIkoner(sp.roller);
-      html+=`<div class="cup-spiller-brikke" draggable="true"
-        ondragstart="startDrag(event,'${sid}')"
-        style="border-left:3px solid #ccc;flex-shrink:0;">
-        <div><div style="font-size:13px;">${sp.navn} ${ikoner?`<span>${ikoner}</span>`:''}</div>
-        <div style="font-size:11px;color:#999;">${sp.lag}</div></div>
-        ${rang!==null?`<div style="font-size:11px;font-weight:600;color:#666;margin-left:4px;">${rang}</div>`:''}
-      </div>`;
-    });
-    html+='</div></div>';
-  }
+      <div style="font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;">
+        ✅ Påmeldt – ikke fordelt (${paameldt.length})
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${paameldt.length===0?`<div style="font-size:12px;color:var(--ink-faint);padding:4px 0;">Alle fordelt på lag 🎉</div>`:''}
+        ${paameldt.map(sid=>lagBrikke(sid)).join('')}
+      </div>
+    </div>
+
+    <div class="cup-venteliste" id="cup-pool-ikke-paameldt"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="dropPaaIkkePaameldt(event)"
+      style="opacity:0.85;">
+      <div style="font-size:11px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;">
+        ➕ Ikke påmeldt (${ikkeIPaameldt.length}) <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;">– dra hit for å melde av</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${ikkeIPaameldt.length===0?`<div style="font-size:12px;color:var(--ink-faint);padding:4px 0;">Alle er påmeldt</div>`:''}
+        ${ikkeIPaameldt.map(sid=>lagBrikke(sid,true)).join('')}
+      </div>
+    </div>
+
+  </div>`;
 
   document.getElementById('cup-innhold').innerHTML=html;
 }
@@ -2213,12 +2404,31 @@ async function dropPaaVenteliste(e){
   if(!dragSpillerId||!aktivCupId) return;
   const oppsett=state.cupOppsett.find(c=>c.id===aktivCupId);
   if(!oppsett) return;
+  // Fjern fra lag
   oppsett.lag.forEach(l=>{ l.spillere=l.spillere.filter(s=>s!==dragSpillerId); });
+  // Legg til i deltakere hvis ikke allerede der (dra fra ikke-påmeldt → påmeldt)
+  if(!oppsett.deltakere.includes(dragSpillerId)) oppsett.deltakere.push(dragSpillerId);
   dragSpillerId=null;
   setSyncStatus('Lagrer...');
   await lagreFirebase();
+  renderCupInnhold();
 }
 window.dropPaaVenteliste=dropPaaVenteliste;
+
+async function dropPaaIkkePaameldt(e){
+  e.currentTarget.classList.remove('drag-over');
+  if(!dragSpillerId||!aktivCupId) return;
+  const oppsett=state.cupOppsett.find(c=>c.id===aktivCupId);
+  if(!oppsett) return;
+  // Fjern fra lag og deltakere
+  oppsett.lag.forEach(l=>{ l.spillere=l.spillere.filter(s=>s!==dragSpillerId); });
+  oppsett.deltakere=oppsett.deltakere.filter(id=>id!==dragSpillerId);
+  dragSpillerId=null;
+  setSyncStatus('Lagrer...');
+  await lagreFirebase();
+  renderCupInnhold();
+}
+window.dropPaaIkkePaameldt=dropPaaIkkePaameldt;
 
 let cupSortMode='nivaa'; // 'nivaa' | 'alfabet'
 
@@ -2253,7 +2463,6 @@ function spillerBrikke(sid, col, bg, draggable=true, onDragStart=''){
     style="border-left:3px solid ${col};">
     <div style="flex:1;min-width:0;">
       <div style="font-size:13px;display:flex;align-items:center;gap:5px;">${sp.navn}${ikoner?`<span style="font-size:12px;">${ikoner}</span>`:''}</div>
-      <div style="font-size:11px;color:#999;">${sp.lag}</div>
     </div>
     ${rang!==null?`<div style="font-size:11px;font-weight:600;color:${rang<=3?'#1D9E75':rang<=6?'#BA7517':'#D85A30'};background:${bg};padding:2px 7px;border-radius:20px;">${rang}</div>`:''}
   </div>`;
@@ -2294,9 +2503,10 @@ let cupEditId=null;
 function openCupModal(){
   cupEditId=null;
   document.getElementById('cup-modal-tittel').textContent='Nytt cup-oppsett';
-  document.getElementById('cup-lagre-modal-btn').textContent='Opprett og fordel';
+  document.getElementById('cup-lagre-modal-btn').textContent='Opprett';
   document.getElementById('cup-navn').value='';
   document.getElementById('cup-dato').value='';
+  document.getElementById('cup-sted').value='';
   document.getElementById('cup-antall-advarsel').style.display='none';
   setCupAntall(2);
   const sortert=[...state.spillere].sort((a,b)=>a.lag.localeCompare(b.lag)||a.navn.localeCompare(b.navn));
@@ -2317,6 +2527,7 @@ function redigerCupOppsett(){
   document.getElementById('cup-lagre-modal-btn').textContent='Lagre endringer';
   document.getElementById('cup-navn').value=oppsett.navn;
   document.getElementById('cup-dato').value=oppsett.dato||'';
+  document.getElementById('cup-sted').value=oppsett.sted||'';
   const origAntall=oppsett.lag.length;
   setCupAntall(origAntall);
   document.getElementById('cup-antall-advarsel').style.display='none';
@@ -2340,6 +2551,7 @@ async function lagreCupModal(){
   const navn=document.getElementById('cup-navn').value.trim();
   if(!navn){alert('Skriv inn navn.');return;}
   const dato=document.getElementById('cup-dato').value;
+  const sted=document.getElementById('cup-sted').value.trim();
   const deltakere=Array.from(document.querySelectorAll('#cup-spillere-valg input:checked')).map(el=>el.value);
   if(!deltakere.length){alert('Velg minst én spiller.');return;}
   if(!state.cupOppsett) state.cupOppsett=[];
@@ -2347,47 +2559,32 @@ async function lagreCupModal(){
     const oppsett=state.cupOppsett.find(c=>c.id===cupEditId);
     if(oppsett){
       const origAntall=oppsett.lag.length;
-      oppsett.navn=navn; oppsett.dato=dato;
+      oppsett.navn=navn; oppsett.dato=dato; oppsett.sted=sted;
+      // Fjern spillere som ble fjernet fra deltakerlisten
       const fjernede=oppsett.deltakere.filter(id=>!deltakere.includes(id));
       oppsett.lag.forEach(l=>{l.spillere=l.spillere.filter(s=>!fjernede.includes(s));});
+      // Nye spillere havner i pool (ikke fordelt)
       oppsett.deltakere=deltakere;
       if(cupAntallLag!==origAntall){
-        const sortertEtterRang=[...deltakere].sort((a,b)=>(getSisteRangering(b)||0)-(getSisteRangering(a)||0));
-        oppsett.lag=Array.from({length:cupAntallLag},()=>({spillere:[],trenere:[]}));
-        sortertEtterRang.forEach((sid,i)=>{oppsett.lag[i%cupAntallLag].spillere.push(sid);});
+        // Behold eksisterende fordeling, juster antall lag - flytt spillere fra siste lag til pool
+        const nyeLag=Array.from({length:cupAntallLag},(_,i)=>oppsett.lag[i]||{spillere:[],trenere:[]});
+        oppsett.lag=nyeLag;
         oppsett.antallLag=cupAntallLag;
       }
     }
     aktivCupId=cupEditId;
   } else {
-    const sortertEtterRang=[...deltakere].sort((a,b)=>(getSisteRangering(b)||0)-(getSisteRangering(a)||0));
+    // Nytt oppsett: alle spillere i pool, ingen auto-fordeling
     const lag=Array.from({length:cupAntallLag},()=>({spillere:[],trenere:[]}));
-    sortertEtterRang.forEach((sid,i)=>{lag[i%cupAntallLag].spillere.push(sid);});
-
-    // Auto-tildel trenere basert på hvilke spillere som er på hvert lag
-    // Prioritet: Jon Arne, Jonas, Ole som hovedtrenere, deretter Christian
-    const hovedtrenere=['Jon Arne Kråkenes','Jonas Larsen','Ole Sagbakken','Christian Heger'];
-    const brukteTrenere=new Set();
-    lag.forEach((l,i)=>{
-      // Finn hjelpetrenere som har barn på dette laget
-      const hjelpetrenerIds=state.trenere
-        .filter(t=>!hovedtrenere.includes(t.navn)&&l.spillere.includes(t.spillerId))
-        .map(t=>t.id);
-      // Finn neste tilgjengelige hovedtrener (round-robin)
-      const ht=state.trenere.find(t=>
-        hovedtrenere.includes(t.navn)&&!brukteTrenere.has(t.id)
-      );
-      if(ht) brukteTrenere.add(ht.id);
-      l.trenere=[...(ht?[ht.id]:[]),...hjelpetrenerIds];
-    });
-
-    const nytt={id:genId(),navn,dato,antallLag:cupAntallLag,deltakere,lag};
+    const nytt={id:genId(),navn,dato,sted,antallLag:cupAntallLag,deltakere,lag,kamper:[]};
     state.cupOppsett.push(nytt);
     aktivCupId=nytt.id;
   }
   closeModal('cup-modal');
+  cupViewMode='lag';
   setSyncStatus('Lagrer...');
   await lagreFirebase();
+  renderCup();
 }
 window.lagreCupModal=lagreCupModal;
 
@@ -2705,6 +2902,8 @@ function genererTreningsdatoer(){
     if(dag===0||dag===2||dag===4){
       // Hopp over 17. mai, legg til 16. mai i stedet
       if(datoStr==='2026-05-17') { cur.setDate(cur.getDate()+1); continue; }
+      // Hopp over 28. mai (NM) og 31. mai (Hydrocup) – avlyste treninger
+      if(datoStr==='2026-05-28'||datoStr==='2026-05-31') { cur.setDate(cur.getDate()+1); continue; }
       datoer.push(datoStr);
     }
     if(datoStr==='2026-05-15'){ // lørdag 16. mai
@@ -2742,6 +2941,9 @@ window.setTOSort=setTOSort;
 
 function toInitSeed(){
   if(!state.toTrenerData) state.toTrenerData={treninger:[]};
+  // Fjern avlyste treninger (NM 28.mai, Hydrocup 31.mai)
+  const avlyste=['2026-05-28','2026-05-31'];
+  state.toTrenerData.treninger=state.toTrenerData.treninger.filter(t=>!avlyste.includes(t.dato));
   TO_SEED_DATA.forEach(seed=>{
     if(!state.toTrenerData.treninger.find(t=>t.dato===seed.dato)){
       state.toTrenerData.treninger.push({dato:seed.dato, oppmote:seed.oppmote, kansellert:false});

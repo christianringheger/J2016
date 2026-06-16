@@ -24,51 +24,59 @@
   --j12: #60a5fa;
   --conflict: #ef4444;
   --conflict-bg: rgba(239, 68, 68, 0.15);
-  --recommended: #ffd23f;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { background: var(--bg); color: var(--text); font-family: 'Archivo', system-ui, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; }
-body { padding: 0; min-height: 100vh; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { background: var(--bg); color: var(--text); font-family: 'Archivo', system-ui, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; }
+body { padding: 0; min-height: 100vh; padding-top: var(--safe-top); padding-bottom: calc(80px + var(--safe-bottom)); }
 
 .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
 /* HEADER */
-.header { padding: 32px 0 24px; border-bottom: 2px solid var(--border); margin-bottom: 32px; }
+.header { padding: 24px 0 20px; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
 .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
-.title { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(32px, 5vw, 56px); letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 8px; }
-.subtitle { color: var(--text-dim); font-size: 16px; max-width: 600px; }
+.title { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(26px, 5vw, 56px); letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 8px; }
+.subtitle { color: var(--text-dim); font-size: 15px; max-width: 600px; }
 .subtitle strong { color: var(--text); }
 
 /* RECOMMENDATION */
-.recommendation { background: linear-gradient(135deg, #1f2933 0%, #2a3441 100%); border: 1px solid var(--accent); border-radius: 14px; padding: 24px; margin-bottom: 32px; position: relative; overflow: hidden; }
+.recommendation { background: linear-gradient(135deg, #1f2933 0%, #2a3441 100%); border: 1px solid var(--accent); border-radius: 14px; padding: 22px; margin-bottom: 24px; position: relative; overflow: hidden; }
 .recommendation::before { content: ''; position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,210,63,0.12) 0%, transparent 70%); pointer-events: none; }
-.rec-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.rec-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
 .rec-label::before { content: '★'; font-size: 14px; }
-.rec-title { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 22px; margin-bottom: 16px; }
-.rec-teams { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-.rec-chip { background: var(--surface); padding: 10px 18px; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); }
-.rec-chip-dot { width: 10px; height: 10px; border-radius: 50%; }
+.rec-title { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 14px; line-height: 1.25; }
+.rec-teams { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.rec-chip { background: var(--surface); padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); }
+.rec-chip-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .rec-chip.g10 .rec-chip-dot { background: var(--g10); }
 .rec-chip.j10 .rec-chip-dot { background: var(--j10); }
 .rec-chip.j12 .rec-chip-dot { background: var(--j12); }
-.rec-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
-.rec-stat { background: rgba(0,0,0,0.25); padding: 12px 14px; border-radius: 8px; }
-.rec-stat-num { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 26px; line-height: 1; }
-.rec-stat-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+.rec-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+.rec-stat { background: rgba(0,0,0,0.25); padding: 12px 10px; border-radius: 8px; text-align: center; }
+.rec-stat-num { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 24px; line-height: 1; }
+.rec-stat-label { font-size: 10px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.2; }
 .rec-action { margin-top: 16px; }
-.btn-apply { background: var(--accent); color: var(--bg); border: 0; padding: 12px 24px; border-radius: 8px; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; letter-spacing: 0.02em; transition: transform .15s ease, box-shadow .15s ease; }
-.btn-apply:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255, 210, 63, 0.3); }
-.rec-note { color: var(--text-dim); font-size: 13px; margin-top: 14px; line-height: 1.6; }
+.btn-apply { background: var(--accent); color: var(--bg); border: 0; padding: 14px 24px; border-radius: 8px; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; letter-spacing: 0.02em; transition: transform .15s ease, box-shadow .15s ease; min-height: 48px; }
+.btn-apply:active { transform: scale(0.98); }
+@media (hover: hover) { .btn-apply:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255, 210, 63, 0.3); } }
+
+.rec-note-toggle { background: transparent; color: var(--text-dim); border: 0; padding: 12px 0 0; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; min-height: 36px; }
+.rec-note-toggle::after { content: '+'; font-size: 16px; transition: transform .2s ease; }
+.rec-note-toggle.open::after { content: '−'; }
+.rec-note { color: var(--text-dim); font-size: 13px; margin-top: 10px; line-height: 1.6; display: none; }
+.rec-note.open { display: block; }
 .rec-note strong { color: var(--accent); }
 
 /* FILTERS */
-.filters { background: var(--surface); border-radius: 14px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border); }
+.filters { background: var(--surface); border-radius: 14px; padding: 18px; margin-bottom: 20px; border: 1px solid var(--border); }
 .filters-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
 .filters-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; }
-.btn-clear { background: transparent; color: var(--text-dim); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; transition: all .15s ease; }
-.btn-clear:hover { color: var(--text); border-color: var(--text-dim); }
+.btn-clear { background: transparent; color: var(--text-dim); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; transition: all .15s ease; min-height: 36px; }
+@media (hover: hover) { .btn-clear:hover { color: var(--text); border-color: var(--text-dim); } }
+.btn-clear:active { background: var(--surface-2); }
 
-.filter-group { margin-bottom: 16px; }
+.filter-group { margin-bottom: 14px; }
 .filter-group:last-child { margin-bottom: 0; }
 .filter-group-label { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
 .filter-group-label::before { content: ''; width: 10px; height: 10px; border-radius: 50%; }
@@ -76,65 +84,138 @@ body { padding: 0; min-height: 100vh; }
 .filter-group.j10 .filter-group-label::before { background: var(--j10); }
 .filter-group.j12 .filter-group-label::before { background: var(--j12); }
 
-.team-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.team-chip { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all .15s ease; font-family: 'Archivo Narrow', sans-serif; user-select: none; }
-.team-chip:hover { border-color: var(--text-dim); color: var(--text); }
+.team-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.team-chip { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all .15s ease; font-family: 'Archivo Narrow', sans-serif; user-select: none; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
+@media (hover: hover) { .team-chip:hover { border-color: var(--text-dim); color: var(--text); } }
+.team-chip:active { transform: scale(0.96); }
 .team-chip.active.g10 { background: var(--g10); color: #0a1f15; border-color: var(--g10); font-weight: 700; }
 .team-chip.active.j10 { background: var(--j10); color: #2a0f1f; border-color: var(--j10); font-weight: 700; }
 .team-chip.active.j12 { background: var(--j12); color: #0a1a2e; border-color: var(--j12); font-weight: 700; }
 
 /* SUMMARY BAR */
-.summary { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-.summary-card { flex: 1; min-width: 130px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+.summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center; }
 .summary-card.conflict { border-color: var(--conflict); background: rgba(239, 68, 68, 0.08); }
-.summary-num { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 28px; line-height: 1; }
+.summary-num { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 24px; line-height: 1; }
 .summary-card.conflict .summary-num { color: var(--conflict); }
-.summary-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+.summary-label { font-size: 10px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.2; }
+
+/* DAY TAB SWITCHER (mobile only) */
+.day-tabs { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 16px; gap: 4px; position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.day-tab { flex: 1; background: transparent; border: 0; color: var(--text-dim); padding: 12px 8px; border-radius: 8px; font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: all .15s ease; min-height: 44px; }
+.day-tab.active { background: var(--surface-2); color: var(--text); }
+.day-tab .tab-count { display: inline-block; margin-left: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); }
+.day-tab.active .tab-count { color: var(--accent); }
 
 /* DAYS */
 .days { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-@media (max-width: 900px) { .days { grid-template-columns: 1fr; } }
 
 .day { background: var(--surface); border-radius: 14px; padding: 20px; border: 1px solid var(--border); }
-.day-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-.day-name { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; }
+.day-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.day-name { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
 .day-date { color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 .day-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); }
 
 .timeline { position: relative; }
 .timeline-empty { color: var(--text-faint); text-align: center; padding: 40px 0; font-style: italic; font-size: 14px; }
 
-.match { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: start; }
+.match { display: grid; grid-template-columns: 56px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: start; }
 .match:last-child { border-bottom: 0; }
-.match-time { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 14px; color: var(--text); padding-top: 4px; }
-.match-card { background: var(--surface-2); border-left: 4px solid; border-radius: 6px; padding: 10px 14px; position: relative; }
+.match-time { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 14px; color: var(--text); padding-top: 6px; line-height: 1.3; }
+.match-end { font-weight: 400; font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.match-card { background: var(--surface-2); border-left: 4px solid; border-radius: 6px; padding: 10px 12px; position: relative; }
 .match-card.g10 { border-left-color: var(--g10); }
 .match-card.j10 { border-left-color: var(--j10); }
 .match-card.j12 { border-left-color: var(--j12); }
 .match-card.conflict { background: var(--conflict-bg); border-left-color: var(--conflict); }
-.match-card.conflict::after { content: '⚠ KONFLIKT'; position: absolute; top: 10px; right: 12px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--conflict); font-weight: 700; }
+.conflict-badge { display: inline-block; background: var(--conflict); color: white; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: 1px; }
 
-.match-team-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; font-weight: 600; }
+.match-team-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 4px; margin-bottom: 6px; font-weight: 600; }
 .match-team-tag.g10 { background: rgba(74, 222, 128, 0.15); color: var(--g10); }
 .match-team-tag.j10 { background: rgba(244, 114, 182, 0.15); color: var(--j10); }
 .match-team-tag.j12 { background: rgba(96, 165, 250, 0.15); color: var(--j12); }
 
-.match-fixture { font-weight: 600; font-size: 14px; line-height: 1.3; margin-bottom: 4px; }
+.match-fixture { font-weight: 600; font-size: 14px; line-height: 1.35; margin-bottom: 4px; }
 .match-fixture .vs { color: var(--text-faint); font-weight: 400; margin: 0 4px; }
 .match-fixture .byasen { color: var(--accent); }
-.match-meta { color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+.match-meta { color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace; line-height: 1.4; }
 .match-meta .dot { margin: 0 6px; color: var(--text-faint); }
 
-footer { color: var(--text-faint); font-size: 12px; text-align: center; padding: 40px 0 20px; }
+footer { color: var(--text-faint); font-size: 12px; text-align: center; padding: 32px 0 20px; }
 
+/* ROSTERS */
+.rosters { margin-bottom: 24px; }
+.rosters-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.rosters-title { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
+.rosters-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+.rosters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 900px) { .rosters-grid { grid-template-columns: 1fr; } }
+
+.roster { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; border-top: 4px solid; }
+.roster.g10 { border-top-color: var(--g10); }
+.roster.j10 { border-top-color: var(--j10); }
+.roster.j12 { border-top-color: var(--j12); }
+
+.roster-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.roster-kid { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; }
+.roster-kid.g10 { color: var(--g10); }
+.roster-kid.j10 { color: var(--j10); }
+.roster-kid.j12 { color: var(--j12); }
+.roster-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
+.roster-tag.g10 { background: rgba(74, 222, 128, 0.15); color: var(--g10); }
+.roster-tag.j10 { background: rgba(244, 114, 182, 0.15); color: var(--j10); }
+.roster-tag.j12 { background: rgba(96, 165, 250, 0.15); color: var(--j12); }
+
+.roster-list { list-style: none; padding: 0; margin: 0; }
+.roster-list li { padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.roster-list li:last-child { border-bottom: 0; }
+.roster-list li.highlight { color: var(--accent); font-weight: 700; }
+.roster-list li.highlight::before { content: '★'; color: var(--accent); font-size: 11px; }
+.roster-parent { color: var(--text-faint); font-size: 12px; font-weight: 400; margin-left: 4px; }
+.roster-list li.highlight .roster-parent { color: var(--text-dim); }
+.roster-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); margin-top: 10px; text-align: right; }
+
+/* TABLET */
+@media (max-width: 900px) {
+  .days { grid-template-columns: 1fr; }
+  .day-tabs { display: flex; }
+  .day { display: none; }
+  .day.active { display: block; }
+}
+
+/* PHONE */
 @media (max-width: 600px) {
-  .container { padding: 16px; }
-  .header { padding: 16px 0 16px; margin-bottom: 20px; }
-  .recommendation { padding: 18px; }
-  .match { grid-template-columns: 50px 1fr; gap: 10px; }
-  .match-time { font-size: 12px; }
+  .container { padding: 14px; }
+  .header { padding: 12px 0 16px; margin-bottom: 18px; border-bottom-width: 1px; }
+  .recommendation { padding: 18px; border-radius: 12px; }
+  .rec-title { font-size: 17px; }
+  .rec-teams { gap: 6px; }
+  .rec-chip { font-size: 13px; padding: 8px 12px; }
+  .rec-stat-num { font-size: 20px; }
+  .rec-stat { padding: 10px 6px; }
+  .btn-apply { width: 100%; padding: 14px 20px; }
+  .filters { padding: 14px; border-radius: 12px; }
+  .summary { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .summary-num { font-size: 22px; }
+  .day { padding: 16px; border-radius: 12px; }
+  .day-name { font-size: 18px; }
+  .match { grid-template-columns: 48px 1fr; gap: 10px; padding: 8px 0; }
+  .match-time { font-size: 13px; padding-top: 8px; }
+  .match-card { padding: 9px 11px; }
   .match-fixture { font-size: 13px; }
   .match-meta { font-size: 11px; }
+  .match-meta .dot { margin: 0 4px; }
+  .day-tabs { border-radius: 10px; }
+  .day-tab { font-size: 13px; padding: 11px 6px; }
+  .roster { padding: 14px; border-radius: 10px; }
+  .roster-kid { font-size: 19px; }
+  .roster-list li { font-size: 13px; padding: 6px 0; }
+}
+
+/* SMALL PHONE */
+@media (max-width: 380px) {
+  .rec-stats { grid-template-columns: repeat(2, 1fr); }
+  .rec-stat-num { font-size: 22px; }
 }
 </style>
 </head>
@@ -148,7 +229,7 @@ footer { color: var(--text-faint); font-size: 12px; text-align: center; padding:
 
   <section class="recommendation" id="recommendation">
     <div class="rec-label">Anbefalt kombinasjon</div>
-    <div class="rec-title">Sett barna på disse lagene for å rekke 14 av 15 kamper</div>
+    <div class="rec-title">Sett barna på disse lagene for å rekke alle 15 kamper uten konflikt</div>
     <div class="rec-teams">
       <div class="rec-chip g10"><span class="rec-chip-dot"></span>G10 – Byåsen 3</div>
       <div class="rec-chip j10"><span class="rec-chip-dot"></span>J10 – Byåsen 1</div>
@@ -156,14 +237,83 @@ footer { color: var(--text-faint); font-size: 12px; text-align: center; padding:
     </div>
     <div class="rec-stats">
       <div class="rec-stat"><div class="rec-stat-num">15</div><div class="rec-stat-label">Kamper totalt</div></div>
-      <div class="rec-stat"><div class="rec-stat-num">14</div><div class="rec-stat-label">Kan rekkes</div></div>
-      <div class="rec-stat"><div class="rec-stat-num">1</div><div class="rec-stat-label">Mild kollisjon</div></div>
-      <div class="rec-stat"><div class="rec-stat-num">15 min</div><div class="rec-stat-label">Maks overlapp</div></div>
+      <div class="rec-stat"><div class="rec-stat-num">15</div><div class="rec-stat-label">Kan rekkes</div></div>
+      <div class="rec-stat"><div class="rec-stat-num">0</div><div class="rec-stat-label">Kollisjoner</div></div>
+      <div class="rec-stat"><div class="rec-stat-num">2×13</div><div class="rec-stat-label">Min spilletid</div></div>
     </div>
     <div class="rec-action">
       <button class="btn-apply" onclick="applyRecommendation()">Vis anbefalt oppsett</button>
     </div>
-    <p class="rec-note">Den ene kollisjonen er <strong>søndag 11:00–11:45</strong> (J10 på Diplom Is banen 4) som overlapper med <strong>søndag 11:30–12:15</strong> (G10 på Diplom Is banen 1). Begge er på samme anleggsområde – du kan se store deler av begge ved å gå mellom banene. Ingen andre kombinasjoner gir like få og milde kollisjoner.</p>
+    <button class="rec-note-toggle" onclick="toggleNote(this)">Forklaring</button>
+    <p class="rec-note">Med kamper på 2×13 min (estimert slutt ~28 min etter start) er det <strong>nøyaktig nok tid</strong> mellom alle kampene. Den tetteste overgangen er søndag formiddag: J10 slutter ~11:28 på Diplom Is banen 4, og G10 starter 11:30 på Diplom Is banen 1 – samme anlegg, 2 minutters gange. <strong>Til sammen 5 kombinasjoner</strong> gir null konflikter, men denne gir mest fleksibilitet siden J12 kan velges fritt mellom lag 1, 2 og 3.</p>
+  </section>
+
+  <section class="rosters">
+    <div class="rosters-header">
+      <div class="rosters-title">Lagoppsett</div>
+      <div class="rosters-sub">Mine barn sine lag</div>
+    </div>
+    <div class="rosters-grid">
+
+      <div class="roster g10">
+        <div class="roster-head">
+          <div class="roster-kid g10">Oliver</div>
+          <div class="roster-tag g10">G10</div>
+        </div>
+        <ul class="roster-list">
+          <li>Benjamin Røe</li>
+          <li>Filip Gråbak Melå <span class="roster-parent">(Ola Melå)</span></li>
+          <li>Henrik Aas <span class="roster-parent">(Olav Aas)</span></li>
+          <li>Håkon Christiansen Myhre <span class="roster-parent">(Martin Myhre)</span></li>
+          <li>Johannes Saghaug Hølås <span class="roster-parent">(Morten Hølås)</span></li>
+          <li>Odin Krog</li>
+          <li class="highlight">Oliver Fevaag Heger</li>
+          <li>Oscar Olsen</li>
+          <li>Vetle Eithun Gabrielsen <span class="roster-parent">(Robin Gabrielsen)</span></li>
+        </ul>
+        <div class="roster-count">9 spillere</div>
+      </div>
+
+      <div class="roster j10">
+        <div class="roster-head">
+          <div class="roster-kid j10">Pernille</div>
+          <div class="roster-tag j10">J10</div>
+        </div>
+        <ul class="roster-list">
+          <li>Nora Elise Rosvold</li>
+          <li>Pernille Viggen Hansen</li>
+          <li>Thea Sissilie Bjørkum</li>
+          <li>Hafsah Mohamed</li>
+          <li>Aliah Fjeldavli Nordvik</li>
+          <li>Ingeborg Kjærsgaard Persen</li>
+          <li>Arja Utengen Larsen <span class="roster-parent">(Jonas Larsen)</span></li>
+          <li class="highlight">Pernille Fevaag Heger</li>
+          <li>Elsa Rennemo <span class="roster-parent">(Kristian Rennemo)</span></li>
+          <li>Hild Midbøe Rognstad <span class="roster-parent">(Anstein Rognstad)</span></li>
+        </ul>
+        <div class="roster-count">10 spillere</div>
+      </div>
+
+      <div class="roster j12">
+        <div class="roster-head">
+          <div class="roster-kid j12">Pia</div>
+          <div class="roster-tag j12">J12 · LAG 1</div>
+        </div>
+        <ul class="roster-list">
+          <li>Madeleine Sørgård Nåvik <span class="roster-parent">(Stian Nåvik)</span></li>
+          <li class="highlight">Pia Fevaag Heger</li>
+          <li>Elise Huus Nordbø <span class="roster-parent">(Ola Nordbø)</span></li>
+          <li>Mina Hektoen Vullum <span class="roster-parent">(Terje Vullum)</span></li>
+          <li>Sofie Solem Gråwe <span class="roster-parent">(Tom Gråwe)</span></li>
+          <li>Astrid Hov Odsæter</li>
+          <li>Seva Engan</li>
+          <li>Ella Håkegård Heineman</li>
+          <li>Live Sorken Nilsen <span class="roster-parent">(Magnus Nilsen)</span></li>
+        </ul>
+        <div class="roster-count">9 spillere</div>
+      </div>
+
+    </div>
   </section>
 
   <section class="filters">
@@ -176,8 +326,13 @@ footer { color: var(--text-faint); font-size: 12px; text-align: center; padding:
 
   <section class="summary" id="summary"></section>
 
+  <div class="day-tabs" id="day-tabs">
+    <button class="day-tab active" data-day="lor" onclick="switchDay('lor')">Lørdag<span class="tab-count" id="lor-tab-count"></span></button>
+    <button class="day-tab" data-day="son" onclick="switchDay('son')">Søndag<span class="tab-count" id="son-tab-count"></span></button>
+  </div>
+
   <section class="days">
-    <div class="day">
+    <div class="day active" data-day="lor">
       <div class="day-header">
         <div>
           <div class="day-name">Lørdag</div>
@@ -187,7 +342,7 @@ footer { color: var(--text-faint); font-size: 12px; text-align: center; padding:
       </div>
       <div class="timeline" id="lor-timeline"></div>
     </div>
-    <div class="day">
+    <div class="day" data-day="son">
       <div class="day-header">
         <div>
           <div class="day-name">Søndag</div>
@@ -205,7 +360,13 @@ footer { color: var(--text-faint); font-size: 12px; text-align: center; padding:
 <script>
 const TEAMS = {"MG10-1":{"id":"MG10-1","category":"G10","categoryFull":"MG10","teamNum":1,"label":"G10 – Byåsen 1","matches":[{"start":"2026-06-20T12:00:00","day":"lor","time":"12:00","minutes":720,"home":"Langevåg IL - Fotball 2","away":"Byåsen IL 1","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MG 10 Plj F","matchnr":"20006906"},{"start":"2026-06-20T13:00:00","day":"lor","time":"13:00","minutes":780,"home":"Byåsen IL 1","away":"Heimdal Fotballklubb 1","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MG 10 Plj F","matchnr":"20006809"},{"start":"2026-06-20T15:00:00","day":"lor","time":"15:00","minutes":900,"home":"Vestbyen IL 2","away":"Byåsen IL 1","venue":"SalMar 4","venueBase":"SalMar","group":"MG 10 Plj F","matchnr":"20007513"},{"start":"2026-06-21T09:30:00","day":"son","time":"09:30","minutes":570,"home":"Byåsen IL 1","away":"Malvik IL 1","venue":"SalMar 3","venueBase":"SalMar","group":"MG 10 Plj F","matchnr":"21008601"},{"start":"2026-06-21T10:30:00","day":"son","time":"10:30","minutes":630,"home":"Byåsen IL 1","away":"Tiller IL 1","venue":"SalMar 3","venueBase":"SalMar","group":"MG 10 Plj F","matchnr":"21008603"}]},"MJ10-1":{"id":"MJ10-1","category":"J10","categoryFull":"MJ10","teamNum":1,"label":"J10 – Byåsen 1","matches":[{"start":"2026-06-20T10:00:00","day":"lor","time":"10:00","minutes":600,"home":"Byåsen IL 1","away":"Orkanger IF","venue":"Lille Lade 4","venueBase":"Lille Lade","group":"MJ 10 Plj D","matchnr":"20007103"},{"start":"2026-06-20T11:00:00","day":"lor","time":"11:00","minutes":660,"home":"Tiller IL 1","away":"Byåsen IL 1","venue":"Specsavers 2","venueBase":"Specsavers","group":"MJ 10 Plj D","matchnr":"20008704"},{"start":"2026-06-21T11:00:00","day":"son","time":"11:00","minutes":660,"home":"Byåsen IL 1","away":"Charlottenlund Sportsklubb Csk2","venue":"Diplom Is banen 4","venueBase":"Diplom Is banen","group":"MJ 10 Plj D","matchnr":"21008304"},{"start":"2026-06-21T12:30:00","day":"son","time":"12:30","minutes":750,"home":"Hommelvik IL HIL1","away":"Byåsen IL 1","venue":"SalMar 3","venueBase":"SalMar","group":"MJ 10 Plj D","matchnr":"21008607"},{"start":"2026-06-21T13:30:00","day":"son","time":"13:30","minutes":810,"home":"Byåsen IL 1","away":"Leinstrand IL","venue":"Lille Lade 3","venueBase":"Lille Lade","group":"MJ 10 Plj D","matchnr":"21007009"}]},"MJ12-1":{"id":"MJ12-1","category":"J12","categoryFull":"MJ12","teamNum":1,"label":"J12 – Byåsen 1","matches":[{"start":"2026-06-20T16:00:00","day":"lor","time":"16:00","minutes":960,"home":"Byåsen IL 1","away":"Freidig, SPK 1","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 12 Plj D","matchnr":"20008515"},{"start":"2026-06-20T17:00:00","day":"lor","time":"17:00","minutes":1020,"home":"Nidelv IL","away":"Byåsen IL 1","venue":"Specsavers 4","venueBase":"Specsavers","group":"MJ 12 Plj D","matchnr":"20007216"},{"start":"2026-06-20T18:00:00","day":"lor","time":"18:00","minutes":1080,"home":"Byåsen IL 1","away":"Utleira IL 2","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MJ 12 Plj D","matchnr":"20006918"},{"start":"2026-06-21T16:00:00","day":"son","time":"16:00","minutes":960,"home":"Ranheim IL 3","away":"Byåsen IL 1","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MJ 12 Plj D","matchnr":"21007614"},{"start":"2026-06-21T18:00:00","day":"son","time":"18:00","minutes":1080,"home":"Byåsen IL 1","away":"Melhus IL 2","venue":"SpareBank1 banen 3","venueBase":"SpareBank1 banen","group":"MJ 12 Plj D","matchnr":"21007818"}]},"MG10-2":{"id":"MG10-2","category":"G10","categoryFull":"MG10","teamNum":2,"label":"G10 – Byåsen 2","matches":[{"start":"2026-06-20T09:30:00","day":"lor","time":"09:30","minutes":570,"home":"Byåsen IL 2","away":"Heimdal Fotballklubb 2","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MG 10 Plj G","matchnr":"20008102"},{"start":"2026-06-20T11:30:00","day":"lor","time":"11:30","minutes":690,"home":"Byåsen IL 2","away":"Charlottenlund Sportsklubb 5","venue":"SalMar 2","venueBase":"SalMar","group":"MG 10 Plj G","matchnr":"20008506"},{"start":"2026-06-21T12:00:00","day":"son","time":"12:00","minutes":720,"home":"Malvik IL 3","away":"Byåsen IL 2","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MG 10 Plj G","matchnr":"21008106"},{"start":"2026-06-21T13:00:00","day":"son","time":"13:00","minutes":780,"home":"Byåsen IL 2","away":"Trond, IL 1","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj G","matchnr":"21008008"},{"start":"2026-06-21T14:30:00","day":"son","time":"14:30","minutes":870,"home":"Tiller IL 2","away":"Byåsen IL 2","venue":"Lille Lade 4","venueBase":"Lille Lade","group":"MG 10 Plj G","matchnr":"21007111"}]},"MJ10-2":{"id":"MJ10-2","category":"J10","categoryFull":"MJ10","teamNum":2,"label":"J10 – Byåsen 2","matches":[{"start":"2026-06-20T15:30:00","day":"lor","time":"15:30","minutes":930,"home":"Byåsen IL 2","away":"Buvik IL - Fotball GUL","venue":"Specsavers 3","venueBase":"Specsavers","group":"MJ 10 Plj B","matchnr":"20007313"},{"start":"2026-06-20T17:30:00","day":"lor","time":"17:30","minutes":1050,"home":"Fosen, Fotballklubben 2","away":"Byåsen IL 2","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MJ 10 Plj B","matchnr":"20006818"},{"start":"2026-06-21T16:00:00","day":"son","time":"16:00","minutes":960,"home":"Sverresborg Fotball","away":"Byåsen IL 2","venue":"Lille Lade 3","venueBase":"Lille Lade","group":"MJ 10 Plj B","matchnr":"21007014"},{"start":"2026-06-21T17:00:00","day":"son","time":"17:00","minutes":1020,"home":"Byåsen IL 2","away":"Freidig, SPK 3","venue":"Specsavers 3","venueBase":"Specsavers","group":"MJ 10 Plj B","matchnr":"21007314"},{"start":"2026-06-21T18:00:00","day":"son","time":"18:00","minutes":1080,"home":"Ranheim IL 2","away":"Byåsen IL 2","venue":"Specsavers 2","venueBase":"Specsavers","group":"MJ 10 Plj B","matchnr":"21008717"}]},"MJ12-2":{"id":"MJ12-2","category":"J12","categoryFull":"MJ12","teamNum":2,"label":"J12 – Byåsen 2","matches":[{"start":"2026-06-20T16:00:00","day":"lor","time":"16:00","minutes":960,"home":"Byåsen IL 2","away":"Hommelvik IL","venue":"Specsavers 1","venueBase":"Specsavers","group":"MJ 12 Plj A","matchnr":"20007414"},{"start":"2026-06-20T18:00:00","day":"lor","time":"18:00","minutes":1080,"home":"Sjetne IL Sjetne/Flatås 3","away":"Byåsen IL 2","venue":"Lille Lade 4","venueBase":"Lille Lade","group":"MJ 12 Plj A","matchnr":"20007119"},{"start":"2026-06-21T15:30:00","day":"son","time":"15:30","minutes":930,"home":"Charlottenlund Sportsklubb CSK 1","away":"Byåsen IL 2","venue":"SalMar 3","venueBase":"SalMar","group":"MJ 12 Plj A","matchnr":"21008613"},{"start":"2026-06-21T17:00:00","day":"son","time":"17:00","minutes":1020,"home":"Strindheim IL 2","away":"Byåsen IL 2","venue":"Specsavers 1","venueBase":"Specsavers","group":"MJ 12 Plj A","matchnr":"21007415"},{"start":"2026-06-21T18:00:00","day":"son","time":"18:00","minutes":1080,"home":"Byåsen IL 2","away":"Trond, IL 1","venue":"SpareBank1 banen 2","venueBase":"SpareBank1 banen","group":"MJ 12 Plj A","matchnr":"21007717"}]},"MG10-3":{"id":"MG10-3","category":"G10","categoryFull":"MG10","teamNum":3,"label":"G10 – Byåsen 3","matches":[{"start":"2026-06-20T12:00:00","day":"lor","time":"12:00","minutes":720,"home":"Langevåg IL - Fotball 1","away":"Byåsen IL 3","venue":"Diplom Is banen 3","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"20008207"},{"start":"2026-06-20T13:00:00","day":"lor","time":"13:00","minutes":780,"home":"Charlottenlund Sportsklubb 2","away":"Byåsen IL 3","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"20008009"},{"start":"2026-06-21T09:00:00","day":"son","time":"09:00","minutes":540,"home":"Byåsen IL 3","away":"Strindheim IL 1","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"21008000"},{"start":"2026-06-21T10:00:00","day":"son","time":"10:00","minutes":600,"home":"Freidig, SPK 1","away":"Byåsen IL 3","venue":"SalMar 1","venueBase":"SalMar","group":"MG 10 Plj J","matchnr":"21008402"},{"start":"2026-06-21T11:30:00","day":"son","time":"11:30","minutes":690,"home":"Ørland BK 2","away":"Byåsen IL 3","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MG 10 Plj J","matchnr":"21008005"}]},"MJ10-3":{"id":"MJ10-3","category":"J10","categoryFull":"MJ10","teamNum":3,"label":"J10 – Byåsen 3","matches":[{"start":"2026-06-20T15:30:00","day":"lor","time":"15:30","minutes":930,"home":"Charlottenlund Sportsklubb Csk1","away":"Byåsen IL 3","venue":"Specsavers 1","venueBase":"Specsavers","group":"MJ 10 Plj C","matchnr":"20007413"},{"start":"2026-06-20T17:30:00","day":"lor","time":"17:30","minutes":1050,"home":"Kattem IL Fotballklubb 2","away":"Byåsen IL 3","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MJ 10 Plj C","matchnr":"20008118"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Malvik 2","away":"Byåsen IL 3","venue":"Diplom Is banen 1","venueBase":"Diplom Is banen","group":"MJ 10 Plj C","matchnr":"21008015"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Trond, IL 1","away":"Byåsen IL 3","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 10 Plj C","matchnr":"21008517"},{"start":"2026-06-21T18:30:00","day":"son","time":"18:30","minutes":1110,"home":"Byåsen IL 3","away":"Sjetne IL 1","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MJ 10 Plj C","matchnr":"21007619"}]},"MJ12-3":{"id":"MJ12-3","category":"J12","categoryFull":"MJ12","teamNum":3,"label":"J12 – Byåsen 3","matches":[{"start":"2026-06-20T16:00:00","day":"lor","time":"16:00","minutes":960,"home":"Kattem IL Fotballklubb","away":"Byåsen IL 3","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MJ 12 Plj E","matchnr":"20006914"},{"start":"2026-06-20T18:00:00","day":"lor","time":"18:00","minutes":1080,"home":"Ranheim IL 1","away":"Byåsen IL 3","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 12 Plj E","matchnr":"20008519"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Byåsen IL 3","away":"Utleira IL 1","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MJ 12 Plj E","matchnr":"21008115"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Byåsen IL 3","away":"Melhus IL 1","venue":"Diplom Is banen 2","venueBase":"Diplom Is banen","group":"MJ 12 Plj E","matchnr":"21008117"},{"start":"2026-06-21T18:30:00","day":"son","time":"18:30","minutes":1110,"home":"Byåsen IL 3","away":"Sverresborg Fotball 1","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MJ 12 Plj E","matchnr":"21006919"}]},"MG10-4":{"id":"MG10-4","category":"G10","categoryFull":"MG10","teamNum":4,"label":"G10 – Byåsen 4","matches":[{"start":"2026-06-20T08:30:00","day":"lor","time":"08:30","minutes":510,"home":"Trond, IL 2","away":"Byåsen IL 4","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MG 10 Plj E","matchnr":"20006800"},{"start":"2026-06-20T09:30:00","day":"lor","time":"09:30","minutes":570,"home":"Byåsen IL 4","away":"Hommelvik IL 3","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MG 10 Plj E","matchnr":"20007601"},{"start":"2026-06-20T11:30:00","day":"lor","time":"11:30","minutes":690,"home":"Astor Fotballklubb 2","away":"Byåsen IL 4","venue":"SpareBank1 banen 4","venueBase":"SpareBank1 banen","group":"MG 10 Plj E","matchnr":"20007905"},{"start":"2026-06-21T12:00:00","day":"son","time":"12:00","minutes":720,"home":"Byåsen IL 4","away":"Ranheim IL 1","venue":"Lille Lade 2","venueBase":"Lille Lade","group":"MG 10 Plj E","matchnr":"21006906"},{"start":"2026-06-21T14:00:00","day":"son","time":"14:00","minutes":840,"home":"Byåsen IL 4","away":"Strindheim IL Åsvang 2","venue":"Lille Lade 3","venueBase":"Lille Lade","group":"MG 10 Plj E","matchnr":"21007010"}]},"MJ10-4":{"id":"MJ10-4","category":"J10","categoryFull":"MJ10","teamNum":4,"label":"J10 – Byåsen 4","matches":[{"start":"2026-06-20T14:00:00","day":"lor","time":"14:00","minutes":840,"home":"Flatås Idrettslag","away":"Byåsen IL 4","venue":"Specsavers 2","venueBase":"Specsavers","group":"MJ 10 Plj F","matchnr":"20008710"},{"start":"2026-06-20T15:00:00","day":"lor","time":"15:00","minutes":900,"home":"Strindheim IL 1","away":"Byåsen IL 4","venue":"Specsavers 4","venueBase":"Specsavers","group":"MJ 10 Plj F","matchnr":"20007213"},{"start":"2026-06-21T15:00:00","day":"son","time":"15:00","minutes":900,"home":"Byåsen IL 4","away":"Utleira IL","venue":"SalMar 4","venueBase":"SalMar","group":"MJ 10 Plj F","matchnr":"21007512"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Byåsen IL 4","away":"Buvik IL - Fotball BLÅ","venue":"SpareBank1 banen 4","venueBase":"SpareBank1 banen","group":"MJ 10 Plj F","matchnr":"21007915"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Tiller IL 2","away":"Byåsen IL 4","venue":"SpareBank1 banen 4","venueBase":"SpareBank1 banen","group":"MJ 10 Plj F","matchnr":"21007917"}]},"MJ12-4":{"id":"MJ12-4","category":"J12","categoryFull":"MJ12","teamNum":4,"label":"J12 – Byåsen 4","matches":[{"start":"2026-06-20T10:30:00","day":"lor","time":"10:30","minutes":630,"home":"Byåsen IL 4","away":"Sverresborg Fotball 2","venue":"SpareBank1 banen 2","venueBase":"SpareBank1 banen","group":"MJ 12 Plj F","matchnr":"20007704"},{"start":"2026-06-20T11:30:00","day":"lor","time":"11:30","minutes":690,"home":"Byåsen IL 4","away":"Strindheim IL 3","venue":"SpareBank1 banen 3","venueBase":"SpareBank1 banen","group":"MJ 12 Plj F","matchnr":"20007806"},{"start":"2026-06-21T16:30:00","day":"son","time":"16:30","minutes":990,"home":"Byåsen IL 4","away":"Langevåg IL - Fotball","venue":"SpareBank1 banen 1","venueBase":"SpareBank1 banen","group":"MJ 12 Plj F","matchnr":"21007615"},{"start":"2026-06-21T17:30:00","day":"son","time":"17:30","minutes":1050,"home":"Malvik IL","away":"Byåsen IL 4","venue":"Specsavers 4","venueBase":"Specsavers","group":"MJ 12 Plj F","matchnr":"21007215"},{"start":"2026-06-21T18:30:00","day":"son","time":"18:30","minutes":1110,"home":"Sjetne IL Sjetne/Flatås 1","away":"Byåsen IL 4","venue":"SalMar 2","venueBase":"SalMar","group":"MJ 12 Plj F","matchnr":"21008519"}]},"MG10-5":{"id":"MG10-5","category":"G10","categoryFull":"MG10","teamNum":5,"label":"G10 – Byåsen 5","matches":[{"start":"2026-06-20T12:00:00","day":"lor","time":"12:00","minutes":720,"home":"Langevåg IL - Fotball 3","away":"Byåsen IL 5","venue":"SalMar 4","venueBase":"SalMar","group":"MG 10 Plj K","matchnr":"20007507"},{"start":"2026-06-20T14:00:00","day":"lor","time":"14:00","minutes":840,"home":"Sverresborg Fotball 1","away":"Byåsen IL 5","venue":"Specsavers 4","venueBase":"Specsavers","group":"MG 10 Plj K","matchnr":"20007211"},{"start":"2026-06-21T09:00:00","day":"son","time":"09:00","minutes":540,"home":"Trygg/Lade, SK Rød","away":"Byåsen IL 5","venue":"Lille Lade 1","venueBase":"Lille Lade","group":"MG 10 Plj K","matchnr":"21006800"},{"start":"2026-06-21T10:00:00","day":"son","time":"10:00","minutes":600,"home":"Byåsen IL 5","away":"Strindheim IL Åsvang 1","venue":"Diplom Is banen 4","venueBase":"Diplom Is banen","group":"MG 10 Plj K","matchnr":"21008302"},{"start":"2026-06-21T11:30:00","day":"son","time":"11:30","minutes":690,"home":"Byåsen IL 5","away":"Stjørdals-Blink Fotball 1","venue":"SalMar 3","venueBase":"SalMar","group":"MG 10 Plj K","matchnr":"21008605"}]}}
 ;
-const MATCH_DURATION = 45; // estimert kamplengde i minutter
+const MATCH_DURATION = 28; // 2x13 min spilletid + ~2 min pause
+
+function addMinutes(timeStr, mins) {
+  const [h, m] = timeStr.split(':').map(Number);
+  const total = h * 60 + m + mins;
+  return String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+}
 const RECOMMENDED = ['MG10-3', 'MJ10-1', 'MJ12-1'];
 
 const selected = new Set();
@@ -344,7 +505,10 @@ function render() {
     const dayMatches = matches.filter(m => m.day === day);
     const tl = document.getElementById(day + '-timeline');
     const count = document.getElementById(day + '-count');
-    count.textContent = dayMatches.length + ' kamp' + (dayMatches.length === 1 ? '' : 'er');
+    const tabCount = document.getElementById(day + '-tab-count');
+    const label = dayMatches.length + ' kamp' + (dayMatches.length === 1 ? '' : 'er');
+    count.textContent = label;
+    if (tabCount) tabCount.textContent = dayMatches.length > 0 ? '(' + dayMatches.length + ')' : '';
     if (dayMatches.length === 0) {
       tl.innerHTML = '<div class="timeline-empty">Ingen kamper valgt for denne dagen</div>';
       return;
@@ -353,17 +517,30 @@ function render() {
       const idx = matches.indexOf(m);
       const conflict = conflicts.has(idx);
       const catLower = m.category.toLowerCase();
+      const conflictBadge = conflict ? '<span class="conflict-badge">⚠ KONFLIKT</span>' : '';
       return `
         <div class="match">
-          <div class="match-time">${m.time}</div>
+          <div class="match-time"><div>${m.time}</div><div class="match-end">→ ${addMinutes(m.time, MATCH_DURATION)}</div></div>
           <div class="match-card ${catLower} ${conflict ? 'conflict' : ''}">
-            <div class="match-team-tag ${catLower}">${m.teamLabel}</div>
+            <div class="match-team-tag ${catLower}">${m.teamLabel}</div>${conflictBadge}
             <div class="match-fixture">${fmtFixture(m)}</div>
             <div class="match-meta">${m.venue}<span class="dot">·</span>${m.group}</div>
           </div>
         </div>`;
     }).join('');
   });
+}
+
+function switchDay(day) {
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.toggle('active', t.dataset.day === day));
+  document.querySelectorAll('.day').forEach(d => d.classList.toggle('active', d.dataset.day === day));
+}
+
+function toggleNote(btn) {
+  const note = btn.nextElementSibling;
+  btn.classList.toggle('open');
+  note.classList.toggle('open');
+  btn.firstChild.nodeValue = btn.classList.contains('open') ? 'Skjul forklaring' : 'Forklaring';
 }
 
 renderFilters();

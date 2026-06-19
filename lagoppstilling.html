@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lagoppstilling – Byåsen J2016</title>
+<style>
+  :root{
+    --bg:#0f1216;
+    --panel:#171c22;
+    --panel2:#1f262e;
+    --line:#2a323c;
+    --text:#f2f5f8;
+    --muted:#9aa6b2;
+    --accent:#2ecc71;
+    --grass1:#2f8f43;
+    --grass2:#277a39;
+    --chip:#e84d4d;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:560px;margin:0 auto;padding:14px 14px 40px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+  header h1{font-size:18px;margin:0;line-height:1.1;}
+  header .sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .badge{background:var(--accent);color:#06210f;font-weight:700;font-size:12px;
+    padding:5px 10px;border-radius:999px;white-space:nowrap;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:8px;margin-bottom:14px;}
+  .tab{flex:1;background:var(--panel);color:var(--muted);border:1px solid var(--line);
+    padding:10px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;}
+  .tab.active{background:var(--accent);color:#06210f;border-color:var(--accent);}
+  .tab .cnt{font-size:11px;font-weight:600;opacity:.8;display:block;}
+
+  /* Pitch */
+  .pitch{position:relative;width:100%;aspect-ratio:7/9;border-radius:16px;overflow:hidden;
+    background:repeating-linear-gradient(0deg,var(--grass1) 0 12%,var(--grass2) 12% 24%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.18);}
+  .lines{position:absolute;inset:0;pointer-events:none;}
+  .lines .ln{position:absolute;border:2px solid rgba(255,255,255,.45);}
+  .midline{top:50%;left:3%;right:3%;border:0;border-top:2px solid rgba(255,255,255,.45);}
+  .circle{top:50%;left:50%;width:26%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);}
+  .box-top{top:0;left:25%;width:50%;height:14%;border-top:0;}
+  .box-bot{bottom:0;left:25%;width:50%;height:14%;border-bottom:0;}
+  .goal-top{top:0;left:38%;width:24%;height:5%;border-top:0;border-color:rgba(255,255,255,.7);}
+  .goal-bot{bottom:0;left:38%;width:24%;height:5%;border-bottom:0;border-color:rgba(255,255,255,.7);}
+
+  .slot{position:absolute;transform:translate(-50%,-50%);width:72px;text-align:center;
+    touch-action:none;user-select:none;}
+  .disc{width:50px;height:50px;margin:0 auto;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:15px;border:2px dashed rgba(255,255,255,.55);
+    background:rgba(0,0,0,.18);color:rgba(255,255,255,.85);transition:transform .08s;}
+  .slot.filled .disc{border-style:solid;border-color:#fff;background:var(--chip);box-shadow:0 4px 12px rgba(0,0,0,.35);}
+  .slot .name{font-size:11px;margin-top:3px;line-height:1.05;color:#fff;
+    text-shadow:0 1px 2px rgba(0,0,0,.6);min-height:13px;}
+  .slot .pos{font-size:9px;color:rgba(255,255,255,.75);font-weight:700;letter-spacing:.5px;}
+  .slot.drop-hover .disc{transform:scale(1.18);border-color:var(--accent);}
+
+  /* Bench + pool */
+  .section{margin-top:18px;}
+  .section h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+    margin:0 0 8px;}
+  .bench{display:flex;gap:10px;}
+  .bench .seat{flex:1;background:var(--panel);border:1px dashed var(--line);border-radius:12px;
+    min-height:58px;display:flex;align-items:center;justify-content:center;padding:8px;
+    touch-action:none;}
+  .bench .seat .empty{color:var(--muted);font-size:12px;}
+
+  .pool{display:flex;flex-wrap:wrap;gap:8px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:10px;min-height:54px;}
+  .pool.drop-hover,.bench .seat.drop-hover{border-color:var(--accent);background:var(--panel2);}
+
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--chip);color:#fff;
+    font-weight:600;font-size:13px;padding:7px 11px;border-radius:999px;cursor:grab;
+    touch-action:none;user-select:none;box-shadow:0 2px 6px rgba(0,0,0,.3);}
+  .chip .ini{background:rgba(255,255,255,.22);width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+  .chip.seated{background:var(--accent);color:#06210f;}
+  .chip.seated .ini{background:rgba(0,0,0,.18);color:#06210f;}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  button.btn{flex:1;min-width:120px;background:var(--panel2);color:var(--text);border:1px solid var(--line);
+    padding:11px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;}
+  button.btn:active{transform:scale(.98);}
+  button.btn.primary{background:var(--accent);color:#06210f;border-color:var(--accent);}
+
+  .ghost{position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-50%) scale(1.06);
+    opacity:.95;}
+  .hint{font-size:11px;color:var(--muted);margin-top:10px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Lagoppstilling</h1>
+      <div class="sub" id="subtitle">7er · 2-3-1</div>
+    </div>
+    <div class="badge">2-3-1</div>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="pitch" id="pitch">
+    <div class="lines">
+      <div class="ln midline"></div>
+      <div class="ln circle"></div>
+      <div class="ln box-top"></div>
+      <div class="ln box-bot"></div>
+      <div class="ln goal-top"></div>
+      <div class="ln goal-bot"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Benk</h2>
+    <div class="bench" id="bench"></div>
+  </div>
+
+  <div class="section">
+    <h2>Tilgjengelige spillere</h2>
+    <div class="pool" id="pool" data-zone="pool"></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn primary" id="autofill">Autofyll</button>
+    <button class="btn" id="reset">Tilbakestill</button>
+  </div>
+
+  <div class="hint">Dra spillerne ut på banen eller benken. Trykk og dra for å bytte plass.</div>
+</div>
+
+<script>
+const POSITIONS = [
+  {id:'sp',   label:'SP', top:13, left:50},
+  {id:'mb_l', label:'MB', top:38, left:22},
+  {id:'mb_c', label:'MB', top:34, left:50},
+  {id:'mb_r', label:'MB', top:38, left:78},
+  {id:'b_l',  label:'B',  top:63, left:32},
+  {id:'b_r',  label:'B',  top:63, left:68},
+  {id:'mv',   label:'MV', top:88, left:50},
+];
+const ORDER = ['mv','b_l','b_r','mb_l','mb_c','mb_r','sp']; // autofyll-rekkefølge
+
+const TEAMS = [
+  { name:'Byåsen 1', names:[
+    "Ella Håkegård Heineman","Elise Huus Nordbø","Seva Engan","Pia Fevaag Heger",
+    "Live Sorken Nilsen","Sofie Solem Gråwe","Madeleine Sørgård Nåvik",
+    "Astrid Hov Odsæter","Mina Hektoen Vullum",
+  ]},
+  { name:'Byåsen 2', names:[
+    "Rakel Stadsøy","Pernille Danielsen Kittang","Maija Lilledal","Hanne Skogstad",
+    "Maria Saurstrø Strypet","Sofia Kolberg Skei","Saga Lunde Steen","Leah Kråkenes",
+  ]},
+];
+TEAMS.forEach(t=>{ t.players = t.names.map((n,i)=>({id:i,name:n,loc:'pool'})); });
+
+let active = 0;
+const team = ()=>TEAMS[active];
+const players = ()=>team().players;
+
+function firstName(n){return n.split(' ')[0];}
+function initials(n){
+  const p=n.trim().split(/\s+/);
+  return (p[0][0]+(p[p.length-1][0]||'')).toUpperCase();
+}
+function byLoc(loc){return players().find(p=>p.loc===loc);}
+
+const tabsEl=document.getElementById('tabs');
+const pitch=document.getElementById('pitch');
+const bench=document.getElementById('bench');
+const pool=document.getElementById('pool');
+const subtitle=document.getElementById('subtitle');
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  TEAMS.forEach((t,i)=>{
+    const b=document.createElement('div');
+    b.className='tab'+(i===active?' active':'');
+    b.innerHTML=`${t.name}<span class="cnt">${t.players.length} spillere</span>`;
+    b.onclick=()=>{active=i; render();};
+    tabsEl.appendChild(b);
+  });
+}
+
+function render(){
+  renderTabs();
+  subtitle.textContent='7er · 2-3-1 · '+team().name;
+
+  pitch.querySelectorAll('.slot').forEach(e=>e.remove());
+  POSITIONS.forEach(pos=>{
+    const occ=byLoc(pos.id);
+    const slot=document.createElement('div');
+    slot.className='slot'+(occ?' filled':'');
+    slot.style.top=pos.top+'%'; slot.style.left=pos.left+'%';
+    slot.dataset.zone=pos.id;
+    slot.innerHTML=`
+      <div class="pos">${pos.label}</div>
+      <div class="disc" ${occ?`data-player="${occ.id}"`:''}>${occ?initials(occ.name):pos.label}</div>
+      <div class="name">${occ?firstName(occ.name):''}</div>`;
+    pitch.appendChild(slot);
+  });
+
+  bench.innerHTML='';
+  ['bench0','bench1'].forEach(b=>{
+    const occ=byLoc(b);
+    const seat=document.createElement('div');
+    seat.className='seat'; seat.dataset.zone=b;
+    if(occ){
+      seat.innerHTML=`<div class="chip seated" data-player="${occ.id}"><span class="ini">${initials(occ.name)}</span>${firstName(occ.name)}</div>`;
+    }else{
+      seat.innerHTML='<span class="empty">Benk</span>';
+    }
+    bench.appendChild(seat);
+  });
+
+  pool.innerHTML='';
+  players().filter(p=>p.loc==='pool').forEach(p=>{
+    const chip=document.createElement('div');
+    chip.className='chip'; chip.dataset.player=p.id;
+    chip.innerHTML=`<span class="ini">${initials(p.name)}</span>${firstName(p.name)}`;
+    pool.appendChild(chip);
+  });
+  attachDrag();
+}
+
+/* ---- Drag & drop via pointer events (touch + mouse) ---- */
+let drag=null;
+function attachDrag(){
+  document.querySelectorAll('[data-player]').forEach(el=>{el.onpointerdown=startDrag;});
+}
+function startDrag(e){
+  const el=e.currentTarget;
+  e.preventDefault();
+  const ghost=el.cloneNode(true);
+  ghost.classList.add('ghost');
+  ghost.style.width=el.offsetWidth+'px';
+  document.body.appendChild(ghost);
+  drag={pid:+el.dataset.player, ghost, src:el};
+  moveGhost(e);
+  el.style.opacity='.25';
+  window.addEventListener('pointermove',onMove);
+  window.addEventListener('pointerup',endDrag,{once:true});
+}
+function moveGhost(e){drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px';}
+function onMove(e){
+  moveGhost(e);
+  drag.ghost.style.display='none';
+  const t=document.elementFromPoint(e.clientX,e.clientY);
+  drag.ghost.style.display='';
+  const zoneEl=t&&t.closest('[data-zone]');
+  document.querySelectorAll('.drop-hover').forEach(z=>z.classList.remove('drop-hover'));
+  if(zoneEl) zoneEl.classList.add('drop-hover');
+  drag.zone=zoneEl?zoneEl.dataset.zone:null;
+}
+function endDrag(e){
+  window.removeEventListener('pointermove',onMove);
+  drag.ghost.remove();
+  if(drag.src)drag.src.style.opacity='';
+  document.querySelectorAll('.drop-hover').forEach(z=>z.classList.remove('drop-hover'));
+  if(drag.zone) place(drag.pid, drag.zone);
+  drag=null;
+}
+function place(pid,zone){
+  const p=players().find(x=>x.id===pid);
+  if(!p||p.loc===zone)return;
+  if(zone!=='pool'){
+    const occ=byLoc(zone);
+    if(occ) occ.loc=p.loc;
+  }
+  p.loc=zone;
+  render();
+}
+
+document.getElementById('reset').onclick=()=>{players().forEach(p=>p.loc='pool'); render();};
+document.getElementById('autofill').onclick=()=>{
+  players().forEach(p=>p.loc='pool');
+  const avail=[...players()];
+  ORDER.forEach((slot,i)=>{ if(avail[i]) avail[i].loc=slot; });
+  if(avail[7]) avail[7].loc='bench0';
+  if(avail[8]) avail[8].loc='bench1';
+  render();
+};
+
+render();
+</script>
+</body>
+</html>
